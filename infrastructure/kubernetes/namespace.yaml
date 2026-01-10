@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: idkit
+  labels:
+    app: idkit
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: idkit-staging
+  labels:
+    app: idkit
+    environment: staging
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: idkit-gpu
+  labels:
+    app: idkit
+    environment: production
+    gpu: "true"

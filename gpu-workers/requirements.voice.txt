@@ -1,0 +1,22 @@
+# Voice Worker Requirements
+
+# Coqui TTS / XTTS
+TTS>=0.21.0
+coqui-tts>=0.24.0
+
+# OpenAI Whisper
+openai-whisper>=20231117
+faster-whisper>=0.10.0
+
+# Bark TTS
+bark>=0.1.5
+
+# Audio processing
+pyaudio>=0.2.14
+webrtcvad>=2.0.10
+noisereduce>=3.0.0
+pedalboard>=0.8.0
+
+# Speech utilities
+phonemizer>=3.2.0
+gruut>=2.4.0

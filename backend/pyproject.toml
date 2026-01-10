@@ -1,0 +1,107 @@
+[project]
+name = "idkit-backend"
+version = "0.1.0"
+description = "IDKit - AI-powered Influencer Development Kit Backend"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "IDKit Team"}
+]
+dependencies = [
+    # FastAPI & Server
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "python-multipart>=0.0.6",
+    "websockets>=12.0",
+
+    # Database
+    "sqlalchemy[asyncio]>=2.0.25",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.1",
+
+    # Redis & Caching
+    "redis>=5.0.1",
+    "aioredis>=2.0.1",
+
+    # Background Tasks
+    "celery[redis]>=5.3.6",
+
+    # Authentication
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "authlib>=1.3.0",
+    "httpx>=0.26.0",
+
+    # AI/ML
+    "openai>=1.10.0",
+    "langchain>=0.1.0",
+    "langchain-openai>=0.0.5",
+
+    # AWS/Storage
+    "boto3>=1.34.0",
+    "aiobotocore>=2.11.0",
+
+    # Utilities
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.0",
+    "orjson>=3.9.0",
+    "pillow>=10.2.0",
+    "python-magic>=0.4.27",
+
+    # Monitoring
+    "prometheus-client>=0.19.0",
+
+    # Structured Logging
+    "structlog>=24.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "aiosqlite>=0.19.0",
+    "httpx>=0.26.0",
+    "black>=24.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

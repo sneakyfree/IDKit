@@ -1,0 +1,244 @@
+---
+# PrometheusRule for canary metrics and alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: idkit-canary-alerts
+  namespace: idkit
+  labels:
+    app: idkit
+    component: canary
+    prometheus: kube-prometheus
+spec:
+  groups:
+    - name: idkit.canary.rules
+      rules:
+        # Recording rules for canary metrics
+        - record: idkit:canary:request_rate:5m
+          expr: |
+            sum(rate(http_requests_total{deployment_track="canary"}[5m]))
+
+        - record: idkit:stable:request_rate:5m
+          expr: |
+            sum(rate(http_requests_total{deployment_track="stable"}[5m]))
+
+        - record: idkit:canary:error_rate:5m
+          expr: |
+            sum(rate(http_requests_total{deployment_track="canary",status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{deployment_track="canary"}[5m]))
+
+        - record: idkit:stable:error_rate:5m
+          expr: |
+            sum(rate(http_requests_total{deployment_track="stable",status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{deployment_track="stable"}[5m]))
+
+        - record: idkit:canary:latency_p99:5m
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(http_request_duration_seconds_bucket{deployment_track="canary"}[5m])) by (le)
+            )
+
+        - record: idkit:stable:latency_p99:5m
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(http_request_duration_seconds_bucket{deployment_track="stable"}[5m])) by (le)
+            )
+
+    - name: idkit.canary.alerts
+      rules:
+        # Alert when canary error rate is significantly higher than stable
+        - alert: CanaryHighErrorRate
+          expr: |
+            (idkit:canary:error_rate:5m > 0.05)
+            and
+            (idkit:canary:error_rate:5m > 2 * idkit:stable:error_rate:5m)
+          for: 2m
+          labels:
+            severity: warning
+            team: platform
+            component: canary
+          annotations:
+            summary: "Canary deployment has elevated error rate"
+            description: "Canary error rate ({{ $value | humanizePercentage }}) is more than 2x stable. Consider rollback."
+            runbook_url: "https://docs.idkit.example.com/runbooks/canary-high-error-rate"
+
+        # Alert when canary latency is significantly higher than stable
+        - alert: CanaryHighLatency
+          expr: |
+            (idkit:canary:latency_p99:5m > 1.0)
+            and
+            (idkit:canary:latency_p99:5m > 1.5 * idkit:stable:latency_p99:5m)
+          for: 2m
+          labels:
+            severity: warning
+            team: platform
+            component: canary
+          annotations:
+            summary: "Canary deployment has elevated latency"
+            description: "Canary p99 latency ({{ $value | humanizeDuration }}) is more than 1.5x stable. Consider rollback."
+            runbook_url: "https://docs.idkit.example.com/runbooks/canary-high-latency"
+
+        # Critical alert for automatic rollback consideration
+        - alert: CanaryCriticalFailure
+          expr: |
+            idkit:canary:error_rate:5m > 0.10
+          for: 1m
+          labels:
+            severity: critical
+            team: platform
+            component: canary
+          annotations:
+            summary: "Canary deployment is failing critically"
+            description: "Canary error rate exceeds 10%. Automatic rollback recommended."
+            runbook_url: "https://docs.idkit.example.com/runbooks/canary-critical-failure"
+
+        # Alert when canary hasn't received traffic
+        - alert: CanaryNoTraffic
+          expr: |
+            idkit:canary:request_rate:5m == 0
+            and
+            idkit:stable:request_rate:5m > 0
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+            component: canary
+          annotations:
+            summary: "Canary deployment is not receiving traffic"
+            description: "Canary has no traffic while stable is serving. Check ingress configuration."
+---
+# ServiceMonitor for canary-specific metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: idkit-api-canary
+  namespace: idkit
+  labels:
+    app: idkit
+    component: api
+    track: canary
+spec:
+  selector:
+    matchLabels:
+      app: idkit
+      component: api
+      track: canary
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_label_track]
+          targetLabel: deployment_track
+          action: replace
+---
+# Grafana Dashboard ConfigMap for canary analysis
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idkit-canary-dashboard
+  namespace: idkit
+  labels:
+    app: idkit
+    component: canary
+    grafana_dashboard: "1"
+data:
+  canary-analysis.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "title": "IDKit Canary Analysis",
+      "uid": "idkit-canary",
+      "version": 1,
+      "panels": [
+        {
+          "title": "Request Rate Comparison",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "idkit:canary:request_rate:5m",
+              "legendFormat": "Canary"
+            },
+            {
+              "expr": "idkit:stable:request_rate:5m",
+              "legendFormat": "Stable"
+            }
+          ]
+        },
+        {
+          "title": "Error Rate Comparison",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            {
+              "expr": "idkit:canary:error_rate:5m * 100",
+              "legendFormat": "Canary %"
+            },
+            {
+              "expr": "idkit:stable:error_rate:5m * 100",
+              "legendFormat": "Stable %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "title": "P99 Latency Comparison",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "targets": [
+            {
+              "expr": "idkit:canary:latency_p99:5m * 1000",
+              "legendFormat": "Canary"
+            },
+            {
+              "expr": "idkit:stable:latency_p99:5m * 1000",
+              "legendFormat": "Stable"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ms"
+            }
+          }
+        },
+        {
+          "title": "Canary Health Score",
+          "type": "gauge",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "targets": [
+            {
+              "expr": "100 - (idkit:canary:error_rate:5m * 100) - (clamp_max(idkit:canary:latency_p99:5m, 2) * 25)",
+              "legendFormat": "Health Score"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  { "color": "red", "value": 0 },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "green", "value": 90 }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }

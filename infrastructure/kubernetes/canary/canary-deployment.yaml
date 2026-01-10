@@ -1,0 +1,159 @@
+---
+# Canary Deployment for IDKit API
+# This deployment runs the new version with limited traffic
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idkit-api-canary
+  namespace: idkit
+  labels:
+    app: idkit
+    component: api
+    track: canary
+  annotations:
+    description: "Canary deployment for gradual rollout of new API versions"
+spec:
+  # Start with 1 replica for canary
+  replicas: 1
+  selector:
+    matchLabels:
+      app: idkit
+      component: api
+      track: canary
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: idkit
+        component: api
+        track: canary
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+        # Mark as canary for metric differentiation
+        deployment.track: "canary"
+    spec:
+      serviceAccountName: idkit-api
+      containers:
+        - name: api
+          # Canary uses a specific version tag
+          image: idkit/api:canary
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: idkit-config
+            - secretRef:
+                name: idkit-secrets
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DEPLOYMENT_TRACK
+              value: "canary"
+            - name: CANARY_WEIGHT
+              valueFrom:
+                configMapKeyRef:
+                  name: idkit-canary-config
+                  key: canary_weight
+                  optional: true
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /app/cache
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir:
+            sizeLimit: 5Gi
+      # Prefer to schedule on different nodes from stable
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: idkit
+                    component: api
+                topologyKey: kubernetes.io/hostname
+---
+# Canary Service (internal, used by Ingress for traffic splitting)
+apiVersion: v1
+kind: Service
+metadata:
+  name: idkit-api-canary
+  namespace: idkit
+  labels:
+    app: idkit
+    component: api
+    track: canary
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: idkit
+    component: api
+    track: canary
+---
+# ConfigMap for canary configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idkit-canary-config
+  namespace: idkit
+  labels:
+    app: idkit
+    component: canary
+data:
+  # Canary weight (0-100, percentage of traffic to canary)
+  canary_weight: "10"
+  # Whether canary is enabled
+  canary_enabled: "true"
+  # Error rate threshold for automatic rollback (percentage)
+  error_rate_threshold: "5"
+  # Latency threshold for automatic rollback (ms)
+  latency_threshold_ms: "1000"
+  # Minimum successful requests before promoting
+  min_requests_for_promotion: "1000"

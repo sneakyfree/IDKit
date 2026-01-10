@@ -1,0 +1,44 @@
+# IDKit AWS Infrastructure - Example Configuration
+# Copy this file to terraform.tfvars and fill in the values
+
+# AWS Region
+aws_region = "us-east-1"
+
+# Environment
+environment = "production"
+
+# VPC
+vpc_cidr = "10.0.0.0/16"
+
+# EKS General Nodes
+eks_cluster_version        = "1.28"
+eks_general_instance_types = ["m6i.xlarge", "m5.xlarge"]
+eks_general_min_size       = 2
+eks_general_max_size       = 10
+eks_general_desired_size   = 3
+
+# EKS GPU Nodes
+eks_gpu_instance_types = ["g4dn.xlarge", "g5.xlarge"]
+eks_gpu_min_size       = 0
+eks_gpu_max_size       = 5
+eks_gpu_desired_size   = 1
+
+# RDS
+rds_instance_class    = "db.r6g.large"
+rds_allocated_storage = 100
+
+# ElastiCache Redis
+redis_node_type  = "cache.r6g.large"
+redis_auth_token = "YOUR_REDIS_AUTH_TOKEN"
+
+# Domain
+domain_name         = "idkit.example.com"
+acm_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/abc123"
+create_dns_zone     = false
+route53_zone_id     = "Z1234567890ABC"
+
+# Secrets (use environment variables or secrets manager in production)
+jwt_secret         = "YOUR_JWT_SECRET"
+openai_api_key     = "sk-..."
+heygen_api_key     = "YOUR_HEYGEN_API_KEY"
+elevenlabs_api_key = "YOUR_ELEVENLABS_API_KEY"

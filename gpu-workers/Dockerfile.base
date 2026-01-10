@@ -1,0 +1,59 @@
+# Base GPU Worker Image
+# Common base for all GPU worker images with CUDA and Python ML dependencies
+
+FROM nvidia/cuda:12.1-cudnn8-runtime-ubuntu22.04
+
+LABEL maintainer="IDKit Team"
+LABEL description="Base GPU worker image for ML inference"
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-venv \
+    python3-pip \
+    git \
+    git-lfs \
+    wget \
+    curl \
+    ffmpeg \
+    libsndfile1 \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Python 3.11 as default
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+
+# Create non-root user
+RUN useradd -m -u 1000 worker
+WORKDIR /app
+
+# Install base Python dependencies
+COPY requirements.base.txt /app/
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.base.txt
+
+# Set up model cache directory
+ENV HF_HOME=/app/cache/huggingface
+ENV TORCH_HOME=/app/cache/torch
+RUN mkdir -p /app/cache/huggingface /app/cache/torch \
+    && chown -R worker:worker /app
+
+USER worker
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+EXPOSE 8080
+
+CMD ["python", "-m", "worker.main"]

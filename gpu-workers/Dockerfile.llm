@@ -1,0 +1,22 @@
+# LLM Inference GPU Worker
+# Handles text generation with local LLMs
+
+FROM idkit/gpu-worker-base:latest
+
+LABEL description="LLM inference worker with Llama, Mistral, Phi"
+
+# Install LLM-specific dependencies
+COPY requirements.llm.txt /app/
+RUN pip install --no-cache-dir -r requirements.llm.txt
+
+# Copy worker code
+COPY worker/ /app/worker/
+COPY models/llm/ /app/models/llm/
+
+ENV WORKER_TYPE=llm
+ENV MODEL_CACHE_DIR=/app/cache/models
+
+# Default to 4-bit quantization for memory efficiency
+ENV QUANTIZATION=4bit
+
+CMD ["python", "-m", "worker.llm.main"]

@@ -1,0 +1,20 @@
+# LLM Worker Requirements
+
+# Quantization and optimization
+bitsandbytes>=0.41.0
+auto-gptq>=0.6.0
+autoawq>=0.1.8
+
+# vLLM for fast inference (optional)
+# vllm>=0.2.7
+
+# Text generation
+text-generation>=0.6.1
+
+# LangChain for orchestration
+langchain>=0.1.0
+langchain-community>=0.0.10
+
+# Tokenizers
+sentencepiece>=0.1.99
+tiktoken>=0.5.0

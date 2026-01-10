@@ -1,0 +1,107 @@
+# IDKit GPU Workers Docker Compose
+# Use alongside main docker-compose.yml when GPU is available
+# Run: docker-compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+
+version: "3.9"
+
+services:
+  gpu-worker-avatar:
+    build:
+      context: ./gpu-workers
+      dockerfile: Dockerfile.avatar
+    container_name: idkit-gpu-avatar
+    restart: unless-stopped
+    command: python run_avatar.py
+    environment:
+      - BACKEND_URL=http://api:8000
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+      - WORKER_API_KEY=${WORKER_API_KEY:-dev_worker_key}
+      - DEVICE=cuda
+      - MODEL_CACHE_DIR=/app/cache/models
+      - HF_HOME=/app/cache/huggingface
+    volumes:
+      - model_cache:/app/cache/models
+      - hf_cache:/app/cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - api
+    networks:
+      - idkit-network
+    shm_size: '16gb'
+
+  gpu-worker-voice:
+    build:
+      context: ./gpu-workers
+      dockerfile: Dockerfile.voice
+    container_name: idkit-gpu-voice
+    restart: unless-stopped
+    command: python run_voice.py
+    environment:
+      - BACKEND_URL=http://api:8000
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+      - WORKER_API_KEY=${WORKER_API_KEY:-dev_worker_key}
+      - DEVICE=cuda
+      - MODEL_CACHE_DIR=/app/cache/models
+      - HF_HOME=/app/cache/huggingface
+    volumes:
+      - model_cache:/app/cache/models
+      - hf_cache:/app/cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - api
+    networks:
+      - idkit-network
+    shm_size: '8gb'
+
+  gpu-worker-llm:
+    build:
+      context: ./gpu-workers
+      dockerfile: Dockerfile.llm
+    container_name: idkit-gpu-llm
+    restart: unless-stopped
+    command: python run_llm.py
+    environment:
+      - BACKEND_URL=http://api:8000
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+      - WORKER_API_KEY=${WORKER_API_KEY:-dev_worker_key}
+      - DEVICE=cuda
+      - MODEL_CACHE_DIR=/app/cache/models
+      - HF_HOME=/app/cache/huggingface
+      - LLM_MODEL=${LLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.3}
+      - LLM_QUANTIZATION=${LLM_QUANTIZATION:-4bit}
+    volumes:
+      - model_cache:/app/cache/models
+      - hf_cache:/app/cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - api
+    networks:
+      - idkit-network
+    shm_size: '16gb'
+
+networks:
+  idkit-network:
+    external: true
+    name: idkit_idkit-network
+
+volumes:
+  model_cache:
+  hf_cache:

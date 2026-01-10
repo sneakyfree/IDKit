@@ -1,0 +1,379 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # =============================================================================
+  # Build and Push Docker Images
+  # =============================================================================
+  build-and-push:
+    name: Build and Push Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      api_image: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for API
+        id: meta-api
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/api
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      - name: Extract metadata for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_SHA=${{ github.sha }}
+            VERSION=${{ steps.meta-api.outputs.version }}
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.API_URL }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_SHA=${{ github.sha }}
+
+      - name: Extract version
+        id: meta
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=sha-$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+          fi
+
+  # =============================================================================
+  # Deploy to Staging
+  # =============================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://staging.idkit.io
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Update image tags
+        run: |
+          cd infrastructure/kubernetes
+          kustomize edit set image \
+            idkit/api=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/api:${{ needs.build-and-push.outputs.version }} \
+            idkit/frontend=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:${{ needs.build-and-push.outputs.version }}
+
+      - name: Deploy to staging
+        run: |
+          kubectl apply -k infrastructure/kubernetes/ --namespace=idkit-staging
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/idkit-api --namespace=idkit-staging --timeout=300s
+          kubectl rollout status deployment/idkit-frontend --namespace=idkit-staging --timeout=300s
+
+      - name: Run database migrations
+        run: |
+          kubectl exec -n idkit-staging deployment/idkit-api -- \
+            python -m alembic upgrade head
+
+      - name: Run smoke tests
+        run: |
+          STAGING_URL="https://staging.idkit.io"
+
+          # Health check
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$STAGING_URL/api/health")
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Health check failed with status $HTTP_STATUS"
+            exit 1
+          fi
+
+          # API version check
+          VERSION=$(curl -s "$STAGING_URL/api/version" | jq -r '.version')
+          echo "Deployed version: $VERSION"
+
+      - name: Notify on success
+        if: success()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Staging deployment successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*IDKit Staging Deployment*\n:white_check_mark: Successfully deployed version `${{ needs.build-and-push.outputs.version }}`\n<https://staging.idkit.io|View Staging>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # Deploy to Production
+  # =============================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-and-push, deploy-staging]
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.environment == 'production'
+    environment:
+      name: production
+      url: https://idkit.io
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Update image tags
+        run: |
+          cd infrastructure/kubernetes
+          kustomize edit set image \
+            idkit/api=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/api:${{ needs.build-and-push.outputs.version }} \
+            idkit/frontend=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:${{ needs.build-and-push.outputs.version }}
+
+      - name: Deploy with canary
+        run: |
+          # Apply canary deployment (10% traffic)
+          kubectl apply -k infrastructure/kubernetes/canary/ --namespace=idkit
+
+          # Wait for canary pods
+          kubectl rollout status deployment/idkit-api-canary --namespace=idkit --timeout=300s
+
+      - name: Monitor canary metrics
+        run: |
+          echo "Monitoring canary deployment for 5 minutes..."
+          sleep 300
+
+          # Check error rate from Prometheus
+          ERROR_RATE=$(curl -s "http://prometheus.idkit.io/api/v1/query?query=sum(rate(http_requests_total{deployment='idkit-api-canary',status=~'5..'}[5m]))/sum(rate(http_requests_total{deployment='idkit-api-canary'}[5m]))" | jq -r '.data.result[0].value[1] // 0')
+
+          if (( $(echo "$ERROR_RATE > 0.05" | bc -l) )); then
+            echo "Canary error rate too high: $ERROR_RATE"
+            kubectl rollout undo deployment/idkit-api-canary --namespace=idkit
+            exit 1
+          fi
+
+          echo "Canary healthy, proceeding with full rollout"
+
+      - name: Full production rollout
+        run: |
+          # Apply main deployment
+          kubectl apply -k infrastructure/kubernetes/ --namespace=idkit
+
+          # Wait for rollout
+          kubectl rollout status deployment/idkit-api --namespace=idkit --timeout=600s
+          kubectl rollout status deployment/idkit-frontend --namespace=idkit --timeout=300s
+
+      - name: Run database migrations
+        run: |
+          kubectl exec -n idkit deployment/idkit-api -- \
+            python -m alembic upgrade head
+
+      - name: Scale down canary
+        run: |
+          kubectl scale deployment/idkit-api-canary --replicas=0 --namespace=idkit
+
+      - name: Run production smoke tests
+        run: |
+          PROD_URL="https://idkit.io"
+
+          # Health check
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PROD_URL/api/health")
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "Health check failed with status $HTTP_STATUS"
+            exit 1
+          fi
+
+          # API version check
+          VERSION=$(curl -s "$PROD_URL/api/version" | jq -r '.version')
+          echo "Deployed version: $VERSION"
+
+      - name: Create release notes
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify on success
+        if: success()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Production deployment successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*IDKit Production Deployment*\n:rocket: Successfully deployed version `${{ needs.build-and-push.outputs.version }}`\n<https://idkit.io|View Production>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Production deployment failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*IDKit Production Deployment Failed*\n:x: Deployment of version `${{ needs.build-and-push.outputs.version }}` failed\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # =============================================================================
+  # Rollback Job (Manual trigger)
+  # =============================================================================
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && failure()
+    environment:
+      name: production
+
+    steps:
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Rollback deployment
+        run: |
+          kubectl rollout undo deployment/idkit-api --namespace=idkit
+          kubectl rollout undo deployment/idkit-frontend --namespace=idkit
+
+          # Wait for rollback
+          kubectl rollout status deployment/idkit-api --namespace=idkit --timeout=300s
+          kubectl rollout status deployment/idkit-frontend --namespace=idkit --timeout=300s
+
+      - name: Notify rollback
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Production rollback executed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*IDKit Production Rollback*\n:warning: Production has been rolled back to previous version"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true

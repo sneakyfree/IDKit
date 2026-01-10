@@ -1,0 +1,225 @@
+---
+# GPU Worker Deployments
+# These require nodes with GPU resources (nvidia.com/gpu)
+# Use node selectors or taints/tolerations to schedule on GPU nodes
+
+# Avatar Worker (SadTalker, Wav2Lip, GFPGAN)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idkit-avatar-worker
+  namespace: idkit-gpu
+  labels:
+    app: idkit
+    component: avatar-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: idkit
+      component: avatar-worker
+  template:
+    metadata:
+      labels:
+        app: idkit
+        component: avatar-worker
+    spec:
+      containers:
+        - name: avatar-worker
+          image: idkit/gpu-worker-avatar:latest
+          imagePullPolicy: Always
+          command: ["python", "run_avatar.py"]
+          envFrom:
+            - secretRef:
+                name: idkit-worker-secrets
+          env:
+            - name: DEVICE
+              value: "cuda"
+            - name: MODEL_CACHE_DIR
+              value: "/app/cache/models"
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: "2000m"
+              memory: "16Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "8000m"
+              memory: "32Gi"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/cache/models
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Gi
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+---
+# Voice Worker (Coqui XTTS, Whisper)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idkit-voice-worker
+  namespace: idkit-gpu
+  labels:
+    app: idkit
+    component: voice-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: idkit
+      component: voice-worker
+  template:
+    metadata:
+      labels:
+        app: idkit
+        component: voice-worker
+    spec:
+      containers:
+        - name: voice-worker
+          image: idkit/gpu-worker-voice:latest
+          imagePullPolicy: Always
+          command: ["python", "run_voice.py"]
+          envFrom:
+            - secretRef:
+                name: idkit-worker-secrets
+          env:
+            - name: DEVICE
+              value: "cuda"
+            - name: MODEL_CACHE_DIR
+              value: "/app/cache/models"
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "8Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "4000m"
+              memory: "16Gi"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/cache/models
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+---
+# LLM Worker (Mistral, Llama)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idkit-llm-worker
+  namespace: idkit-gpu
+  labels:
+    app: idkit
+    component: llm-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: idkit
+      component: llm-worker
+  template:
+    metadata:
+      labels:
+        app: idkit
+        component: llm-worker
+    spec:
+      containers:
+        - name: llm-worker
+          image: idkit/gpu-worker-llm:latest
+          imagePullPolicy: Always
+          command: ["python", "run_llm.py"]
+          envFrom:
+            - secretRef:
+                name: idkit-worker-secrets
+          env:
+            - name: DEVICE
+              value: "cuda"
+            - name: MODEL_CACHE_DIR
+              value: "/app/cache/models"
+            - name: LLM_MODEL
+              value: "mistralai/Mistral-7B-Instruct-v0.3"
+            - name: LLM_QUANTIZATION
+              value: "4bit"
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: "2000m"
+              memory: "16Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "8000m"
+              memory: "32Gi"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/cache/models
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Gi
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+---
+# Model Cache PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-cache-pvc
+  namespace: idkit-gpu
+  labels:
+    app: idkit
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: fast-storage
+  resources:
+    requests:
+      storage: 200Gi

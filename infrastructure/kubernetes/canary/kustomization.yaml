@@ -1,0 +1,45 @@
+---
+# Kustomization for canary deployment resources
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: idkit
+
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/part-of: idkit
+
+resources:
+  - canary-deployment.yaml
+  - canary-ingress.yaml
+  - canary-analysis.yaml
+  # Uncomment to use Argo Rollouts instead of native canary
+  # - canary-rollout.yaml
+
+commonLabels:
+  app: idkit
+  environment: production
+
+configMapGenerator:
+  - name: idkit-canary-config
+    behavior: merge
+    literals:
+      - canary_weight=10
+      - canary_enabled=true
+
+# Image customization for different environments
+images:
+  - name: idkit/api
+    newTag: canary
+
+# Patches for environment-specific configurations
+patches:
+  # Reduce replica count for staging
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: idkit-api-canary

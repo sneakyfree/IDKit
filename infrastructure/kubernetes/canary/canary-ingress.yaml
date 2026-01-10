@@ -1,0 +1,114 @@
+---
+# Canary Ingress with traffic splitting
+# Uses NGINX Ingress Controller canary annotations
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: idkit-api-canary
+  namespace: idkit
+  labels:
+    app: idkit
+    component: api
+    track: canary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # Enable canary mode
+    nginx.ingress.kubernetes.io/canary: "true"
+    # Weight-based traffic splitting (configurable 0-100)
+    nginx.ingress.kubernetes.io/canary-weight: "10"
+    # Optional: Header-based canary (for testing)
+    # Users can add X-Canary: always to force canary
+    nginx.ingress.kubernetes.io/canary-by-header: "X-Canary"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "always"
+    # Optional: Cookie-based canary (for sticky sessions)
+    nginx.ingress.kubernetes.io/canary-by-cookie: "idkit_canary"
+    # Proxy settings (inherit from main ingress)
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+spec:
+  rules:
+    # API subdomain canary
+    - host: api.idkit.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: idkit-api-canary
+                port:
+                  number: 8000
+    # Main domain API canary
+    - host: idkit.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: idkit-api-canary
+                port:
+                  number: 8000
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: idkit-api-canary
+                port:
+                  number: 8000
+---
+# Alternative: Istio VirtualService for more advanced traffic splitting
+# Uncomment if using Istio service mesh
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: idkit-api-vs
+#   namespace: idkit
+# spec:
+#   hosts:
+#     - api.idkit.example.com
+#   http:
+#     - match:
+#         - headers:
+#             x-canary:
+#               exact: "always"
+#       route:
+#         - destination:
+#             host: idkit-api-canary
+#             port:
+#               number: 8000
+#     - route:
+#         - destination:
+#             host: idkit-api
+#             port:
+#               number: 8000
+#           weight: 90
+#         - destination:
+#             host: idkit-api-canary
+#             port:
+#               number: 8000
+#           weight: 10
+---
+# DestinationRule for Istio (circuit breaking, load balancing)
+# Uncomment if using Istio
+# apiVersion: networking.istio.io/v1beta1
+# kind: DestinationRule
+# metadata:
+#   name: idkit-api-dr
+#   namespace: idkit
+# spec:
+#   host: idkit-api-canary
+#   trafficPolicy:
+#     connectionPool:
+#       tcp:
+#         maxConnections: 100
+#       http:
+#         h2UpgradePolicy: UPGRADE
+#         http1MaxPendingRequests: 100
+#         http2MaxRequests: 1000
+#     outlierDetection:
+#       consecutive5xxErrors: 5
+#       interval: 30s
+#       baseEjectionTime: 60s
+#       maxEjectionPercent: 100

@@ -1,0 +1,245 @@
+---
+# Argo Rollouts configuration for automated canary deployments
+# Requires Argo Rollouts controller to be installed
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: idkit-api-rollout
+  namespace: idkit
+  labels:
+    app: idkit
+    component: api
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: idkit
+      component: api
+  template:
+    metadata:
+      labels:
+        app: idkit
+        component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: idkit-api
+      containers:
+        - name: api
+          image: idkit/api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: idkit-config
+            - secretRef:
+                name: idkit-secrets
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /app/cache
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir:
+            sizeLimit: 10Gi
+  strategy:
+    canary:
+      # Traffic routing using NGINX Ingress
+      trafficRouting:
+        nginx:
+          stableIngress: idkit-ingress
+          annotationPrefix: nginx.ingress.kubernetes.io
+      # Canary steps - gradual traffic increase
+      steps:
+        # Step 1: 5% traffic, pause for manual verification
+        - setWeight: 5
+        - pause:
+            duration: 5m
+        # Step 2: Verify metrics are healthy
+        - analysis:
+            templates:
+              - templateName: idkit-success-rate
+            args:
+              - name: service-name
+                value: idkit-api-canary
+        # Step 3: 20% traffic
+        - setWeight: 20
+        - pause:
+            duration: 5m
+        # Step 4: Verify again
+        - analysis:
+            templates:
+              - templateName: idkit-success-rate
+        # Step 5: 50% traffic
+        - setWeight: 50
+        - pause:
+            duration: 10m
+        # Step 6: Final verification before full rollout
+        - analysis:
+            templates:
+              - templateName: idkit-success-rate
+              - templateName: idkit-latency-check
+        # Step 7: Full rollout
+        - setWeight: 100
+      # Anti-affinity for canary pods
+      antiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          weight: 100
+      # Canary metrics
+      canaryMetadata:
+        labels:
+          track: canary
+      # Stable metrics
+      stableMetadata:
+        labels:
+          track: stable
+---
+# AnalysisTemplate for success rate verification
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: idkit-success-rate
+  namespace: idkit
+spec:
+  args:
+    - name: service-name
+  metrics:
+    - name: success-rate
+      # Run every 30 seconds
+      interval: 30s
+      # Minimum of 5 measurements before making decision
+      count: 5
+      # Must be successful 3 out of 5 times
+      successCondition: result[0] >= 0.95
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring:9090
+          query: |
+            sum(rate(http_requests_total{service="{{ args.service-name }}", status!~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{service="{{ args.service-name }}"}[5m]))
+---
+# AnalysisTemplate for latency verification
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: idkit-latency-check
+  namespace: idkit
+spec:
+  metrics:
+    - name: p99-latency
+      interval: 30s
+      count: 5
+      # P99 latency must be under 500ms
+      successCondition: result[0] < 0.5
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring:9090
+          query: |
+            histogram_quantile(0.99,
+              sum(rate(http_request_duration_seconds_bucket{track="canary"}[5m])) by (le)
+            )
+---
+# AnalysisTemplate for error rate comparison
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: idkit-error-rate-comparison
+  namespace: idkit
+spec:
+  metrics:
+    - name: error-rate-ratio
+      interval: 1m
+      count: 3
+      # Canary error rate must not be more than 1.5x stable
+      successCondition: result[0] < 1.5
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring:9090
+          query: |
+            (
+              sum(rate(http_requests_total{track="canary", status=~"5.."}[5m]))
+              / sum(rate(http_requests_total{track="canary"}[5m]))
+            )
+            /
+            (
+              sum(rate(http_requests_total{track="stable", status=~"5.."}[5m]))
+              / sum(rate(http_requests_total{track="stable"}[5m]))
+            )
+---
+# Script for manual canary management
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idkit-canary-scripts
+  namespace: idkit
+  labels:
+    app: idkit
+    component: canary
+data:
+  promote-canary.sh: |
+    #!/bin/bash
+    # Promote canary to stable
+    kubectl argo rollouts promote idkit-api-rollout -n idkit
+    echo "Canary promoted to stable"
+
+  rollback-canary.sh: |
+    #!/bin/bash
+    # Rollback canary deployment
+    kubectl argo rollouts abort idkit-api-rollout -n idkit
+    kubectl argo rollouts undo idkit-api-rollout -n idkit
+    echo "Canary rolled back"
+
+  set-canary-weight.sh: |
+    #!/bin/bash
+    # Set canary weight manually
+    WEIGHT=${1:-10}
+    kubectl argo rollouts set weight idkit-api-rollout $WEIGHT -n idkit
+    echo "Canary weight set to $WEIGHT%"
+
+  canary-status.sh: |
+    #!/bin/bash
+    # Get canary status
+    kubectl argo rollouts status idkit-api-rollout -n idkit
+    echo ""
+    echo "Detailed info:"
+    kubectl argo rollouts get rollout idkit-api-rollout -n idkit

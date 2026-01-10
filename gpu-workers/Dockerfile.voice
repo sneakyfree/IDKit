@@ -1,0 +1,19 @@
+# Voice Cloning GPU Worker
+# Handles TTS, voice cloning, and speech recognition
+
+FROM idkit/gpu-worker-base:latest
+
+LABEL description="Voice processing worker with XTTS, Whisper, Bark"
+
+# Install voice-specific dependencies
+COPY requirements.voice.txt /app/
+RUN pip install --no-cache-dir -r requirements.voice.txt
+
+# Copy worker code
+COPY worker/ /app/worker/
+COPY models/voice/ /app/models/voice/
+
+ENV WORKER_TYPE=voice
+ENV MODEL_CACHE_DIR=/app/cache/models
+
+CMD ["python", "-m", "worker.voice.main"]

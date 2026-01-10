@@ -1,0 +1,195 @@
+---
+# ServiceMonitor for Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: idkit-api-monitor
+  namespace: idkit
+  labels:
+    app: idkit
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: idkit
+      component: api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+# PrometheusRule for alerting
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: idkit-alerts
+  namespace: idkit
+  labels:
+    app: idkit
+    release: prometheus
+spec:
+  groups:
+    - name: idkit.rules
+      rules:
+        # High error rate
+        - alert: IDKitHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{job="idkit-api", status=~"5.."}[5m]))
+              /
+              sum(rate(http_requests_total{job="idkit-api"}[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: High error rate in IDKit API
+            description: Error rate is {{ $value | printf "%.2f" }}%
+
+        # High latency
+        - alert: IDKitHighLatency
+          expr: |
+            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="idkit-api"}[5m])) by (le))
+            > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High latency in IDKit API
+            description: P95 latency is {{ $value | printf "%.2f" }}s
+
+        # GPU worker down
+        - alert: IDKitGPUWorkerDown
+          expr: |
+            up{job=~"idkit-(avatar|voice|llm)-worker"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: GPU worker is down
+            description: "{{ $labels.job }} has been down for more than 5 minutes"
+
+        # High GPU job queue
+        - alert: IDKitHighJobQueue
+          expr: |
+            idkit_gpu_job_queue_length > 100
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: High GPU job queue
+            description: Job queue length is {{ $value }}
+
+        # Database connection issues
+        - alert: IDKitDatabaseConnectionIssues
+          expr: |
+            pg_up{job="postgres"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: Database connection issues
+            description: PostgreSQL is not responding
+
+        # Redis connection issues
+        - alert: IDKitRedisConnectionIssues
+          expr: |
+            redis_up{job="redis"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: Redis connection issues
+            description: Redis is not responding
+
+        # High memory usage
+        - alert: IDKitHighMemoryUsage
+          expr: |
+            (
+              sum(container_memory_usage_bytes{namespace="idkit"}) by (pod)
+              /
+              sum(container_spec_memory_limit_bytes{namespace="idkit"}) by (pod)
+            ) > 0.9
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High memory usage
+            description: "{{ $labels.pod }} memory usage is above 90%"
+---
+# Grafana Dashboard ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idkit-grafana-dashboard
+  namespace: idkit
+  labels:
+    app: idkit
+    grafana_dashboard: "1"
+data:
+  idkit-dashboard.json: |
+    {
+      "dashboard": {
+        "title": "IDKit Overview",
+        "panels": [
+          {
+            "title": "API Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "sum(rate(http_requests_total{job=\"idkit-api\"}[5m])) by (method)",
+                "legendFormat": "{{ method }}"
+              }
+            ]
+          },
+          {
+            "title": "API Latency (P95)",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"idkit-api\"}[5m])) by (le))",
+                "legendFormat": "P95"
+              }
+            ]
+          },
+          {
+            "title": "GPU Job Queue Length",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "idkit_gpu_job_queue_length"
+              }
+            ]
+          },
+          {
+            "title": "Active GPU Workers",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "count(up{job=~\"idkit-.*-worker\"} == 1)"
+              }
+            ]
+          },
+          {
+            "title": "Database Connections",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "pg_stat_activity_count{datname=\"idkit\"}",
+                "legendFormat": "Active connections"
+              }
+            ]
+          },
+          {
+            "title": "Redis Memory Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "redis_memory_used_bytes",
+                "legendFormat": "Used memory"
+              }
+            ]
+          }
+        ]
+      }
+    }

@@ -1,0 +1,22 @@
+# Avatar Generation GPU Worker
+# Handles lip-sync, face generation, and video synthesis
+
+FROM idkit/gpu-worker-base:latest
+
+LABEL description="Avatar generation worker with SadTalker, Wav2Lip, GFPGAN"
+
+# Install avatar-specific dependencies
+COPY requirements.avatar.txt /app/
+RUN pip install --no-cache-dir -r requirements.avatar.txt
+
+# Copy worker code
+COPY worker/ /app/worker/
+COPY models/avatar/ /app/models/avatar/
+
+# Pre-download models (optional, can be done at runtime)
+# RUN python -c "from worker.avatar import preload_models; preload_models()"
+
+ENV WORKER_TYPE=avatar
+ENV MODEL_CACHE_DIR=/app/cache/models
+
+CMD ["python", "-m", "worker.avatar.main"]

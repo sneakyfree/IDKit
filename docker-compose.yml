@@ -1,0 +1,366 @@
+# IDKit Development Docker Compose
+# Run: docker-compose up -d
+# With dev tools: docker-compose --profile dev-tools up -d
+
+version: "3.9"
+
+services:
+  # =============================================================================
+  # Core Infrastructure
+  # =============================================================================
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: idkit-postgres
+    environment:
+      POSTGRES_USER: idkit
+      POSTGRES_PASSWORD: idkit_dev_password
+      POSTGRES_DB: idkit
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U idkit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - idkit-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: idkit-redis
+    command: redis-server --requirepass idkit_dev_password --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "idkit_dev_password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - idkit-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: idkit-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - idkit-network
+
+  # Initialize MinIO buckets
+  minio-init:
+    image: minio/mc:latest
+    container_name: idkit-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123;
+      mc mb local/idkit-media --ignore-existing;
+      mc mb local/idkit-models --ignore-existing;
+      mc mb local/idkit-backups --ignore-existing;
+      mc anonymous set download local/idkit-media;
+      exit 0;
+      "
+    networks:
+      - idkit-network
+
+  # =============================================================================
+  # Backend Services
+  # =============================================================================
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idkit-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://idkit:idkit_dev_password@postgres:5432/idkit
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+      - JWT_SECRET_KEY=dev_secret_key_change_in_production
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin123
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_BUCKET_NAME=idkit-media
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - HEYGEN_API_KEY=${HEYGEN_API_KEY:-}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - api_cache:/app/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - idkit-network
+
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idkit-celery-worker
+    command: celery -A app.workers worker -l info -c 2
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://idkit:idkit_dev_password@postgres:5432/idkit
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin123
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_BUCKET_NAME=idkit-media
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - HEYGEN_API_KEY=${HEYGEN_API_KEY:-}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+    volumes:
+      - ./backend:/app
+      - api_cache:/app/cache
+    depends_on:
+      - api
+    networks:
+      - idkit-network
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idkit-celery-beat
+    command: celery -A app.workers beat -l info
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://idkit:idkit_dev_password@postgres:5432/idkit
+      - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - celery-worker
+    networks:
+      - idkit-network
+
+  # =============================================================================
+  # Frontend
+  # =============================================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: idkit-frontend
+    command: npm run dev
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+    networks:
+      - idkit-network
+
+  # =============================================================================
+  # GPU Workers (Optional - requires NVIDIA Docker)
+  # =============================================================================
+
+  # Uncomment if you have a GPU and nvidia-docker installed
+  # gpu-worker-avatar:
+  #   build:
+  #     context: ./gpu-workers
+  #     dockerfile: Dockerfile.avatar
+  #   container_name: idkit-gpu-avatar
+  #   command: python run_avatar.py
+  #   environment:
+  #     - BACKEND_URL=http://api:8000
+  #     - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+  #     - WORKER_API_KEY=dev_worker_key
+  #     - DEVICE=cuda
+  #     - MODEL_CACHE_DIR=/app/cache/models
+  #   volumes:
+  #     - model_cache:/app/cache/models
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - idkit-network
+
+  # gpu-worker-voice:
+  #   build:
+  #     context: ./gpu-workers
+  #     dockerfile: Dockerfile.voice
+  #   container_name: idkit-gpu-voice
+  #   command: python run_voice.py
+  #   environment:
+  #     - BACKEND_URL=http://api:8000
+  #     - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+  #     - WORKER_API_KEY=dev_worker_key
+  #     - DEVICE=cuda
+  #     - MODEL_CACHE_DIR=/app/cache/models
+  #   volumes:
+  #     - model_cache:/app/cache/models
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - idkit-network
+
+  # gpu-worker-llm:
+  #   build:
+  #     context: ./gpu-workers
+  #     dockerfile: Dockerfile.llm
+  #   container_name: idkit-gpu-llm
+  #   command: python run_llm.py
+  #   environment:
+  #     - BACKEND_URL=http://api:8000
+  #     - REDIS_URL=redis://:idkit_dev_password@redis:6379/0
+  #     - WORKER_API_KEY=dev_worker_key
+  #     - DEVICE=cuda
+  #     - MODEL_CACHE_DIR=/app/cache/models
+  #     - LLM_MODEL=mistralai/Mistral-7B-Instruct-v0.3
+  #     - LLM_QUANTIZATION=4bit
+  #   volumes:
+  #     - model_cache:/app/cache/models
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - idkit-network
+
+  # =============================================================================
+  # Development Tools (enable with --profile dev-tools)
+  # =============================================================================
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: idkit-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@idkit.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - idkit-network
+    profiles:
+      - dev-tools
+
+  # Redis Commander for Redis management
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: idkit-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:idkit_dev_password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - idkit-network
+    profiles:
+      - dev-tools
+
+  # Flower for Celery monitoring
+  flower:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idkit-flower
+    command: celery -A app.workers flower --port=5555
+    environment:
+      - CELERY_BROKER_URL=redis://:idkit_dev_password@redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery-worker
+    networks:
+      - idkit-network
+    profiles:
+      - dev-tools
+
+  # Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: idkit-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - idkit-network
+    profiles:
+      - dev-tools
+
+# =============================================================================
+# Networks
+# =============================================================================
+
+networks:
+  idkit-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  api_cache:
+  model_cache:
+  pgadmin_data:
