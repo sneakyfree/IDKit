@@ -36,7 +36,7 @@ jobs:
       api_image: ${{ steps.meta.outputs.tags }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -122,7 +122,7 @@ jobs:
       url: https://staging.idkit.io
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -205,7 +205,7 @@ jobs:
       url: https://idkit.io
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
