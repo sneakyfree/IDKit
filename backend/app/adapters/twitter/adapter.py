@@ -19,14 +19,15 @@ from urllib.parse import urlencode
 import httpx
 
 from app.adapters.interfaces.base import (
+    AccountInfo,
     AnalyticsData,
     BasePlatformAdapter,
     Comment,
-    Message,
+    ContentType,
+    DirectMessage,
     OAuthTokens,
     PublishContent,
     PublishResult,
-    UserProfile,
 )
 
 
@@ -258,7 +259,7 @@ class TwitterAdapter(BasePlatformAdapter):
 
         return response.status_code == 200
 
-    async def get_user_profile(self, access_token: str) -> UserProfile:
+    async def get_user_profile(self, access_token: str) -> AccountInfo:
         """
         Get authenticated user's profile.
 
@@ -283,7 +284,7 @@ class TwitterAdapter(BasePlatformAdapter):
         user = result.get("data", {})
         metrics = user.get("public_metrics", {})
 
-        return UserProfile(
+        return AccountInfo(
             id=user.get("id"),
             username=user.get("username"),
             display_name=user.get("name"),
@@ -744,7 +745,7 @@ class TwitterAdapter(BasePlatformAdapter):
         access_token: str,
         cursor: Optional[str] = None,
         limit: int = 50,
-    ) -> tuple[list[Message], Optional[str]]:
+    ) -> tuple[list[DirectMessage], Optional[str]]:
         """
         Get direct messages.
 
@@ -786,7 +787,7 @@ class TwitterAdapter(BasePlatformAdapter):
         for event in result.get("data", []):
             sender = users.get(event.get("sender_id"), {})
 
-            messages.append(Message(
+            messages.append(DirectMessage(
                 id=event.get("id"),
                 conversation_id=event.get("dm_conversation_id"),
                 text=event.get("text"),
@@ -806,7 +807,7 @@ class TwitterAdapter(BasePlatformAdapter):
         access_token: str,
         user_id: str,
         text: str,
-    ) -> Optional[Message]:
+    ) -> Optional[DirectMessage]:
         """
         Send a direct message.
 
@@ -835,7 +836,7 @@ class TwitterAdapter(BasePlatformAdapter):
 
         event = result.get("data", {})
 
-        return Message(
+        return DirectMessage(
             id=event.get("dm_event_id"),
             conversation_id=event.get("dm_conversation_id"),
             text=text,

@@ -7,6 +7,7 @@ Defines supported API versions and their metadata.
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
+from functools import total_ordering
 from typing import Optional
 
 
@@ -18,6 +19,7 @@ class VersionStatus(str, Enum):
     SUNSET = "sunset"            # No longer available
 
 
+@total_ordering
 @dataclass(frozen=True)
 class APIVersion:
     """

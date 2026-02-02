@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ServiceWorkerProvider } from "@/components/providers/ServiceWorkerProvider";
 import { SkipLinks } from "@/components/a11y/SkipLink";
 import { GlobalLiveRegion } from "@/components/a11y/LiveRegion";
 
@@ -43,9 +44,11 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white dark:bg-black text-gray-900 dark:text-white antialiased transition-colors duration-200`}>
         <ThemeProvider>
-          <SkipLinks />
-          <GlobalLiveRegion />
-          {children}
+          <ServiceWorkerProvider>
+            <SkipLinks />
+            <GlobalLiveRegion />
+            {children}
+          </ServiceWorkerProvider>
         </ThemeProvider>
       </body>
     </html>

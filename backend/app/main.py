@@ -17,6 +17,7 @@ from app.config import settings
 from app.middleware.rate_limit import RateLimitMiddleware, rate_limiter
 from app.middleware.metrics import PrometheusMiddleware, set_app_info
 from app.middleware.security import SecurityHeadersMiddleware, get_security_middleware_config
+from app.middleware.performance import CacheMiddleware, TimingMiddleware
 from app.logging_config import configure_logging, get_logger, LoggingMiddleware
 from app.api.versioning import VersionMiddleware
 
@@ -155,6 +156,11 @@ def create_app() -> FastAPI:
     # API versioning middleware (negotiation, headers, deprecation warnings)
     app.add_middleware(VersionMiddleware)
 
+    # Performance middleware - response caching and timing headers
+    app.add_middleware(TimingMiddleware)
+    if not settings.debug:  # Only cache in production
+        app.add_middleware(CacheMiddleware, default_ttl=60, max_size=1000)
+
     # Set app info for Prometheus
     set_app_info(version=settings.version, environment=settings.environment)
 
@@ -167,6 +173,11 @@ def create_app() -> FastAPI:
     from app.api.v1.websocket import router as websocket_router
 
     app.include_router(websocket_router, prefix="/ws", tags=["WebSocket"])
+
+    # Include Stripe Connect webhook router
+    from app.api.v1.webhooks_connect import router as webhooks_connect_router
+
+    app.include_router(webhooks_connect_router, prefix="/webhooks", tags=["Webhooks"])
 
     @app.get("/health")
     async def health_check() -> dict:

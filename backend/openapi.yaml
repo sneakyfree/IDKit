@@ -1,0 +1,327 @@
+openapi: "3.0.3"
+info:
+  title: IDKit API
+  description: |
+    IDKit - AI-Powered Content Creation Platform API
+    
+    This API enables developers to integrate IDKit's AI content generation,
+    digital twins, analytics, and monetization features into their applications.
+  version: "2.0.0"
+  contact:
+    email: developers@idkit.io
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.idkit.io/v2
+    description: Production server
+  - url: https://staging-api.idkit.io/v2
+    description: Staging server
+  - url: http://localhost:8000/api/v2
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Content
+    description: Content generation and management
+  - name: Twins
+    description: AI digital twin management
+  - name: Analytics
+    description: Analytics and reporting
+  - name: Auth
+    description: Authentication endpoints
+
+paths:
+  /content:
+    get:
+      tags:
+        - Content
+      summary: List all content
+      operationId: listContent
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of content items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentList"
+    
+    post:
+      tags:
+        - Content
+      summary: Generate new content
+      operationId: generateContent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateRequest"
+      responses:
+        "201":
+          description: Content generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Content"
+
+  /content/{id}:
+    get:
+      tags:
+        - Content
+      summary: Get content by ID
+      operationId: getContent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Content details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Content"
+        "404":
+          description: Content not found
+
+  /twins:
+    get:
+      tags:
+        - Twins
+      summary: List AI twins
+      operationId: listTwins
+      responses:
+        "200":
+          description: List of twins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Twin"
+
+  /twins/{id}/generate:
+    post:
+      tags:
+        - Twins
+      summary: Generate content with twin
+      operationId: generateWithTwin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TwinGenerateRequest"
+      responses:
+        "200":
+          description: Generated content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Content"
+
+  /analytics:
+    get:
+      tags:
+        - Analytics
+      summary: Get analytics data
+      operationId: getAnalytics
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsData"
+
+  /analytics/export:
+    post:
+      tags:
+        - Analytics
+      summary: Export analytics report
+      operationId: exportAnalytics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportRequest"
+      responses:
+        "200":
+          description: Export job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportJob"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Content:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        platform:
+          type: string
+          enum: [twitter, instagram, linkedin, tiktok, youtube]
+        status:
+          type: string
+          enum: [draft, scheduled, published]
+        created_at:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+      required:
+        - id
+        - text
+        - platform
+        - status
+
+    ContentList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Content"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    GenerateRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+        platform:
+          type: string
+        twin_id:
+          type: string
+        options:
+          type: object
+          properties:
+            tone:
+              type: string
+            length:
+              type: string
+              enum: [short, medium, long]
+      required:
+        - prompt
+
+    Twin:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        avatar_url:
+          type: string
+        voice_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    TwinGenerateRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+        platform:
+          type: string
+        options:
+          type: object
+      required:
+        - prompt
+
+    AnalyticsData:
+      type: object
+      properties:
+        impressions:
+          type: integer
+        engagements:
+          type: integer
+        followers:
+          type: integer
+        revenue:
+          type: number
+        period:
+          type: string
+
+    ExportRequest:
+      type: object
+      properties:
+        format:
+          type: string
+          enum: [csv, json, xlsx]
+        metrics:
+          type: array
+          items:
+            type: string
+        date_range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+
+    ExportJob:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        download_url:
+          type: string

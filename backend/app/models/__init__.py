@@ -32,6 +32,12 @@ from app.models.social import (
     SocialDMMessage,
     SocialAnalytics,
     SocialWebhookEvent,
+    AnalyticsDaily,
+)
+# Import content BEFORE podcast (podcast references brand_voices from content)
+from app.models.content import (
+    ContentItem,
+    BrandVoice,
 )
 from app.models.podcast import (
     Podcast,
@@ -48,6 +54,24 @@ from app.models.enterprise import (
     APIKey,
     AuditLog,
     ContentApproval,
+)
+from app.models.payout import (
+    ConnectAccount,
+    Transfer,
+    Payout,
+    ConnectAccountStatus,
+    TransferStatus,
+    PayoutStatus,
+)
+from app.models.roi import (
+    ROIReport,
+    CostEntry,
+)
+from app.models.agent_memory import (
+    AgentMemory,
+    AgentContext,
+    GuardrailConfig,
+    MemoryType,
 )
 
 __all__ = [
@@ -89,4 +113,14 @@ __all__ = [
     "APIKey",
     "AuditLog",
     "ContentApproval",
+    "ConnectAccount",
+    "Transfer",
+    "Payout",
+    "ConnectAccountStatus",
+    "TransferStatus",
+    "PayoutStatus",
+    "ROIReport",
+    "CostEntry",
 ]
+
+

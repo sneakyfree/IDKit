@@ -55,11 +55,10 @@ export default function AnalyticsPage() {
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                timeRange === range
-                  ? "bg-white text-black"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${timeRange === range
+                ? "bg-white text-black"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
             >
               {range === "all" ? "All Time" : range.replace("d", " Days")}
             </button>
@@ -233,6 +232,22 @@ export default function AnalyticsPage() {
             <h3 className="font-medium text-sm">Viral Predictor</h3>
             <p className="text-xs text-gray-500 mt-1">Score your content</p>
           </Link>
+          <Link
+            href="/roi"
+            className="bg-gradient-to-br from-green-900/40 to-emerald-900/20 rounded-2xl p-4 hover:from-green-900/60 hover:to-emerald-900/40 transition-colors border border-green-500/30"
+          >
+            <ROIIcon className="w-6 h-6 text-green-400 mb-2" />
+            <h3 className="font-medium text-sm">ROI Calculator</h3>
+            <p className="text-xs text-gray-500 mt-1">Track profitability</p>
+          </Link>
+          <Link
+            href="/settings/payouts"
+            className="bg-gradient-to-br from-purple-900/40 to-purple-900/20 rounded-2xl p-4 hover:from-purple-900/60 hover:to-purple-900/40 transition-colors border border-purple-500/30"
+          >
+            <PayoutIcon className="w-6 h-6 text-purple-400 mb-2" />
+            <h3 className="font-medium text-sm">Payouts</h3>
+            <p className="text-xs text-gray-500 mt-1">Manage earnings</p>
+          </Link>
         </div>
       </div>
 
@@ -313,3 +328,20 @@ function ViralIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+function ROIIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+function PayoutIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+    </svg>
+  );
+}
+

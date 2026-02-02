@@ -123,6 +123,7 @@ class UserProfile(Base, UUIDMixin, TimestampMixin):
         "FeedPost",
         back_populates="author",
         lazy="dynamic",
+        primaryjoin="UserProfile.user_id == foreign(FeedPost.user_id)",
     )
 
     def __repr__(self) -> str:

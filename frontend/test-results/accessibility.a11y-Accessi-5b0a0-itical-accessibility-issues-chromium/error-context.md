@@ -1,0 +1,52 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - heading "A/B Testing" [level=1] [ref=e9]
+          - paragraph [ref=e10]: Test content variations to optimize performance
+        - button "Create Test" [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+          - text: Create Test
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - img [ref=e17]
+          - generic [ref=e19]:
+            - paragraph [ref=e20]: "0"
+            - paragraph [ref=e21]: Active Tests
+        - generic [ref=e23]:
+          - img [ref=e25]
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: "0"
+            - paragraph [ref=e30]: Completed
+        - generic [ref=e32]:
+          - img [ref=e34]
+          - generic [ref=e37]:
+            - paragraph [ref=e38]: 23%
+            - paragraph [ref=e39]: Avg Lift
+        - generic [ref=e41]:
+          - img [ref=e43]
+          - generic [ref=e48]:
+            - paragraph [ref=e49]: 45.2K
+            - paragraph [ref=e50]: Total Participants
+      - generic [ref=e51]:
+        - button "All" [ref=e52] [cursor=pointer]
+        - button "Running" [ref=e53] [cursor=pointer]
+        - button "Completed" [ref=e54] [cursor=pointer]
+        - button "Draft" [ref=e55] [cursor=pointer]
+      - img [ref=e57]
+  - generic [ref=e60]:
+    - img [ref=e61]
+    - generic [ref=e63]: You & apos;re offline
+    - generic [ref=e64]: Changes will sync when online
+  - alert [ref=e65]
+```

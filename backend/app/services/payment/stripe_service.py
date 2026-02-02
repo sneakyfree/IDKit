@@ -10,7 +10,12 @@ from typing import Any, Optional
 from uuid import UUID
 
 import stripe
-from stripe.error import StripeError
+
+# Handle both old and new stripe library versions
+try:
+    from stripe.error import StripeError
+except ImportError:
+    StripeError = stripe.StripeError
 
 from app.config import settings
 
@@ -598,6 +603,213 @@ class StripeService:
             logger.error(f"Failed to create billing portal session: {e}")
             raise
 
+    # =========================================================================
+    # Stripe Connect - Account Management
+    # =========================================================================
+
+    async def create_connect_account(
+        self,
+        user_id: str,
+        email: str,
+        country: str = "US",
+    ) -> dict:
+        """Create a Stripe Connect Express account for a creator."""
+        try:
+            account = stripe.Account.create(
+                type="express",
+                country=country,
+                email=email,
+                capabilities={
+                    "card_payments": {"requested": True},
+                    "transfers": {"requested": True},
+                },
+                metadata={
+                    "user_id": user_id,
+                },
+            )
+            logger.info(f"Created Connect account {account.id} for user {user_id}")
+            return {
+                "account_id": account.id,
+                "details_submitted": account.details_submitted,
+                "charges_enabled": account.charges_enabled,
+                "payouts_enabled": account.payouts_enabled,
+            }
+        except StripeError as e:
+            logger.error(f"Failed to create Connect account: {e}")
+            raise
+
+    async def create_account_link(
+        self,
+        account_id: str,
+        refresh_url: str,
+        return_url: str,
+    ) -> str:
+        """Create an account link for Connect onboarding."""
+        try:
+            link = stripe.AccountLink.create(
+                account=account_id,
+                refresh_url=refresh_url,
+                return_url=return_url,
+                type="account_onboarding",
+            )
+            logger.info(f"Created account link for {account_id}")
+            return link.url
+        except StripeError as e:
+            logger.error(f"Failed to create account link: {e}")
+            raise
+
+    async def get_connect_account_status(self, account_id: str) -> dict:
+        """Get the status of a Connect account."""
+        try:
+            account = stripe.Account.retrieve(account_id)
+            return {
+                "account_id": account.id,
+                "details_submitted": account.details_submitted,
+                "charges_enabled": account.charges_enabled,
+                "payouts_enabled": account.payouts_enabled,
+                "requirements": {
+                    "currently_due": account.requirements.currently_due or [],
+                    "eventually_due": account.requirements.eventually_due or [],
+                    "pending_verification": account.requirements.pending_verification or [],
+                },
+            }
+        except StripeError as e:
+            logger.error(f"Failed to get Connect account status: {e}")
+            raise
+
+    async def create_login_link(self, account_id: str) -> str:
+        """Create a login link for the Express Dashboard."""
+        try:
+            link = stripe.Account.create_login_link(account_id)
+            return link.url
+        except StripeError as e:
+            logger.error(f"Failed to create login link: {e}")
+            raise
+
+    # =========================================================================
+    # Stripe Connect - Transfers
+    # =========================================================================
+
+    async def create_transfer(
+        self,
+        account_id: str,
+        amount_cents: int,
+        currency: str = "usd",
+        description: Optional[str] = None,
+        metadata: Optional[dict] = None,
+    ) -> dict:
+        """Transfer funds to a Connect account."""
+        try:
+            transfer = stripe.Transfer.create(
+                amount=amount_cents,
+                currency=currency,
+                destination=account_id,
+                description=description,
+                metadata=metadata or {},
+            )
+            logger.info(
+                f"Created transfer {transfer.id} of {amount_cents} cents "
+                f"to account {account_id}"
+            )
+            return {
+                "transfer_id": transfer.id,
+                "amount": transfer.amount,
+                "currency": transfer.currency,
+                "status": "pending",
+            }
+        except StripeError as e:
+            logger.error(f"Failed to create transfer: {e}")
+            raise
+
+    async def reverse_transfer(
+        self,
+        transfer_id: str,
+        amount_cents: Optional[int] = None,
+    ) -> dict:
+        """Reverse a transfer (full or partial)."""
+        try:
+            params = {}
+            if amount_cents:
+                params["amount"] = amount_cents
+
+            reversal = stripe.Transfer.create_reversal(transfer_id, **params)
+            logger.info(f"Reversed transfer {transfer_id}")
+            return {
+                "reversal_id": reversal.id,
+                "amount": reversal.amount,
+            }
+        except StripeError as e:
+            logger.error(f"Failed to reverse transfer: {e}")
+            raise
+
+    # =========================================================================
+    # Stripe Connect - Payouts
+    # =========================================================================
+
+    async def get_connect_balance(self, account_id: str) -> dict:
+        """Get the balance for a Connect account."""
+        try:
+            balance = stripe.Balance.retrieve(stripe_account=account_id)
+            return {
+                "available": [
+                    {"amount": b.amount, "currency": b.currency}
+                    for b in balance.available
+                ],
+                "pending": [
+                    {"amount": b.amount, "currency": b.currency}
+                    for b in balance.pending
+                ],
+            }
+        except StripeError as e:
+            logger.error(f"Failed to get Connect balance: {e}")
+            raise
+
+    async def create_connect_payout(
+        self,
+        account_id: str,
+        amount_cents: int,
+        currency: str = "usd",
+    ) -> dict:
+        """Create a payout to the creator's bank account."""
+        try:
+            payout = stripe.Payout.create(
+                amount=amount_cents,
+                currency=currency,
+                stripe_account=account_id,
+            )
+            logger.info(
+                f"Created payout {payout.id} of {amount_cents} cents "
+                f"for account {account_id}"
+            )
+            return {
+                "payout_id": payout.id,
+                "amount": payout.amount,
+                "currency": payout.currency,
+                "status": payout.status,
+                "arrival_date": payout.arrival_date,
+            }
+        except StripeError as e:
+            logger.error(f"Failed to create payout: {e}")
+            raise
+
+    async def get_payout(self, payout_id: str, account_id: str) -> Optional[dict]:
+        """Get payout details."""
+        try:
+            payout = stripe.Payout.retrieve(payout_id, stripe_account=account_id)
+            return {
+                "payout_id": payout.id,
+                "amount": payout.amount,
+                "currency": payout.currency,
+                "status": payout.status,
+                "arrival_date": payout.arrival_date,
+                "failure_code": payout.failure_code,
+                "failure_message": payout.failure_message,
+            }
+        except StripeError as e:
+            logger.error(f"Failed to get payout: {e}")
+            return None
+
 
 # Global instance
 stripe_service = StripeService()
+

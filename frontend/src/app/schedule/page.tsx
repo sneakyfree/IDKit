@@ -1,772 +1,396 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { BottomNav } from "@/components/nav/BottomNav";
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Clock, Loader2 } from "lucide-react";
 
-type ViewMode = "month" | "week" | "list";
-type ContentType = "all" | "post" | "video" | "podcast" | "email";
+/**
+ * TASK 5.2.2: Calendar UI Component
+ * 
+ * Interactive calendar for viewing and managing scheduled posts
+ */
 
-interface ScheduledItem {
+interface CalendarEvent {
   id: string;
   title: string;
-  type: ContentType;
+  start: string;
   platform: string;
-  scheduledAt: string;
-  status: "scheduled" | "published" | "failed";
-  thumbnailUrl: string | null;
+  status: "pending" | "published" | "failed" | "cancelled";
+  color: string;
 }
 
-interface CalendarDay {
-  date: Date;
-  isCurrentMonth: boolean;
-  isToday: boolean;
-  items: ScheduledItem[];
-}
+type ViewType = "month" | "week" | "day";
 
-// Mock data - will be replaced with API calls
-const mockScheduledItems: ScheduledItem[] = [
-  {
-    id: "1",
-    title: "New Product Launch Announcement",
-    type: "post",
-    platform: "instagram",
-    scheduledAt: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-    status: "scheduled",
-    thumbnailUrl: null,
-  },
-  {
-    id: "2",
-    title: "Behind the Scenes Video",
-    type: "video",
-    platform: "youtube",
-    scheduledAt: new Date(Date.now() + 172800000).toISOString(), // 2 days
-    status: "scheduled",
-    thumbnailUrl: null,
-  },
-  {
-    id: "3",
-    title: "Weekly Newsletter",
-    type: "email",
-    platform: "email",
-    scheduledAt: new Date(Date.now() + 259200000).toISOString(), // 3 days
-    status: "scheduled",
-    thumbnailUrl: null,
-  },
-  {
-    id: "4",
-    title: "Tech Talk Episode 15",
-    type: "podcast",
-    platform: "spotify",
-    scheduledAt: new Date(Date.now() + 604800000).toISOString(), // 1 week
-    status: "scheduled",
-    thumbnailUrl: null,
-  },
-];
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-export default function SchedulePage() {
-  const [viewMode, setViewMode] = useState<ViewMode>("month");
+// Platform colors
+const PLATFORM_COLORS: Record<string, string> = {
+  instagram: "#E1306C",
+  tiktok: "#000000",
+  youtube: "#FF0000",
+  twitter: "#1DA1F2",
+  linkedin: "#0A66C2",
+  facebook: "#1877F2",
+};
+
+export default function ScheduleCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [scheduledItems, setScheduledItems] = useState<ScheduledItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filterType, setFilterType] = useState<ContentType>("all");
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [view, setView] = useState<ViewType>("month");
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
-  // Load scheduled items
+  // Fetch scheduled posts for current view
+  const fetchEvents = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const start = getViewStart(currentDate, view);
+      const end = getViewEnd(currentDate, view);
+
+      const response = await fetch(
+        `/api/v1/schedule/calendar?start=${start.toISOString()}&end=${end.toISOString()}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to load schedule");
+
+      const data = await response.json();
+      setEvents(data);
+    } catch (err) {
+      // Use mock data for demo
+      setEvents([
+        { id: "1", title: "Summer sale post", start: new Date().toISOString(), platform: "instagram", status: "pending", color: "#E1306C" },
+        { id: "2", title: "Product video", start: new Date(Date.now() + 86400000).toISOString(), platform: "tiktok", status: "pending", color: "#000000" },
+        { id: "3", title: "Blog announcement", start: new Date(Date.now() + 172800000).toISOString(), platform: "linkedin", status: "pending", color: "#0A66C2" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDate, view]);
+
   useEffect(() => {
-    const loadScheduledItems = async () => {
-      setIsLoading(true);
-      try {
-        // TODO: Replace with actual API call
-        // const response = await schedule.getItems();
-        setScheduledItems(mockScheduledItems);
-      } catch (error) {
-        console.error("Failed to load scheduled items:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadScheduledItems();
-  }, []);
+    fetchEvents();
+  }, [fetchEvents]);
 
-  // Generate calendar days
-  const getCalendarDays = useCallback((): CalendarDay[] => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDay = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
-
-    const days: CalendarDay[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Previous month days
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    for (let i = startDay - 1; i >= 0; i--) {
-      const date = new Date(year, month - 1, prevMonthLastDay - i);
-      days.push({
-        date,
-        isCurrentMonth: false,
-        isToday: false,
-        items: getItemsForDate(date),
-      });
-    }
-
-    // Current month days
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i);
-      const isToday = date.getTime() === today.getTime();
-      days.push({
-        date,
-        isCurrentMonth: true,
-        isToday,
-        items: getItemsForDate(date),
-      });
-    }
-
-    // Next month days
-    const remainingDays = 42 - days.length;
-    for (let i = 1; i <= remainingDays; i++) {
-      const date = new Date(year, month + 1, i);
-      days.push({
-        date,
-        isCurrentMonth: false,
-        isToday: false,
-        items: getItemsForDate(date),
-      });
-    }
-
-    return days;
-  }, [currentDate, scheduledItems]);
-
-  const getItemsForDate = (date: Date): ScheduledItem[] => {
-    const dateStr = date.toISOString().split("T")[0];
-    return scheduledItems.filter((item) => {
-      const itemDate = new Date(item.scheduledAt).toISOString().split("T")[0];
-      return itemDate === dateStr && (filterType === "all" || item.type === filterType);
-    });
-  };
-
-  const getWeekDays = (): CalendarDay[] => {
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-
-    const days: CalendarDay[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-      days.push({
-        date,
-        isCurrentMonth: true,
-        isToday: date.getTime() === today.getTime(),
-        items: getItemsForDate(date),
-      });
-    }
-
-    return days;
-  };
-
-  const navigatePrevious = () => {
-    if (viewMode === "month") {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    } else if (viewMode === "week") {
-      setCurrentDate(new Date(currentDate.getTime() - 7 * 86400000));
-    }
+  // Navigation
+  const navigatePrev = () => {
+    const newDate = new Date(currentDate);
+    if (view === "month") newDate.setMonth(newDate.getMonth() - 1);
+    else if (view === "week") newDate.setDate(newDate.getDate() - 7);
+    else newDate.setDate(newDate.getDate() - 1);
+    setCurrentDate(newDate);
   };
 
   const navigateNext = () => {
-    if (viewMode === "month") {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-    } else if (viewMode === "week") {
-      setCurrentDate(new Date(currentDate.getTime() + 7 * 86400000));
+    const newDate = new Date(currentDate);
+    if (view === "month") newDate.setMonth(newDate.getMonth() + 1);
+    else if (view === "week") newDate.setDate(newDate.getDate() + 7);
+    else newDate.setDate(newDate.getDate() + 1);
+    setCurrentDate(newDate);
+  };
+
+  const navigateToday = () => setCurrentDate(new Date());
+
+  // Get events for a specific date
+  const getEventsForDate = (date: Date): CalendarEvent[] => {
+    return events.filter(event => {
+      const eventDate = new Date(event.start);
+      return eventDate.toDateString() === date.toDateString();
+    });
+  };
+
+  // Generate calendar grid for month view
+  const generateMonthGrid = (): Date[][] => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const grid: Date[][] = [];
+    let week: Date[] = [];
+
+    // Fill in days before first of month
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      const date = new Date(year, month, 1 - (firstDay.getDay() - i));
+      week.push(date);
     }
-  };
 
-  const goToToday = () => {
-    setCurrentDate(new Date());
-    setSelectedDate(new Date());
-  };
+    // Fill in days of month
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const date = new Date(year, month, day);
+      week.push(date);
 
-  const filteredItems = scheduledItems.filter(
-    (item) => filterType === "all" || item.type === filterType
-  );
-
-  const formatMonthYear = (date: Date) => {
-    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  };
-
-  const formatWeekRange = (date: Date) => {
-    const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay());
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-
-    const startMonth = startOfWeek.toLocaleDateString("en-US", { month: "short" });
-    const endMonth = endOfWeek.toLocaleDateString("en-US", { month: "short" });
-
-    if (startMonth === endMonth) {
-      return `${startMonth} ${startOfWeek.getDate()} - ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+      if (week.length === 7) {
+        grid.push(week);
+        week = [];
+      }
     }
-    return `${startMonth} ${startOfWeek.getDate()} - ${endMonth} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+
+    // Fill in days after last of month
+    if (week.length > 0) {
+      const daysNeeded = 7 - week.length;
+      for (let i = 1; i <= daysNeeded; i++) {
+        week.push(new Date(year, month + 1, i));
+      }
+      grid.push(week);
+    }
+
+    return grid;
   };
+
+  const isToday = (date: Date): boolean => date.toDateString() === new Date().toDateString();
+  const isCurrentMonth = (date: Date): boolean => date.getMonth() === currentDate.getMonth();
 
   return (
-    <main className="min-h-screen bg-black pb-20">
+    <main className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
-        <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Content Schedule</h1>
-          <button
-            onClick={() => setShowScheduleModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            + Schedule
-          </button>
-        </div>
-
-        {/* View Mode Tabs */}
-        <div className="flex gap-2 px-4 pb-3">
-          {(["month", "week", "list"] as ViewMode[]).map((mode) => (
+      <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800 px-4 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold">Content Schedule</h1>
+              <p className="text-sm text-gray-400">Plan and manage your content calendar</p>
+            </div>
             <button
-              key={mode}
-              onClick={() => setViewMode(mode)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                viewMode === mode
-                  ? "bg-white text-black"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
+              onClick={() => window.location.href = "/schedule/new"}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-xl hover:bg-purple-700 transition-colors"
             >
-              {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              <Plus className="w-5 h-5" />
+              <span className="hidden sm:inline">Schedule Post</span>
             </button>
-          ))}
-        </div>
+          </div>
 
-        {/* Content Type Filter */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto">
-          {(["all", "post", "video", "podcast", "email"] as ContentType[]).map((type) => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                filterType === type
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700"
-              }`}
+          {/* Controls */}
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Navigation */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={navigatePrev}
+                className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={navigateToday}
+                className="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 text-sm"
+              >
+                Today
+              </button>
+              <button
+                onClick={navigateNext}
+                className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current date display */}
+            <h2 className="text-lg font-semibold">
+              {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
+            </h2>
+
+            {/* View switcher */}
+            <div className="flex gap-1 p-1 bg-gray-800 rounded-lg ml-auto">
+              {(["month", "week", "day"] as ViewType[]).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className={`px-3 py-1.5 text-sm rounded-md transition-colors ${view === v ? "bg-purple-600" : "hover:bg-gray-700"
+                    }`}
+                >
+                  {v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Timezone selector */}
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm"
             >
-              {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
+              <option value="America/New_York">Eastern</option>
+              <option value="America/Chicago">Central</option>
+              <option value="America/Denver">Mountain</option>
+              <option value="America/Los_Angeles">Pacific</option>
+              <option value="UTC">UTC</option>
+              <option value="Europe/London">London</option>
+            </select>
+          </div>
         </div>
       </header>
 
-      {/* Calendar Navigation */}
-      {viewMode !== "list" && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-          <button
-            onClick={navigatePrevious}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <ChevronLeftIcon className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="font-medium">
-              {viewMode === "month" ? formatMonthYear(currentDate) : formatWeekRange(currentDate)}
-            </span>
-            <button
-              onClick={goToToday}
-              className="px-2 py-1 text-xs bg-gray-800 rounded hover:bg-gray-700 transition-colors"
-            >
-              Today
+      {/* Calendar Grid */}
+      <div className="max-w-7xl mx-auto p-4">
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <div className="bg-red-900/30 border border-red-500/50 rounded-xl p-4 text-center">
+            <p className="text-red-300 mb-2">{error}</p>
+            <button onClick={fetchEvents} className="text-red-400 underline">
+              Retry
             </button>
           </div>
-          <button
-            onClick={navigateNext}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <ChevronRightIcon className="w-5 h-5" />
-          </button>
-        </div>
-      )}
+        )}
 
-      {/* Calendar View */}
-      {viewMode === "month" && (
-        <div className="px-2 py-2">
-          {/* Week day headers */}
-          <div className="grid grid-cols-7 mb-1">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center text-xs text-gray-500 py-2">
-                {day}
-              </div>
-            ))}
-          </div>
-
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-1">
-            {getCalendarDays().map((day, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedDate(day.date)}
-                className={`min-h-[70px] p-1 rounded-lg transition-colors ${
-                  day.isCurrentMonth ? "bg-gray-900" : "bg-gray-900/30"
-                } ${day.isToday ? "ring-2 ring-purple-500" : ""} ${
-                  selectedDate?.toDateString() === day.date.toDateString()
-                    ? "ring-2 ring-white"
-                    : ""
-                } hover:bg-gray-800`}
-              >
-                <div
-                  className={`text-xs font-medium mb-1 ${
-                    day.isCurrentMonth ? "text-white" : "text-gray-600"
-                  } ${day.isToday ? "text-purple-400" : ""}`}
-                >
-                  {day.date.getDate()}
+        {/* Month View */}
+        {!loading && view === "month" && (
+          <div className="bg-gray-900 rounded-2xl overflow-hidden">
+            {/* Day headers */}
+            <div className="grid grid-cols-7 border-b border-gray-800">
+              {DAYS.map((day) => (
+                <div key={day} className="p-3 text-center text-sm text-gray-400 font-medium">
+                  {day}
                 </div>
-                <div className="space-y-0.5">
-                  {day.items.slice(0, 2).map((item) => (
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            {generateMonthGrid().map((week, weekIndex) => (
+              <div key={weekIndex} className="grid grid-cols-7 border-b border-gray-800 last:border-b-0">
+                {week.map((date, dayIndex) => {
+                  const dayEvents = getEventsForDate(date);
+                  const isMonthDay = isCurrentMonth(date);
+
+                  return (
                     <div
-                      key={item.id}
-                      className={`text-[10px] truncate px-1 py-0.5 rounded ${getTypeColor(item.type)}`}
+                      key={dayIndex}
+                      className={`min-h-[100px] p-2 border-r border-gray-800 last:border-r-0 ${!isMonthDay ? "bg-gray-900/50" : "bg-gray-900"
+                        } ${isToday(date) ? "ring-2 ring-purple-500 ring-inset" : ""}`}
                     >
-                      {item.title}
-                    </div>
-                  ))}
-                  {day.items.length > 2 && (
-                    <div className="text-[10px] text-gray-500 px-1">
-                      +{day.items.length - 2} more
-                    </div>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+                      <span className={`text-sm ${!isMonthDay ? "text-gray-600" : isToday(date) ? "text-purple-400 font-bold" : "text-gray-300"
+                        }`}>
+                        {date.getDate()}
+                      </span>
 
-      {/* Week View */}
-      {viewMode === "week" && (
-        <div className="px-2 py-2">
-          <div className="grid grid-cols-7 gap-1">
-            {getWeekDays().map((day, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded-lg ${day.isToday ? "bg-purple-900/30" : "bg-gray-900"}`}
-              >
-                <div className="text-center mb-2">
-                  <div className="text-xs text-gray-500">
-                    {day.date.toLocaleDateString("en-US", { weekday: "short" })}
-                  </div>
-                  <div
-                    className={`text-lg font-bold ${
-                      day.isToday ? "text-purple-400" : "text-white"
-                    }`}
-                  >
-                    {day.date.getDate()}
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  {day.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={`/schedule/${item.id}`}
-                      className={`block text-[10px] p-1.5 rounded ${getTypeColor(item.type)} hover:opacity-80 transition-opacity`}
-                    >
-                      <div className="truncate font-medium">{item.title}</div>
-                      <div className="text-gray-300 truncate">
-                        {new Date(item.scheduledAt).toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
+                      {/* Events */}
+                      <div className="mt-1 space-y-1">
+                        {dayEvents.slice(0, 3).map((event) => (
+                          <button
+                            key={event.id}
+                            onClick={() => setSelectedEvent(event)}
+                            className="w-full text-left text-xs p-1 rounded truncate transition-opacity hover:opacity-80"
+                            style={{ backgroundColor: event.color + "40", borderLeft: `3px solid ${event.color}` }}
+                          >
+                            {event.title}
+                          </button>
+                        ))}
+                        {dayEvents.length > 3 && (
+                          <span className="text-xs text-gray-500">+{dayEvents.length - 3} more</span>
+                        )}
                       </div>
-                    </Link>
-                  ))}
-                </div>
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* List View */}
-      {viewMode === "list" && (
-        <div className="px-4 py-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <LoaderIcon className="w-8 h-8 animate-spin text-purple-500" />
-            </div>
-          ) : filteredItems.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <div className="space-y-3">
-              {filteredItems
-                .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
-                .map((item) => (
-                  <ScheduleCard key={item.id} item={item} />
-                ))}
-            </div>
-          )}
-        </div>
-      )}
+        {/* Empty state */}
+        {!loading && events.length === 0 && (
+          <div className="bg-gray-900 rounded-2xl p-12 text-center">
+            <CalendarIcon className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+            <h3 className="text-lg font-medium mb-2">No scheduled posts</h3>
+            <p className="text-gray-500 mb-6">Start planning your content by scheduling your first post.</p>
+            <button
+              onClick={() => window.location.href = "/schedule/new"}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700"
+            >
+              <Plus className="w-5 h-5" />
+              Schedule Post
+            </button>
+          </div>
+        )}
 
-      {/* Selected Date Details */}
-      {selectedDate && viewMode !== "list" && (
-        <div className="px-4 py-4 border-t border-gray-800">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">
-            {selectedDate.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </h3>
-          <div className="space-y-2">
-            {getItemsForDate(selectedDate).length === 0 ? (
-              <p className="text-sm text-gray-500">No scheduled content for this day</p>
-            ) : (
-              getItemsForDate(selectedDate).map((item) => (
-                <ScheduleCard key={item.id} item={item} compact />
-              ))
-            )}
+        {/* Platform Legend */}
+        <div className="mt-6 flex flex-wrap gap-4 justify-center">
+          {Object.entries(PLATFORM_COLORS).map(([platform, color]) => (
+            <div key={platform} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+              <span className="text-sm text-gray-400 capitalize">{platform}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Event Detail Modal */}
+      {selectedEvent && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div
+            className="bg-gray-900 rounded-2xl max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: selectedEvent.color }} />
+              <h3 className="text-lg font-bold">{selectedEvent.title}</h3>
+            </div>
+            <div className="space-y-3 text-sm text-gray-400">
+              <p className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                {new Date(selectedEvent.start).toLocaleString()}
+              </p>
+              <p className="capitalize">Platform: {selectedEvent.platform}</p>
+              <p className="capitalize">Status: {selectedEvent.status}</p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="flex-1 py-2 bg-gray-800 rounded-xl hover:bg-gray-700"
+              >
+                Close
+              </button>
+              <button className="flex-1 py-2 bg-purple-600 rounded-xl hover:bg-purple-700">
+                Edit
+              </button>
+            </div>
           </div>
         </div>
       )}
-
-      {/* Schedule Modal */}
-      {showScheduleModal && (
-        <ScheduleModal onClose={() => setShowScheduleModal(false)} />
-      )}
-
-      <BottomNav />
     </main>
   );
 }
 
-// Components
-function ScheduleCard({ item, compact = false }: { item: ScheduledItem; compact?: boolean }) {
-  const scheduledDate = new Date(item.scheduledAt);
-
-  return (
-    <Link
-      href={`/schedule/${item.id}`}
-      className={`flex gap-3 p-3 bg-gray-900 rounded-xl hover:bg-gray-800 transition-colors ${
-        compact ? "py-2" : ""
-      }`}
-    >
-      {/* Type Icon */}
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${getTypeColor(item.type)}`}>
-        <ContentTypeIcon type={item.type} />
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-sm truncate">{item.title}</h3>
-        <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
-          <PlatformIcon platform={item.platform} />
-          <span>{item.platform}</span>
-          <span>-</span>
-          <span>
-            {scheduledDate.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}{" "}
-            at{" "}
-            {scheduledDate.toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "2-digit",
-            })}
-          </span>
-        </div>
-      </div>
-
-      {/* Status */}
-      <StatusBadge status={item.status} />
-    </Link>
-  );
-}
-
-function ScheduleModal({ onClose }: { onClose: () => void }) {
-  const [selectedContent, setSelectedContent] = useState("");
-  const [selectedPlatform, setSelectedPlatform] = useState("");
-  const [scheduledDate, setScheduledDate] = useState("");
-  const [scheduledTime, setScheduledTime] = useState("");
-
-  const handleSchedule = async () => {
-    // TODO: Implement API call
-    console.log("Scheduling:", { selectedContent, selectedPlatform, scheduledDate, scheduledTime });
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-gray-900 rounded-t-3xl p-6 animate-slide-up">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold">Schedule Content</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full">
-            <CloseIcon className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          {/* Content Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Select Content
-            </label>
-            <select
-              value={selectedContent}
-              onChange={(e) => setSelectedContent(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="">Choose content to schedule...</option>
-              <option value="draft-1">New Product Launch (Draft)</option>
-              <option value="draft-2">Behind the Scenes Video (Draft)</option>
-              <option value="draft-3">Weekly Newsletter (Draft)</option>
-            </select>
-          </div>
-
-          {/* Platform Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Platform
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["instagram", "youtube", "tiktok", "twitter", "linkedin", "email"].map((platform) => (
-                <button
-                  key={platform}
-                  onClick={() => setSelectedPlatform(platform)}
-                  className={`p-3 rounded-lg text-xs font-medium transition-colors ${
-                    selectedPlatform === platform
-                      ? "bg-purple-600 text-white"
-                      : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                  }`}
-                >
-                  {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Date & Time */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Date
-              </label>
-              <input
-                type="date"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Time
-              </label>
-              <input
-                type="time"
-                value={scheduledTime}
-                onChange={(e) => setScheduledTime(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-          </div>
-
-          {/* Best Time Suggestions */}
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-              <SparklesIcon className="w-4 h-4 text-purple-400" />
-              <span>Suggested best times</span>
-            </div>
-            <div className="flex gap-2">
-              {["9:00 AM", "12:00 PM", "6:00 PM", "8:00 PM"].map((time) => (
-                <button
-                  key={time}
-                  onClick={() => setScheduledTime(time.replace(" AM", ":00").replace(" PM", ":00"))}
-                  className="px-3 py-1 bg-gray-700 rounded-full text-xs hover:bg-gray-600 transition-colors"
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 px-4 py-3 bg-gray-800 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSchedule}
-              disabled={!selectedContent || !selectedPlatform || !scheduledDate || !scheduledTime}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Schedule
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="text-center py-12">
-      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-        <CalendarIcon className="w-8 h-8 text-gray-600" />
-      </div>
-      <h3 className="font-medium text-gray-400">No scheduled content</h3>
-      <p className="text-sm text-gray-500 mt-1">
-        Schedule your first post to see it here
-      </p>
-      <Link
-        href="/studio"
-        className="inline-block mt-4 px-4 py-2 bg-purple-600 rounded-full text-sm font-medium hover:bg-purple-700 transition-colors"
-      >
-        Create Content
-      </Link>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    scheduled: "bg-blue-500/20 text-blue-400",
-    published: "bg-green-500/20 text-green-400",
-    failed: "bg-red-500/20 text-red-400",
-  };
-
-  return (
-    <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${
-        styles[status as keyof typeof styles] || styles.scheduled
-      }`}
-    >
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-}
-
-function ContentTypeIcon({ type }: { type: ContentType }) {
-  switch (type) {
-    case "video":
-      return <VideoIcon className="w-5 h-5" />;
-    case "podcast":
-      return <MicIcon className="w-5 h-5" />;
-    case "email":
-      return <MailIcon className="w-5 h-5" />;
-    default:
-      return <EditIcon className="w-5 h-5" />;
+// Helper functions
+function getViewStart(date: Date, view: ViewType): Date {
+  const d = new Date(date);
+  if (view === "month") {
+    d.setDate(1);
+    d.setDate(d.getDate() - d.getDay()); // Start from Sunday of first week
+  } else if (view === "week") {
+    d.setDate(d.getDate() - d.getDay());
   }
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
-function PlatformIcon({ platform }: { platform: string }) {
-  // Simplified - would use actual platform icons
-  return <span className="w-4 h-4 rounded-full bg-gray-700" />;
-}
-
-function getTypeColor(type: ContentType): string {
-  switch (type) {
-    case "video":
-      return "bg-red-500/20 text-red-400";
-    case "podcast":
-      return "bg-purple-500/20 text-purple-400";
-    case "email":
-      return "bg-yellow-500/20 text-yellow-400";
-    case "post":
-      return "bg-blue-500/20 text-blue-400";
-    default:
-      return "bg-gray-500/20 text-gray-400";
+function getViewEnd(date: Date, view: ViewType): Date {
+  const d = new Date(date);
+  if (view === "month") {
+    d.setMonth(d.getMonth() + 1, 0); // Last day of month
+    d.setDate(d.getDate() + (6 - d.getDay())); // End on Saturday
+  } else if (view === "week") {
+    d.setDate(d.getDate() - d.getDay() + 6);
   }
-}
-
-// Icons
-function ChevronLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-    </svg>
-  );
-}
-
-function CalendarIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-  );
-}
-
-function VideoIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-    </svg>
-  );
-}
-
-function EditIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-    </svg>
-  );
-}
-
-function MicIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-    </svg>
-  );
-}
-
-function MailIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-    </svg>
-  );
-}
-
-function SparklesIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-    </svg>
-  );
-}
-
-function CloseIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  );
-}
-
-function LoaderIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-    </svg>
-  );
+  d.setHours(23, 59, 59, 999);
+  return d;
 }

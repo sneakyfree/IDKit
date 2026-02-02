@@ -17,6 +17,8 @@ from app.models.base import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.feed import UserProfile
+    from app.models.payout import ConnectAccount
+    from app.models.schedule import ScheduledPost
 
 
 class User(Base, UUIDMixin, TimestampMixin):
@@ -92,6 +94,20 @@ class User(Base, UUIDMixin, TimestampMixin):
         back_populates="user",
         uselist=False,
         lazy="joined",
+    )
+
+    connect_account: Mapped["ConnectAccount"] = relationship(
+        "ConnectAccount",
+        back_populates="user",
+        uselist=False,
+        lazy="noload",
+    )
+
+    # Scheduled posts relationship (required by ScheduledPost.user back_populates)
+    scheduled_posts: Mapped[list["ScheduledPost"]] = relationship(
+        "ScheduledPost",
+        back_populates="user",
+        lazy="noload",
     )
 
     def __repr__(self) -> str:

@@ -181,7 +181,7 @@ async def get_hashtag_posts(
     current_user: OptionalUser,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=50),
-    sort: str = Query(default="trending", regex="^(trending|recent|top)$"),
+    sort: str = Query(default="trending", pattern="^(trending|recent|top)$"),
 ):
     """Get posts with a specific hashtag."""
     tag = tag.lstrip("#").lower()
@@ -387,7 +387,7 @@ async def search_posts(
     current_user: OptionalUser = None,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=50),
-    sort: str = Query(default="relevant", regex="^(relevant|recent|top)$"),
+    sort: str = Query(default="relevant", pattern="^(relevant|recent|top)$"),
 ):
     """Search posts by content text."""
     search_term = q.strip().lower()

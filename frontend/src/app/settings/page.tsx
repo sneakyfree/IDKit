@@ -214,6 +214,17 @@ export default function SettingsPage() {
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-500" />
             </Link>
+            <div className="h-px bg-gray-800 ml-12" />
+            <Link
+              href="/settings/payouts"
+              className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <BankIcon className="w-5 h-5 text-gray-400" />
+                <span>Payouts</span>
+              </div>
+              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+            </Link>
           </div>
         </section>
 
@@ -272,14 +283,12 @@ function Toggle({
   return (
     <button
       onClick={onChange}
-      className={`relative w-11 h-6 rounded-full transition-colors ${
-        enabled ? "bg-purple-600" : "bg-gray-700"
-      }`}
+      className={`relative w-11 h-6 rounded-full transition-colors ${enabled ? "bg-purple-600" : "bg-gray-700"
+        }`}
     >
       <div
-        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-          enabled ? "translate-x-6" : "translate-x-1"
-        }`}
+        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${enabled ? "translate-x-6" : "translate-x-1"
+          }`}
       />
     </button>
   );
@@ -421,3 +430,12 @@ function GlobeIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+function BankIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  );
+}
+

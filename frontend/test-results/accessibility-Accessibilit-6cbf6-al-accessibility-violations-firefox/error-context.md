@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - heading "Bulk Content Generation" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Generate 10-100 pieces of content from a template and CSV data
+      - progressbar [ref=e9]:
+        - generic [ref=e11]: "1"
+        - generic [ref=e14]: "2"
+        - generic [ref=e17]: "3"
+        - generic [ref=e20]: "4"
+        - generic [ref=e21]: Select Template
+      - region "Select a Template" [ref=e22]:
+        - heading "Select a Template" [level=2] [ref=e23]
+        - generic [ref=e24]:
+          - button "Social Post Engaging social media post topic tone platform" [ref=e25] [cursor=pointer]:
+            - heading "Social Post" [level=3] [ref=e26]
+            - paragraph [ref=e27]: Engaging social media post
+            - generic [ref=e28]:
+              - generic [ref=e29]: topic
+              - generic [ref=e30]: tone
+              - generic [ref=e31]: platform
+          - button "Blog Article Full blog article title keywords length" [ref=e32] [cursor=pointer]:
+            - heading "Blog Article" [level=3] [ref=e33]
+            - paragraph [ref=e34]: Full blog article
+            - generic [ref=e35]:
+              - generic [ref=e36]: title
+              - generic [ref=e37]: keywords
+              - generic [ref=e38]: length
+          - button "Product Description E-commerce product copy product_name features price" [ref=e39] [cursor=pointer]:
+            - heading "Product Description" [level=3] [ref=e40]
+            - paragraph [ref=e41]: E-commerce product copy
+            - generic [ref=e42]:
+              - generic [ref=e43]: product_name
+              - generic [ref=e44]: features
+              - generic [ref=e45]: price
+  - generic [ref=e47]:
+    - img [ref=e48]
+    - generic [ref=e50]: You & apos;re offline
+    - generic [ref=e51]: Changes will sync when online
+  - alert [ref=e52]
+```

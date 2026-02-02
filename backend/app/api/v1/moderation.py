@@ -362,7 +362,7 @@ async def get_my_reports(
 async def get_moderation_queue(
     db: AsyncSession = Depends(get_db),
     admin: User = Depends(require_admin),
-    status_filter: str = Query("pending", regex="^(pending|reviewed|all)$"),
+    status_filter: str = Query("pending", pattern="^(pending|reviewed|all)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ):

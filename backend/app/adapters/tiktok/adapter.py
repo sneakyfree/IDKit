@@ -19,14 +19,15 @@ from urllib.parse import urlencode
 import httpx
 
 from app.adapters.interfaces.base import (
+    AccountInfo,
     AnalyticsData,
     BasePlatformAdapter,
     Comment,
-    Message,
+    ContentType,
+    DirectMessage,
     OAuthTokens,
     PublishContent,
     PublishResult,
-    UserProfile,
 )
 
 
@@ -219,7 +220,7 @@ class TikTokAdapter(BasePlatformAdapter):
 
         return response.status_code == 200
 
-    async def get_user_profile(self, access_token: str) -> UserProfile:
+    async def get_user_profile(self, access_token: str) -> AccountInfo:
         """
         Get authenticated user's profile.
 
@@ -227,7 +228,7 @@ class TikTokAdapter(BasePlatformAdapter):
             access_token: Valid access token
 
         Returns:
-            User profile information
+            Account information
         """
         client = await self._get_client()
 
@@ -243,18 +244,17 @@ class TikTokAdapter(BasePlatformAdapter):
 
         user = result.get("data", {}).get("user", {})
 
-        return UserProfile(
-            id=user.get("open_id"),
+        return AccountInfo(
+            platform_user_id=user.get("open_id", ""),
             username=user.get("display_name"),
             display_name=user.get("display_name"),
-            avatar_url=user.get("avatar_url"),
-            bio=user.get("bio_description"),
-            followers_count=user.get("follower_count"),
-            following_count=user.get("following_count"),
-            posts_count=user.get("video_count"),
-            is_verified=user.get("is_verified", False),
             profile_url=user.get("profile_deep_link"),
-            raw_data=user,
+            profile_image_url=user.get("avatar_url"),
+            account_type="creator",
+            follower_count=user.get("follower_count", 0),
+            following_count=user.get("following_count", 0),
+            capabilities={"video_count": user.get("video_count", 0), "is_verified": user.get("is_verified", False)},
+            raw_response=user,
         )
 
     async def publish(
@@ -586,7 +586,7 @@ class TikTokAdapter(BasePlatformAdapter):
         access_token: str,
         cursor: Optional[str] = None,
         limit: int = 50,
-    ) -> tuple[list[Message], Optional[str]]:
+    ) -> tuple[list[DirectMessage], Optional[str]]:
         """
         Get direct messages.
 
@@ -608,7 +608,7 @@ class TikTokAdapter(BasePlatformAdapter):
         access_token: str,
         user_id: str,
         text: str,
-    ) -> Optional[Message]:
+    ) -> Optional[DirectMessage]:
         """
         Send a direct message.
 

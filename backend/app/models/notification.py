@@ -93,7 +93,8 @@ class Notification(Base, UUIDMixin):
     )
 
     # Additional metadata (flexible JSON for different notification types)
-    metadata: Mapped[dict] = mapped_column(
+    notification_data: Mapped[dict] = mapped_column(
+        "metadata",  # Keep original column name in DB for compatibility
         JSONB,
         default=dict,
         nullable=False,

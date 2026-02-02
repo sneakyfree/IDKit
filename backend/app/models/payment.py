@@ -259,7 +259,8 @@ class Subscription(Base, UUIDMixin, TimestampMixin):
     )
 
     # Metadata
-    metadata: Mapped[dict] = mapped_column(
+    subscription_data: Mapped[dict] = mapped_column(
+        "metadata",  # Keep DB column name for compatibility
         JSONB,
         default=dict,
         nullable=False,
@@ -437,7 +438,8 @@ class Payment(Base, UUIDMixin, TimestampMixin):
     )
 
     # Metadata
-    metadata: Mapped[dict] = mapped_column(
+    payment_data: Mapped[dict] = mapped_column(
+        "metadata",  # Keep DB column name for compatibility
         JSONB,
         default=dict,
         nullable=False,
@@ -512,7 +514,8 @@ class UsageRecord(Base, UUIDMixin, TimestampMixin):
     )
 
     # Metadata
-    metadata: Mapped[dict] = mapped_column(
+    usage_data: Mapped[dict] = mapped_column(
+        "metadata",  # Keep DB column name for compatibility
         JSONB,
         default=dict,
         nullable=False,

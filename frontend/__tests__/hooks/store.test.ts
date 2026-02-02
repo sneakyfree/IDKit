@@ -1,13 +1,27 @@
 import { act, renderHook } from "@testing-library/react";
+import {
+  useAuthStore,
+  useFeedStore,
+  useCreateStore,
+  useThemeStore,
+} from "@/lib/store";
 
-// Reset zustand stores between tests
+// Reset store state between tests (without resetting modules which breaks React)
 beforeEach(() => {
-  jest.resetModules();
+  // Reset each store to initial state
+  useAuthStore.setState({
+    user: null,
+    profile: null,
+    isAuthenticated: false,
+    isLoading: true,
+  });
+  useFeedStore.setState({ activeTab: "for-you" });
+  useCreateStore.setState({ isOpen: false });
+  useThemeStore.setState({ theme: "dark", resolvedTheme: "dark" });
 });
 
 describe("useAuthStore", () => {
-  it("should have default state", async () => {
-    const { useAuthStore } = await import("@/lib/store");
+  it("should have default state", () => {
     const { result } = renderHook(() => useAuthStore());
 
     expect(result.current.user).toBeNull();
@@ -16,19 +30,16 @@ describe("useAuthStore", () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it("should set user and update authentication state", async () => {
-    const { useAuthStore } = await import("@/lib/store");
+  it("should set user and update authentication state", () => {
     const { result } = renderHook(() => useAuthStore());
 
     const mockUser = {
       id: "1",
       email: "test@example.com",
-      username: "testuser",
-      display_name: "Test User",
+      full_name: "Test User",
       avatar_url: null,
       is_verified: false,
-      is_premium: false,
-      created_at: new Date().toISOString(),
+      subscription_tier: "free",
     };
 
     act(() => {
@@ -40,19 +51,23 @@ describe("useAuthStore", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should set profile", async () => {
-    const { useAuthStore } = await import("@/lib/store");
+  it("should set profile", () => {
     const { result } = renderHook(() => useAuthStore());
 
     const mockProfile = {
       id: "1",
       user_id: "1",
+      username: "testuser",
+      display_name: "Test User",
       bio: "Test bio",
-      website: "https://test.com",
-      location: "Test City",
+      avatar_url: null,
+      cover_image_url: null,
+      website_url: "https://test.com",
       follower_count: 100,
       following_count: 50,
       post_count: 10,
+      is_verified: false,
+      niche_tags: [],
       is_following: false,
     };
 
@@ -63,19 +78,16 @@ describe("useAuthStore", () => {
     expect(result.current.profile).toEqual(mockProfile);
   });
 
-  it("should logout and clear state", async () => {
-    const { useAuthStore } = await import("@/lib/store");
+  it("should logout and clear state", () => {
     const { result } = renderHook(() => useAuthStore());
 
     const mockUser = {
       id: "1",
       email: "test@example.com",
-      username: "testuser",
-      display_name: "Test User",
+      full_name: "Test User",
       avatar_url: null,
       is_verified: false,
-      is_premium: false,
-      created_at: new Date().toISOString(),
+      subscription_tier: "free",
     };
 
     act(() => {
@@ -95,15 +107,13 @@ describe("useAuthStore", () => {
 });
 
 describe("useFeedStore", () => {
-  it("should have default active tab as for-you", async () => {
-    const { useFeedStore } = await import("@/lib/store");
+  it("should have default active tab as for-you", () => {
     const { result } = renderHook(() => useFeedStore());
 
     expect(result.current.activeTab).toBe("for-you");
   });
 
-  it("should switch active tab", async () => {
-    const { useFeedStore } = await import("@/lib/store");
+  it("should switch active tab", () => {
     const { result } = renderHook(() => useFeedStore());
 
     act(() => {
@@ -115,15 +125,13 @@ describe("useFeedStore", () => {
 });
 
 describe("useCreateStore", () => {
-  it("should start closed", async () => {
-    const { useCreateStore } = await import("@/lib/store");
+  it("should start closed", () => {
     const { result } = renderHook(() => useCreateStore());
 
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("should open and close", async () => {
-    const { useCreateStore } = await import("@/lib/store");
+  it("should open and close", () => {
     const { result } = renderHook(() => useCreateStore());
 
     act(() => {
@@ -139,16 +147,14 @@ describe("useCreateStore", () => {
 });
 
 describe("useThemeStore", () => {
-  it("should have default theme as dark", async () => {
-    const { useThemeStore } = await import("@/lib/store");
+  it("should have default theme as dark", () => {
     const { result } = renderHook(() => useThemeStore());
 
     expect(result.current.theme).toBe("dark");
     expect(result.current.resolvedTheme).toBe("dark");
   });
 
-  it("should set theme to light", async () => {
-    const { useThemeStore } = await import("@/lib/store");
+  it("should set theme to light", () => {
     const { result } = renderHook(() => useThemeStore());
 
     act(() => {
@@ -159,8 +165,7 @@ describe("useThemeStore", () => {
     expect(result.current.resolvedTheme).toBe("light");
   });
 
-  it("should handle system theme", async () => {
-    const { useThemeStore } = await import("@/lib/store");
+  it("should handle system theme", () => {
     const { result } = renderHook(() => useThemeStore());
 
     act(() => {
@@ -172,3 +177,4 @@ describe("useThemeStore", () => {
     expect(result.current.resolvedTheme).toBe("dark");
   });
 });
+

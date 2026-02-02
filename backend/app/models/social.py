@@ -154,10 +154,9 @@ class SocialPost(Base, UUIDMixin, TimestampMixin):
     reach: Mapped[int] = mapped_column(Integer, default=0)
     impressions: Mapped[int] = mapped_column(BigInteger, default=0)
 
-    # Source content (if derived from IDKit content)
+    # Source content (if derived from IDKit content - no FK to allow flexibility)
     source_content_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("content_items.id", ondelete="SET NULL"),
         nullable=True,
     )
     source_feed_post_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -442,3 +441,49 @@ class SocialWebhookEvent(Base, UUIDMixin, TimestampMixin):
         ForeignKey("social_posts.id", ondelete="SET NULL"),
         nullable=True,
     )
+
+
+# ==================== Daily Analytics ====================
+
+
+class AnalyticsDaily(Base, UUIDMixin, TimestampMixin):
+    """
+    Daily analytics per social account and optionally per post.
+    
+    Used for time series analytics and trend analysis.
+    """
+
+    __tablename__ = "analytics_daily"
+
+    account_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("social_accounts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    # Date for this analytics record
+    date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+
+    # Optional post-level tracking
+    post_id: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+
+    # Metrics
+    impressions: Mapped[int] = mapped_column(BigInteger, default=0)
+    reach: Mapped[int] = mapped_column(Integer, default=0)
+    likes: Mapped[int] = mapped_column(Integer, default=0)
+    comments: Mapped[int] = mapped_column(Integer, default=0)
+    shares: Mapped[int] = mapped_column(Integer, default=0)
+    saves: Mapped[int] = mapped_column(Integer, default=0)
+    clicks: Mapped[int] = mapped_column(Integer, default=0)
+    views: Mapped[int] = mapped_column(BigInteger, default=0)
+    watch_time_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    follower_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
+# ==================== Backward Compatibility Aliases ====================
+# These aliases support older code that uses shorter names
+
+Comment = SocialComment
+DmMessage = SocialDMMessage
+DmConversation = SocialDMConversation

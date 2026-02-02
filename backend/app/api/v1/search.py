@@ -87,7 +87,7 @@ class SuggestionItem(BaseModel):
 async def search(
     q: str = Query(..., min_length=2, max_length=200, description="Search query"),
     types: str = Query("user,post,hashtag,podcast", description="Comma-separated result types"),
-    sort_by: str = Query("relevance", regex="^(relevance|recent|popular|followers|engagement)$"),
+    sort_by: str = Query("relevance", pattern="^(relevance|recent|popular|followers|engagement)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     verified_only: bool = Query(False),
@@ -236,7 +236,7 @@ async def search_advanced(
 @router.get("/users")
 async def search_users(
     q: str = Query(..., min_length=2, max_length=200),
-    sort_by: str = Query("relevance", regex="^(relevance|followers|recent)$"),
+    sort_by: str = Query("relevance", pattern="^(relevance|followers|recent)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
     verified_only: bool = Query(False),
@@ -286,7 +286,7 @@ async def search_users(
 @router.get("/posts")
 async def search_posts(
     q: str = Query(..., min_length=2, max_length=200),
-    sort_by: str = Query("relevance", regex="^(relevance|recent|popular|engagement)$"),
+    sort_by: str = Query("relevance", pattern="^(relevance|recent|popular|engagement)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
     has_media: Optional[bool] = Query(None),
@@ -334,7 +334,7 @@ async def search_posts(
 @router.get("/hashtags")
 async def search_hashtags(
     q: str = Query(..., min_length=1, max_length=100),
-    sort_by: str = Query("relevance", regex="^(relevance|popular)$"),
+    sort_by: str = Query("relevance", pattern="^(relevance|popular)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
@@ -376,7 +376,7 @@ async def search_hashtags(
 @router.get("/podcasts")
 async def search_podcasts(
     q: str = Query(..., min_length=2, max_length=200),
-    sort_by: str = Query("relevance", regex="^(relevance|popular|recent)$"),
+    sort_by: str = Query("relevance", pattern="^(relevance|popular|recent)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),

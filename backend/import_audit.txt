@@ -1,0 +1,47 @@
+============================================================
+IDKit Backend Import Audit Report
+============================================================
+
+Modules scanned: 134
+Circular import chains found: 4
+
+CIRCULAR IMPORTS DETECTED:
+
+Cycle 1:
+  app.models.user -> app.models.feed -> app.models.user
+
+Cycle 2:
+  app.models.payout -> app.models.user -> app.models.payout
+
+Cycle 3:
+  app.models.feed -> app.models.user -> app.models.feed
+
+Cycle 4:
+  app.models.user -> app.models.payout -> app.models.user
+
+
+============================================================
+MODULE DEPENDENCY SUMMARY
+============================================================
+
+Top 20 modules by import count:
+  app.models: 9 imports
+  app.services.podcast.generator: 9 imports
+  app.services.inbox.unified_inbox: 8 imports
+  app.services.analytics.unified_analytics: 8 imports
+  app.services.podcast.distributor: 8 imports
+  app.services.automation.auto_reply: 8 imports
+  app.services.gdpr.service: 8 imports
+  app.api.v1.payouts: 6 imports
+  app.api.v1.privacy: 6 imports
+  app.api.v1.social: 6 imports
+  app.api.v1.websocket: 6 imports
+  app.services.twin.service: 6 imports
+  app.api.v1.admin: 5 imports
+  app.api.v1.payments: 5 imports
+  app.api.v1.roi: 4 imports
+  app.api.v1.auth: 4 imports
+  app.api.v1.gpu: 4 imports
+  app.api.v1.webhooks_connect: 4 imports
+  app.services.podcast.clip_extractor: 4 imports
+  app.services.podcast: 4 imports

@@ -56,10 +56,10 @@ class PrivacySettingsRequest(BaseModel):
     """Privacy settings update request."""
 
     profile_visibility: Optional[str] = Field(
-        None, regex="^(public|followers|private)$"
+        None, pattern="^(public|followers|private)$"
     )
     activity_visibility: Optional[str] = Field(
-        None, regex="^(public|followers|private)$"
+        None, pattern="^(public|followers|private)$"
     )
     search_visibility: Optional[bool] = None
     analytics_enabled: Optional[bool] = None

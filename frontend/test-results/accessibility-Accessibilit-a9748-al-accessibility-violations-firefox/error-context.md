@@ -1,0 +1,113 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - heading "A/B Testing" [level=1] [ref=e9]
+          - paragraph [ref=e10]: Test content variations to optimize performance
+        - button "Create Test" [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+          - text: Create Test
+      - generic [ref=e15]:
+        - generic [ref=e17]:
+          - img [ref=e19]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: "1"
+            - paragraph [ref=e26]: Active Tests
+        - generic [ref=e28]:
+          - img [ref=e30]
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: "1"
+            - paragraph [ref=e35]: Completed
+        - generic [ref=e37]:
+          - img [ref=e39]
+          - generic [ref=e42]:
+            - paragraph [ref=e43]: 23%
+            - paragraph [ref=e44]: Avg Lift
+        - generic [ref=e46]:
+          - img [ref=e48]
+          - generic [ref=e53]:
+            - paragraph [ref=e54]: 45.2K
+            - paragraph [ref=e55]: Total Participants
+      - generic [ref=e56]:
+        - button "All" [ref=e57] [cursor=pointer]
+        - button "Running" [ref=e58] [cursor=pointer]
+        - button "Completed" [ref=e59] [cursor=pointer]
+        - button "Draft" [ref=e60] [cursor=pointer]
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]:
+                - heading "Summer CTA Test" [level=3] [ref=e66]
+                - generic [ref=e67]: running
+              - paragraph [ref=e68]: "Measuring: clicks"
+            - generic [ref=e69]:
+              - paragraph [ref=e70]: Confidence
+              - paragraph [ref=e71]: 87%
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e76]: Variation A
+                - generic [ref=e77]: Shop Now →
+              - generic [ref=e80]:
+                - generic [ref=e81]: 5.7% rate
+                - generic [ref=e82]: 312 / 5,430
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - generic [ref=e86]: Variation B
+                - generic [ref=e87]: Get 50% Off
+              - generic [ref=e90]:
+                - generic [ref=e91]: 7.8% rate
+                - generic [ref=e92]: 428 / 5,520
+          - generic [ref=e93]:
+            - button "Pause" [ref=e94] [cursor=pointer]
+            - button "End Test" [ref=e95] [cursor=pointer]
+            - button "View Details" [ref=e96] [cursor=pointer]
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e100]:
+                - heading "Email Subject Line" [level=3] [ref=e101]
+                - generic [ref=e102]: completed
+              - paragraph [ref=e103]: "Measuring: conversions"
+            - generic [ref=e104]:
+              - paragraph [ref=e105]: Confidence
+              - paragraph [ref=e106]: 96%
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - generic [ref=e111]: Control
+                - generic [ref=e112]: Check out our new products
+              - generic [ref=e115]:
+                - generic [ref=e116]: 1.2% rate
+                - generic [ref=e117]: 850 / 10,000
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - generic [ref=e120]:
+                  - generic [ref=e121]: Urgency
+                  - generic [ref=e122]:
+                    - img [ref=e123]
+                    - text: Winner
+                - generic [ref=e126]: Last chance! 24 hours only
+              - generic [ref=e129]:
+                - generic [ref=e130]: 1.85% rate
+                - generic [ref=e131]: 1,240 / 10,000
+          - generic [ref=e132]:
+            - button "Apply Winner" [ref=e133] [cursor=pointer]
+            - button "View Details" [ref=e134] [cursor=pointer]
+  - generic [ref=e136]:
+    - img [ref=e137]
+    - generic [ref=e139]: You & apos;re offline
+    - generic [ref=e140]: Changes will sync when online
+  - alert [ref=e141]
+```

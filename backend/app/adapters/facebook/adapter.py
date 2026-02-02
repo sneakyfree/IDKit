@@ -16,14 +16,15 @@ from urllib.parse import urlencode
 import httpx
 
 from app.adapters.interfaces.base import (
+    AccountInfo,
     AnalyticsData,
     BasePlatformAdapter,
     Comment,
-    Message,
+    ContentType,
+    DirectMessage,
     OAuthTokens,
     PublishContent,
     PublishResult,
-    UserProfile,
 )
 
 
@@ -220,7 +221,7 @@ class FacebookAdapter(BasePlatformAdapter):
 
         return response.status_code == 200
 
-    async def get_user_profile(self, access_token: str) -> UserProfile:
+    async def get_user_profile(self, access_token: str) -> AccountInfo:
         """
         Get authenticated user's profile.
 
@@ -242,7 +243,7 @@ class FacebookAdapter(BasePlatformAdapter):
         response.raise_for_status()
         user = response.json()
 
-        return UserProfile(
+        return AccountInfo(
             id=user.get("id"),
             username=None,  # Facebook doesn't have usernames
             display_name=user.get("name"),
@@ -688,7 +689,7 @@ class FacebookAdapter(BasePlatformAdapter):
         access_token: str,
         cursor: Optional[str] = None,
         limit: int = 50,
-    ) -> tuple[list[Message], Optional[str]]:
+    ) -> tuple[list[DirectMessage], Optional[str]]:
         """
         Get Page conversations.
 
@@ -725,7 +726,7 @@ class FacebookAdapter(BasePlatformAdapter):
             conv_id = conversation.get("id")
             for msg in conversation.get("messages", {}).get("data", []):
                 sender = msg.get("from", {})
-                messages.append(Message(
+                messages.append(DirectMessage(
                     id=msg.get("id"),
                     conversation_id=conv_id,
                     text=msg.get("message"),
@@ -745,7 +746,7 @@ class FacebookAdapter(BasePlatformAdapter):
         access_token: str,
         user_id: str,
         text: str,
-    ) -> Optional[Message]:
+    ) -> Optional[DirectMessage]:
         """
         Send a message to a user.
 
@@ -772,7 +773,7 @@ class FacebookAdapter(BasePlatformAdapter):
         response.raise_for_status()
         result = response.json()
 
-        return Message(
+        return DirectMessage(
             id=result.get("message_id"),
             text=text,
             created_at=datetime.utcnow(),

@@ -9,30 +9,41 @@ from fastapi import APIRouter
 from app.api.v1 import (
     admin,
     affiliates,
+    agent_memory,
+    agents,
     analytics,
     auth,
     automation,
+    blockers,
     brand_deals,
     campaigns,
     collaborations,
     competitors,
+    compliance,
     content,
     discovery,
     enterprise,
+    explainability,
     feed,
     gpu,
     inbox,
+    intake,
     media,
     media_kits,
     moderation,
     notifications,
     payments,
+    payouts,
+    performance,
     podcasts,
     posts,
     privacy,
     profiles,
     push,
     repurpose,
+    roi,
+    scenarios,
+    schedule,
     search,
     smart_reply,
     social,
@@ -41,6 +52,7 @@ from app.api.v1 import (
     trends,
     twins,
     viral,
+    revenue,
 )
 
 api_router = APIRouter()
@@ -97,8 +109,14 @@ api_router.include_router(enterprise.router, prefix="/enterprise", tags=["Enterp
 # Payments & Subscriptions
 api_router.include_router(payments.router, prefix="/payments", tags=["Payments"])
 
+# Creator Payouts
+api_router.include_router(payouts.router, prefix="/payouts", tags=["Payouts"])
+
 # Content Moderation
 api_router.include_router(moderation.router, prefix="/moderation", tags=["Moderation"])
+
+# FTC Compliance & Brand Safety
+api_router.include_router(compliance.router, prefix="/compliance", tags=["Compliance"])
 
 # Admin Dashboard
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
@@ -108,3 +126,45 @@ api_router.include_router(search.router, prefix="/search", tags=["Search"])
 
 # Privacy & GDPR
 api_router.include_router(privacy.router, prefix="/privacy", tags=["Privacy"])
+
+# ROI Calculator
+api_router.include_router(roi.router, prefix="/roi", tags=["ROI"])
+
+# Performance Monitoring
+api_router.include_router(performance.router, prefix="/performance", tags=["Performance"])
+
+# Content Scheduling
+api_router.include_router(schedule.router, prefix="/schedule", tags=["Schedule"])
+
+# Creator Onboarding (TurboTax-style Intake)
+api_router.include_router(intake.router, prefix="/intake", tags=["Intake"])
+
+# AI Agent Crew
+api_router.include_router(agents.router, prefix="/agents", tags=["Agents"])
+
+# Scenario Universe & Blockers Engine
+api_router.include_router(scenarios.router, prefix="/scenarios", tags=["Scenarios"])
+api_router.include_router(blockers.router, prefix="/blockers", tags=["Blockers"])
+
+# Multi-View Explainability & Audit
+api_router.include_router(explainability.router, prefix="/api/v1", tags=["Explainability", "Audit"])
+
+# Revenue Intelligence (Phase 6)
+api_router.include_router(revenue.router, tags=["Revenue Intelligence"])
+
+# Agent Memory & Guardrails (Gap Closure)
+api_router.include_router(agent_memory.router, tags=["Agent Memory"])
+
+# Content Calendar (Gap Closure)
+try:
+    from app.api.v1 import calendar
+    api_router.include_router(calendar.router, tags=["Calendar"])
+except ImportError:
+    pass  # Calendar module optional
+
+# Stub Endpoints for New Features (Developer Portal, Contracts, etc.)
+try:
+    from app.api.v1 import stubs
+    api_router.include_router(stubs.router, tags=["Stubs (Development)"])
+except ImportError:
+    pass  # Stubs module optional

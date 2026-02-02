@@ -85,7 +85,7 @@ class UpdateSettingsRequest(BaseModel):
     push_ai_complete: Optional[bool] = None
     email_enabled: Optional[bool] = None
     email_digest_frequency: Optional[str] = Field(
-        None, regex="^(none|instant|daily|weekly)$"
+        None, pattern="^(none|instant|daily|weekly)$"
     )
     quiet_hours: Optional[dict] = None
 
@@ -123,7 +123,7 @@ async def get_notifications(
                 actor_id=n.actor_id,
                 post_id=n.post_id,
                 comment_id=n.comment_id,
-                metadata=n.metadata,
+                metadata=n.notification_data,
                 is_read=n.is_read,
                 created_at=n.created_at.isoformat(),
             )

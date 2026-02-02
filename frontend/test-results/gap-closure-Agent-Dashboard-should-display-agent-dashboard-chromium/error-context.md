@@ -1,0 +1,103 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - heading "AI Agent Dashboard" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Monitor, control, and approve AI agent actions
+      - generic [ref=e11]:
+        - generic [ref=e12]: 2Agents Available
+        - generic [ref=e13]: 3Pending Approvals
+    - generic [ref=e14]:
+      - heading "Submit New Task" [level=2] [ref=e15]:
+        - img [ref=e16]
+        - text: Submit New Task
+      - generic [ref=e18]:
+        - combobox [ref=e19]:
+          - option "Select Agent..." [selected]
+          - option "Content Optimizer"
+          - option "Strategy Agent"
+        - textbox "Describe the task you want the agent to perform..." [ref=e20]
+        - button "Submit Task" [disabled] [ref=e21]
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Agent Capabilities" [level=2] [ref=e24]:
+          - img [ref=e25]
+          - text: Agent Capabilities
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - heading "Content Optimizer" [level=3] [ref=e30]
+            - paragraph [ref=e32]: Analyzes and optimizes content for engagement and reach
+            - generic [ref=e33]:
+              - generic [ref=e34]: 156 tasks
+              - generic [ref=e35]: ~2.3s avg
+          - generic [ref=e36]:
+            - heading "Analytics Agent" [level=3] [ref=e38]
+            - paragraph [ref=e40]: Gathers and analyzes performance metrics across platforms
+            - generic [ref=e41]:
+              - generic [ref=e42]: 89 tasks
+              - generic [ref=e43]: ~4.1s avg
+          - generic [ref=e44]:
+            - heading "Strategy Agent" [level=3] [ref=e46]
+            - paragraph [ref=e48]: Provides growth strategy recommendations based on data
+            - generic [ref=e49]:
+              - generic [ref=e50]: 234 tasks
+              - generic [ref=e51]: ~5.8s avg
+          - generic [ref=e52]:
+            - heading "Pricing Agent" [level=3] [ref=e54]
+            - paragraph [ref=e56]: Recommends optimal pricing for brand deals and sponsorships
+            - generic [ref=e57]:
+              - generic [ref=e58]: 67 tasks
+              - generic [ref=e59]: ~3.2s avg
+      - generic [ref=e60]:
+        - heading "Pending Approvals" [level=2] [ref=e61]:
+          - img [ref=e62]
+          - text: Pending Approvals
+        - generic [ref=e64]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]: Content Optimizer
+                - generic [ref=e70]: HIGH
+                - generic [ref=e71]: 2 min ago
+              - paragraph [ref=e72]: "Rewrite caption for TikTok post #342 to improve engagement"
+              - generic [ref=e73]: content rewrite
+            - generic [ref=e74]:
+              - button "Approve" [ref=e75] [cursor=pointer]
+              - button "Reject" [ref=e76] [cursor=pointer]
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - generic [ref=e81]: Strategy Agent
+                - generic [ref=e82]: MEDIUM
+                - generic [ref=e83]: 15 min ago
+              - paragraph [ref=e84]: Publish 3-month growth strategy to creator dashboard
+              - generic [ref=e85]: growth plan
+            - generic [ref=e86]:
+              - button "Approve" [ref=e87] [cursor=pointer]
+              - button "Reject" [ref=e88] [cursor=pointer]
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - generic [ref=e93]: Pricing Agent
+                - generic [ref=e94]: HIGH
+                - generic [ref=e95]: 1 hour ago
+              - paragraph [ref=e96]: Update sponsored post rate from $500 to $750 based on market analysis
+              - generic [ref=e97]: rate update
+            - generic [ref=e98]:
+              - button "Approve" [ref=e99] [cursor=pointer]
+              - button "Reject" [ref=e100] [cursor=pointer]
+  - generic [ref=e102]:
+    - img [ref=e103]
+    - generic [ref=e105]: You & apos;re offline
+    - generic [ref=e106]: Changes will sync when online
+  - alert [ref=e107]
+```

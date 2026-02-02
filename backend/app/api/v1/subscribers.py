@@ -743,7 +743,7 @@ async def export_subscribers(
     list_id: Optional[UUID] = None,
     segment_id: Optional[UUID] = None,
     status: Optional[SubscriberStatusEnum] = None,
-    format: str = Query(default="csv", regex="^(csv|json)$"),
+    format: str = Query(default="csv", pattern="^(csv|json)$"),
     # current_user = Depends(get_current_user)
 ):
     """

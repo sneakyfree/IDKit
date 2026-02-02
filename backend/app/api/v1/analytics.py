@@ -521,3 +521,176 @@ async def get_platform_analytics(
         watch_time_seconds=platform_data.watch_time_seconds,
         posts_count=platform_data.posts_count,
     )
+
+
+class ExportFormat(str):
+    CSV = "csv"
+    JSON = "json"
+
+
+class ExportResponse(BaseModel):
+    """Export data response."""
+    format: str
+    filename: str
+    data: str  # Base64 encoded for CSV, JSON string for JSON
+    generated_at: datetime
+
+
+@router.get("/export", response_model=ExportResponse)
+async def export_analytics(
+    format: str = Query("csv", description="Export format: csv or json"),
+    start_date: Optional[datetime] = Query(None, description="Start date"),
+    end_date: Optional[datetime] = Query(None, description="End date"),
+    platforms: Optional[List[str]] = Query(None, description="Filter by platforms"),
+    include_timeseries: bool = Query(True, description="Include daily time series data"),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Export analytics data as CSV or JSON.
+    
+    Includes overview metrics, platform breakdown, and optionally time series.
+    """
+    import csv
+    import io
+    import json
+    import base64
+
+    if format not in ["csv", "json"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid format. Valid options: csv, json"
+        )
+
+    # Default to last 30 days
+    if not end_date:
+        end_date = datetime.now(timezone.utc)
+    if not start_date:
+        start_date = end_date - timedelta(days=30)
+
+    service = UnifiedAnalyticsService(db)
+
+    # Get metrics
+    metrics = await service.get_unified_metrics(
+        user_id=current_user.id,
+        start_date=start_date,
+        end_date=end_date,
+        platforms=platforms,
+    )
+
+    # Get time series for engagement if requested
+    timeseries = []
+    if include_timeseries:
+        timeseries = await service.get_time_series(
+            user_id=current_user.id,
+            metric=MetricType.ENGAGEMENT,
+            start_date=start_date,
+            end_date=end_date,
+            granularity="day",
+            platforms=platforms,
+        )
+
+    # Build export data
+    export_data = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "period": {
+            "start": start_date.isoformat(),
+            "end": end_date.isoformat(),
+        },
+        "overview": {
+            "total_impressions": metrics.total_impressions,
+            "total_reach": metrics.total_reach,
+            "total_engagement": metrics.total_engagement,
+            "total_likes": metrics.total_likes,
+            "total_comments": metrics.total_comments,
+            "total_shares": metrics.total_shares,
+            "total_saves": metrics.total_saves,
+            "total_clicks": metrics.total_clicks,
+            "total_followers": metrics.total_followers,
+            "total_follower_change": metrics.total_follower_change,
+            "total_views": metrics.total_views,
+            "total_watch_time_seconds": metrics.total_watch_time_seconds,
+            "total_posts": metrics.total_posts,
+            "average_engagement_rate": metrics.average_engagement_rate,
+        },
+        "platform_breakdown": [
+            {
+                "platform": p.platform,
+                "account_name": p.account_name,
+                "impressions": p.impressions,
+                "reach": p.reach,
+                "engagement": p.engagement,
+                "engagement_rate": p.engagement_rate,
+                "likes": p.likes,
+                "comments": p.comments,
+                "shares": p.shares,
+                "saves": p.saves,
+                "clicks": p.clicks,
+                "followers": p.followers,
+                "follower_change": p.follower_change,
+                "views": p.views,
+                "watch_time_seconds": p.watch_time_seconds,
+                "posts_count": p.posts_count,
+            }
+            for p in metrics.platform_breakdown
+        ],
+        "timeseries": [
+            {
+                "date": point.date.isoformat(),
+                "value": point.value,
+                "platform": point.platform,
+            }
+            for point in timeseries
+        ] if timeseries else [],
+    }
+
+    filename_date = start_date.strftime("%Y%m%d") + "-" + end_date.strftime("%Y%m%d")
+
+    if format == "json":
+        data_str = json.dumps(export_data, indent=2)
+        return ExportResponse(
+            format="json",
+            filename=f"analytics_{filename_date}.json",
+            data=data_str,
+            generated_at=datetime.now(timezone.utc),
+        )
+
+    # CSV format
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Overview section
+    writer.writerow(["Analytics Export Report"])
+    writer.writerow(["Period", f"{start_date.date()} to {end_date.date()}"])
+    writer.writerow([])
+    writer.writerow(["Overview Metrics"])
+    for key, value in export_data["overview"].items():
+        writer.writerow([key.replace("_", " ").title(), value])
+    writer.writerow([])
+
+    # Platform breakdown
+    writer.writerow(["Platform Breakdown"])
+    if export_data["platform_breakdown"]:
+        headers = list(export_data["platform_breakdown"][0].keys())
+        writer.writerow(headers)
+        for platform in export_data["platform_breakdown"]:
+            writer.writerow([platform[h] for h in headers])
+    writer.writerow([])
+
+    # Time series
+    if export_data["timeseries"]:
+        writer.writerow(["Daily Engagement"])
+        writer.writerow(["Date", "Value", "Platform"])
+        for point in export_data["timeseries"]:
+            writer.writerow([point["date"], point["value"], point["platform"]])
+
+    csv_content = output.getvalue()
+    encoded = base64.b64encode(csv_content.encode()).decode()
+
+    return ExportResponse(
+        format="csv",
+        filename=f"analytics_{filename_date}.csv",
+        data=encoded,
+        generated_at=datetime.now(timezone.utc),
+    )
+

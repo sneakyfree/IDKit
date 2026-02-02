@@ -456,8 +456,8 @@ async def list_users(
     search: Optional[str] = None,
     subscription_tier: Optional[str] = None,
     is_active: Optional[bool] = None,
-    sort_by: str = Query("created_at", regex="^(created_at|last_login|email|username)$"),
-    sort_order: str = Query("desc", regex="^(asc|desc)$"),
+    sort_by: str = Query("created_at", pattern="^(created_at|last_login|email|username)$"),
+    sort_order: str = Query("desc", pattern="^(asc|desc)$"),
 ):
     """
     List all users with filtering and pagination.

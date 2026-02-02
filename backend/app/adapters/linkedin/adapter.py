@@ -17,14 +17,15 @@ from urllib.parse import urlencode
 import httpx
 
 from app.adapters.interfaces.base import (
+    AccountInfo,
     AnalyticsData,
     BasePlatformAdapter,
     Comment,
-    Message,
+    ContentType,
+    DirectMessage,
     OAuthTokens,
     PublishContent,
     PublishResult,
-    UserProfile,
 )
 
 
@@ -208,7 +209,7 @@ class LinkedInAdapter(BasePlatformAdapter):
 
         return response.status_code == 200
 
-    async def get_user_profile(self, access_token: str) -> UserProfile:
+    async def get_user_profile(self, access_token: str) -> AccountInfo:
         """
         Get authenticated user's profile.
 
@@ -228,7 +229,7 @@ class LinkedInAdapter(BasePlatformAdapter):
         response.raise_for_status()
         user = response.json()
 
-        return UserProfile(
+        return AccountInfo(
             id=user.get("sub"),
             username=None,  # LinkedIn doesn't expose public usernames via API
             display_name=user.get("name"),
@@ -787,7 +788,7 @@ class LinkedInAdapter(BasePlatformAdapter):
         access_token: str,
         cursor: Optional[str] = None,
         limit: int = 50,
-    ) -> tuple[list[Message], Optional[str]]:
+    ) -> tuple[list[DirectMessage], Optional[str]]:
         """
         Get direct messages.
 
@@ -809,7 +810,7 @@ class LinkedInAdapter(BasePlatformAdapter):
         access_token: str,
         user_id: str,
         text: str,
-    ) -> Optional[Message]:
+    ) -> Optional[DirectMessage]:
         """
         Send a direct message.
 

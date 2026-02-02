@@ -308,7 +308,7 @@ async def create_collaboration_request(
 @router.get("/requests", response_model=List[CollaborationRequest])
 async def list_collaboration_requests(
     status: Optional[CollaborationStatusEnum] = None,
-    direction: str = Query(default="all", regex="^(sent|received|all)$"),
+    direction: str = Query(default="all", pattern="^(sent|received|all)$"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
     # current_user = Depends(get_current_user)

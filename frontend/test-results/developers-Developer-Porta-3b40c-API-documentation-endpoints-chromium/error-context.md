@@ -1,0 +1,105 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - heading "Developer Portal" [level=1] [ref=e9]
+          - paragraph [ref=e10]: API keys, documentation, and SDKs
+        - link "Full Documentation" [ref=e11] [cursor=pointer]:
+          - /url: /docs
+          - img [ref=e12]
+          - text: Full Documentation
+      - generic [ref=e14]:
+        - button "API Keys" [ref=e15] [cursor=pointer]
+        - button "API Docs" [active] [ref=e16] [cursor=pointer]
+        - button "SDKs" [ref=e17] [cursor=pointer]
+      - generic [ref=e18]:
+        - paragraph [ref=e20]:
+          - text: "Base URL:"
+          - code [ref=e21]: https://api.idkit.io/v1
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]:
+              - generic [ref=e25]: GET
+              - code [ref=e26]: /api/v1/content
+            - generic [ref=e27]:
+              - generic [ref=e28]: List all content
+              - img [ref=e29]
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]: POST
+              - code [ref=e36]: /api/v1/content
+            - generic [ref=e37]:
+              - generic [ref=e38]: Create new content
+              - img [ref=e39]
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - generic [ref=e45]: GET
+              - code [ref=e46]: "/api/v1/content/{id}"
+            - generic [ref=e47]:
+              - generic [ref=e48]: Get content by ID
+              - img [ref=e49]
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - generic [ref=e55]: PUT
+              - code [ref=e56]: "/api/v1/content/{id}"
+            - generic [ref=e57]:
+              - generic [ref=e58]: Update content
+              - img [ref=e59]
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]: DELETE
+              - code [ref=e66]: "/api/v1/content/{id}"
+            - generic [ref=e67]:
+              - generic [ref=e68]: Delete content
+              - img [ref=e69]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]: GET
+              - code [ref=e76]: /api/v1/analytics
+            - generic [ref=e77]:
+              - generic [ref=e78]: Get analytics data
+              - img [ref=e79]
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - generic [ref=e85]: GET
+              - code [ref=e86]: /api/v1/analytics/export
+            - generic [ref=e87]:
+              - generic [ref=e88]: Export analytics
+              - img [ref=e89]
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - generic [ref=e95]: POST
+              - code [ref=e96]: /api/v1/ai/generate
+            - generic [ref=e97]:
+              - generic [ref=e98]: Generate AI content
+              - img [ref=e99]
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]: GET
+              - code [ref=e106]: /api/v1/twins
+            - generic [ref=e107]:
+              - generic [ref=e108]: List AI twins
+              - img [ref=e109]
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: POST
+              - code [ref=e116]: "/api/v1/twins/{id}/generate"
+            - generic [ref=e117]:
+              - generic [ref=e118]: Generate with twin
+              - img [ref=e119]
+  - generic [ref=e124]:
+    - img [ref=e125]
+    - generic [ref=e127]: You & apos;re offline
+    - generic [ref=e128]: Changes will sync when online
+  - alert [ref=e129]
+```

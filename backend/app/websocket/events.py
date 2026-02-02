@@ -79,6 +79,15 @@ class EventType(str, Enum):
     SOCIAL_POST_FAILED = "social_post_failed"
     SOCIAL_ANALYTICS_UPDATED = "social_analytics_updated"
 
+    # Agent Status events
+    AGENT_STATUS_UPDATE = "agent_status_update"
+    AGENT_TASK_STARTED = "agent_task_started"
+    AGENT_TASK_PROGRESS = "agent_task_progress"
+    AGENT_TASK_COMPLETED = "agent_task_completed"
+    AGENT_TASK_FAILED = "agent_task_failed"
+    AGENT_CREW_STATUS = "agent_crew_status"
+    AGENT_COLLABORATION_UPDATE = "agent_collaboration_update"
+
 
 class WebSocketEvent(BaseModel):
     """Base WebSocket event model."""
@@ -443,3 +452,145 @@ class TwinEvent(WebSocketEvent):
                 "duration_seconds": duration_seconds,
             }
         )
+
+
+class AgentStatusEvent(WebSocketEvent):
+    """Agent status and task progress event."""
+
+    type: EventType = EventType.AGENT_STATUS_UPDATE
+    data: dict = Field(default_factory=dict)
+
+    @classmethod
+    def status_update(
+        cls,
+        agent_id: str,
+        agent_name: str,
+        agent_type: str,
+        status: str,
+        current_task: Optional[str] = None,
+        tasks_completed: int = 0,
+        autonomy_level: str = "medium",
+    ) -> "AgentStatusEvent":
+        """Create an agent status update event."""
+        return cls(
+            type=EventType.AGENT_STATUS_UPDATE,
+            data={
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "agent_type": agent_type,
+                "status": status,
+                "current_task": current_task,
+                "tasks_completed": tasks_completed,
+                "autonomy_level": autonomy_level,
+            }
+        )
+
+    @classmethod
+    def task_started(
+        cls,
+        agent_id: str,
+        agent_name: str,
+        task_id: UUID,
+        task_type: str,
+        task_description: str,
+    ) -> "AgentStatusEvent":
+        """Create a task started event."""
+        return cls(
+            type=EventType.AGENT_TASK_STARTED,
+            data={
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "task_id": str(task_id),
+                "task_type": task_type,
+                "task_description": task_description,
+                "started_at": datetime.utcnow().isoformat(),
+            }
+        )
+
+    @classmethod
+    def task_progress(
+        cls,
+        agent_id: str,
+        task_id: UUID,
+        progress: float,
+        stage: str,
+        message: Optional[str] = None,
+    ) -> "AgentStatusEvent":
+        """Create a task progress event."""
+        return cls(
+            type=EventType.AGENT_TASK_PROGRESS,
+            data={
+                "agent_id": agent_id,
+                "task_id": str(task_id),
+                "progress": progress,
+                "stage": stage,
+                "message": message,
+            }
+        )
+
+    @classmethod
+    def task_completed(
+        cls,
+        agent_id: str,
+        agent_name: str,
+        task_id: UUID,
+        result_summary: str,
+        duration_seconds: float,
+        requires_approval: bool = False,
+    ) -> "AgentStatusEvent":
+        """Create a task completed event."""
+        return cls(
+            type=EventType.AGENT_TASK_COMPLETED,
+            data={
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "task_id": str(task_id),
+                "result_summary": result_summary,
+                "duration_seconds": duration_seconds,
+                "requires_approval": requires_approval,
+                "completed_at": datetime.utcnow().isoformat(),
+            }
+        )
+
+    @classmethod
+    def crew_status(
+        cls,
+        agents: list[dict],
+        active_tasks: int,
+        pending_approvals: int,
+        tasks_completed_today: int,
+    ) -> "AgentStatusEvent":
+        """Create a crew status update (all agents summary)."""
+        return cls(
+            type=EventType.AGENT_CREW_STATUS,
+            data={
+                "agents": agents,
+                "active_tasks": active_tasks,
+                "pending_approvals": pending_approvals,
+                "tasks_completed_today": tasks_completed_today,
+            }
+        )
+
+    @classmethod
+    def collaboration_update(
+        cls,
+        collaboration_id: UUID,
+        participating_agents: list[str],
+        current_phase: str,
+        handoff_from: Optional[str] = None,
+        handoff_to: Optional[str] = None,
+    ) -> "AgentStatusEvent":
+        """Create a multi-agent collaboration update."""
+        return cls(
+            type=EventType.AGENT_COLLABORATION_UPDATE,
+            data={
+                "collaboration_id": str(collaboration_id),
+                "participating_agents": participating_agents,
+                "current_phase": current_phase,
+                "handoff": {
+                    "from": handoff_from,
+                    "to": handoff_to,
+                } if handoff_from or handoff_to else None,
+            }
+        )
+

@@ -1,0 +1,77 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - heading "Sponsorship Management" [level=1] [ref=e9]
+          - paragraph [ref=e10]: Track sponsors, deals, and revenue
+        - button "Add Sponsor" [active] [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+          - text: Add Sponsor
+      - generic [ref=e15]:
+        - generic [ref=e17]:
+          - img [ref=e19]
+          - generic [ref=e22]:
+            - paragraph [ref=e23]: $0
+            - paragraph [ref=e24]: Total Revenue
+        - generic [ref=e26]:
+          - img [ref=e28]
+          - generic [ref=e34]:
+            - paragraph [ref=e35]: "0"
+            - paragraph [ref=e36]: Active Deals
+        - generic [ref=e38]:
+          - img [ref=e40]
+          - generic [ref=e43]:
+            - paragraph [ref=e44]: $0
+            - paragraph [ref=e45]: Pending Payments
+        - generic [ref=e47]:
+          - img [ref=e49]
+          - generic [ref=e57]:
+            - paragraph [ref=e58]: "0"
+            - paragraph [ref=e59]: Sponsors
+      - generic [ref=e60]:
+        - button "all" [ref=e61] [cursor=pointer]
+        - button "active" [ref=e62] [cursor=pointer]
+        - button "negotiating" [ref=e63] [cursor=pointer]
+        - button "completed" [ref=e64] [cursor=pointer]
+        - button "paused" [ref=e65] [cursor=pointer]
+      - generic [ref=e66]:
+        - img [ref=e67]
+        - heading "No sponsors yet" [level=3] [ref=e75]
+        - paragraph [ref=e76]: Start tracking your sponsorship relationships.
+        - button "Add Sponsor" [ref=e77] [cursor=pointer]:
+          - img [ref=e78]
+          - text: Add Sponsor
+      - generic [ref=e82]:
+        - heading "Add Sponsor" [level=2] [ref=e83]
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]: Company Name *
+            - textbox [ref=e87]
+          - generic [ref=e88]:
+            - generic [ref=e89]: Industry
+            - textbox "e.g., Technology, Fashion" [ref=e90]
+          - generic [ref=e91]:
+            - generic [ref=e92]: Contact Name
+            - textbox [ref=e93]
+          - generic [ref=e94]:
+            - generic [ref=e95]: Contact Email
+            - textbox [ref=e96]
+          - generic [ref=e97]:
+            - button "Cancel" [ref=e98] [cursor=pointer]
+            - button "Add Sponsor" [disabled] [ref=e99]
+  - generic [ref=e101]:
+    - img [ref=e102]
+    - generic [ref=e104]: You & apos;re offline
+    - generic [ref=e105]: Changes will sync when online
+  - alert [ref=e106]
+```

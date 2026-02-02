@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.notification import Notification, NotificationType, NotificationSettings
 from app.models.feed import UserProfile, FeedPost
-from app.utils.redis import redis_client
+from app.utils.redis import get_redis
 
 
 class NotificationService:
@@ -59,7 +59,7 @@ class NotificationService:
             actor_id=actor_id,
             post_id=post_id,
             comment_id=comment_id,
-            metadata=metadata or {},
+            notification_data=metadata or {},
         )
 
         self.db.add(notification)
@@ -263,8 +263,9 @@ class NotificationService:
     async def get_unread_count(self, user_id: uuid.UUID) -> int:
         """Get unread notification count for a user."""
         # Try cache first
+        redis = await get_redis()
         cache_key = f"notif:unread:{user_id}"
-        cached = await redis_client.get(cache_key)
+        cached = await redis.get(cache_key)
         if cached is not None:
             return int(cached)
 
@@ -278,7 +279,7 @@ class NotificationService:
         count = result.scalar() or 0
 
         # Cache for 5 minutes
-        await redis_client.setex(cache_key, 300, str(count))
+        await redis.setex(cache_key, 300, str(count))
 
         return count
 
@@ -333,6 +334,7 @@ class NotificationService:
 
     async def _publish_notification(self, notification: Notification):
         """Publish notification for real-time delivery via WebSocket."""
+        redis = await get_redis()
         channel = f"notifications:{notification.user_id}"
         message = {
             "id": str(notification.id),
@@ -340,17 +342,19 @@ class NotificationService:
             "title": notification.title,
             "body": notification.body,
             "created_at": notification.created_at.isoformat(),
-            "metadata": notification.metadata,
+            "metadata": notification.notification_data,
         }
 
-        await redis_client.publish(channel, str(message))
+        await redis.publish(channel, str(message))
 
     async def _increment_unread_count(self, user_id: uuid.UUID):
         """Increment cached unread count."""
+        redis = await get_redis()
         cache_key = f"notif:unread:{user_id}"
-        await redis_client.incr(cache_key)
+        await redis.incr(cache_key)
 
     async def _clear_unread_count(self, user_id: uuid.UUID):
         """Clear cached unread count."""
+        redis = await get_redis()
         cache_key = f"notif:unread:{user_id}"
-        await redis_client.delete(cache_key)
+        await redis.delete(cache_key)

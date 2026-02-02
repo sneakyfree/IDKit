@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link [ref=e8] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e9]
+        - heading "Privacy & Data" [level=1] [ref=e11]
+      - generic [ref=e12]:
+        - button "Settings" [ref=e13] [cursor=pointer]
+        - button "Your Data" [ref=e14] [cursor=pointer]
+        - button "Your Rights" [ref=e15] [cursor=pointer]
+    - navigation [ref=e16]:
+      - generic [ref=e17]:
+        - link "Home" [ref=e18] [cursor=pointer]:
+          - /url: /
+          - img [ref=e19]
+          - generic [ref=e22]: Home
+        - link "Discover" [ref=e23] [cursor=pointer]:
+          - /url: /discover
+          - img [ref=e24]
+          - generic [ref=e27]: Discover
+        - button [ref=e28] [cursor=pointer]:
+          - img [ref=e30]
+        - link "Inbox" [ref=e33] [cursor=pointer]:
+          - /url: /inbox
+          - img [ref=e34]
+          - generic [ref=e36]: Inbox
+        - link "Profile" [ref=e37] [cursor=pointer]:
+          - /url: /profile
+          - img [ref=e38]
+          - generic [ref=e41]: Profile
+  - generic [ref=e43]:
+    - img [ref=e44]
+    - generic [ref=e46]: You & apos;re offline
+    - generic [ref=e47]: Changes will sync when online
+  - alert [ref=e48]
+```

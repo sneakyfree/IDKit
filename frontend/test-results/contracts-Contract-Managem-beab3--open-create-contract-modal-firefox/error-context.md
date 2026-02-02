@@ -1,0 +1,81 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - heading "Contract Management" [level=1] [ref=e9]
+          - paragraph [ref=e10]: Track and manage your legal agreements
+        - button "New Contract" [active] [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+          - text: New Contract
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: "0"
+          - paragraph [ref=e18]: Active Contracts
+        - generic [ref=e19]:
+          - paragraph [ref=e20]: "0"
+          - paragraph [ref=e21]: Pending Signature
+        - generic [ref=e22]:
+          - paragraph [ref=e23]: $0
+          - paragraph [ref=e24]: Total Contract Value
+      - generic [ref=e25]:
+        - button "all" [ref=e26] [cursor=pointer]
+        - button "draft" [ref=e27] [cursor=pointer]
+        - button "pending" [ref=e28] [cursor=pointer]
+        - button "signed" [ref=e29] [cursor=pointer]
+        - button "expired" [ref=e30] [cursor=pointer]
+        - button "cancelled" [ref=e31] [cursor=pointer]
+      - generic [ref=e32]:
+        - img [ref=e33]
+        - heading "No contracts found" [level=3] [ref=e39]
+        - paragraph [ref=e40]: Create your first contract or agreement.
+        - button "Create Contract" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - text: Create Contract
+      - generic [ref=e46]:
+        - heading "Create Contract" [level=2] [ref=e47]
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: Contract Title *
+            - textbox [ref=e51]
+          - generic [ref=e52]:
+            - generic [ref=e53]: Type
+            - combobox [ref=e54]:
+              - option "Sponsorship Agreement" [selected]
+              - option "Collaboration Agreement"
+              - option "Content Licensing"
+              - option "Non-Disclosure Agreement"
+              - option "Custom Contract"
+          - generic [ref=e55]:
+            - generic [ref=e56]: Contract Value ($)
+            - spinbutton [ref=e57]
+          - generic [ref=e58]:
+            - generic [ref=e59]:
+              - generic [ref=e60]: Start Date *
+              - textbox [ref=e61]
+            - generic [ref=e62]:
+              - generic [ref=e63]: End Date
+              - textbox [ref=e64]
+          - generic [ref=e65]:
+            - paragraph [ref=e66]: Other Party
+            - generic [ref=e67]:
+              - textbox "Company/Person Name" [ref=e68]
+              - textbox "email@example.com" [ref=e69]
+          - generic [ref=e70]:
+            - button "Cancel" [ref=e71] [cursor=pointer]
+            - button "Create" [disabled] [ref=e72]
+  - generic [ref=e74]:
+    - img [ref=e75]
+    - generic [ref=e77]: You & apos;re offline
+    - generic [ref=e78]: Changes will sync when online
+  - alert [ref=e79]
+```

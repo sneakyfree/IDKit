@@ -1,0 +1,107 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to main content" [ref=e2] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e3] [cursor=pointer]:
+      - /url: "#main-navigation"
+  - status [ref=e4]
+  - main [ref=e5]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - heading "Content Schedule" [level=1] [ref=e10]
+          - paragraph [ref=e11]: Plan and manage your content calendar
+        - button "Schedule Post" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+          - generic [ref=e16]: Schedule Post
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - button "Previous" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - button "Today" [ref=e22] [cursor=pointer]
+          - button "Next" [ref=e23] [cursor=pointer]:
+            - img [ref=e24]
+        - heading "January 2026" [level=2] [ref=e26]
+        - generic [ref=e27]:
+          - button "Month" [ref=e28] [cursor=pointer]
+          - button "Week" [ref=e29] [cursor=pointer]
+          - button "Day" [ref=e30] [cursor=pointer]
+        - combobox [ref=e31]:
+          - option "Eastern" [selected]
+          - option "Central"
+          - option "Mountain"
+          - option "Pacific"
+          - option "UTC"
+          - option "London"
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: Sun
+          - generic [ref=e36]: Mon
+          - generic [ref=e37]: Tue
+          - generic [ref=e38]: Wed
+          - generic [ref=e39]: Thu
+          - generic [ref=e40]: Fri
+          - generic [ref=e41]: Sat
+        - generic [ref=e42]:
+          - generic [ref=e43]: "28"
+          - generic [ref=e44]: "29"
+          - generic [ref=e45]: "30"
+          - generic [ref=e46]: "31"
+          - generic [ref=e47]: "1"
+          - generic [ref=e48]: "2"
+          - generic [ref=e49]: "3"
+        - generic [ref=e50]:
+          - generic [ref=e51]: "4"
+          - generic [ref=e52]: "5"
+          - generic [ref=e53]: "6"
+          - generic [ref=e54]: "7"
+          - generic [ref=e55]: "8"
+          - generic [ref=e56]: "9"
+          - generic [ref=e57]: "10"
+        - generic [ref=e58]:
+          - generic [ref=e59]: "11"
+          - generic [ref=e60]: "12"
+          - generic [ref=e61]: "13"
+          - generic [ref=e62]: "14"
+          - generic [ref=e63]: "15"
+          - generic [ref=e64]: "16"
+          - generic [ref=e65]: "17"
+        - generic [ref=e66]:
+          - generic [ref=e67]: "18"
+          - generic [ref=e68]: "19"
+          - generic [ref=e69]: "20"
+          - generic [ref=e70]: "21"
+          - generic [ref=e71]: "22"
+          - generic [ref=e72]: "23"
+          - generic [ref=e73]: "24"
+        - generic [ref=e74]:
+          - generic [ref=e75]: "25"
+          - generic [ref=e76]: "26"
+          - generic [ref=e77]:
+            - text: "27"
+            - button "Summer sale post" [ref=e79] [cursor=pointer]
+          - generic [ref=e80]:
+            - text: "28"
+            - button "Product video" [ref=e82] [cursor=pointer]
+          - generic [ref=e83]:
+            - text: "29"
+            - button "Blog announcement" [ref=e85] [cursor=pointer]
+          - generic [ref=e86]: "30"
+          - generic [ref=e87]: "31"
+      - generic [ref=e88]:
+        - generic [ref=e91]: instagram
+        - generic [ref=e94]: tiktok
+        - generic [ref=e97]: youtube
+        - generic [ref=e100]: twitter
+        - generic [ref=e103]: linkedin
+        - generic [ref=e106]: facebook
+  - generic [ref=e108]:
+    - img [ref=e109]
+    - generic [ref=e111]: You & apos;re offline
+    - generic [ref=e112]: Changes will sync when online
+  - alert [ref=e113]
+```

@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
-from app.models.database import async_session_maker
+from app.models.database import async_session_factory
 from app.models.user import User
 
 
@@ -51,7 +51,7 @@ async def websocket_auth(
             return None
 
         # Fetch user from database
-        async with async_session_maker() as db:
+        async with async_session_factory() as db:
             result = await db.execute(
                 select(User).where(User.id == UUID(user_id))
             )
