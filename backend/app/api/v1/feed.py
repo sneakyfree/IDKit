@@ -235,3 +235,59 @@ async def get_trending_feed(
         page_size=page_size,
         has_more=has_more,
     )
+
+
+# ==================== Create Post (for frontend compatibility) ====================
+
+
+class CreatePostRequest(BaseModel):
+    """Request to create a new post (feed/posts endpoint)."""
+    post_type: str = "text"
+    content_text: Optional[str] = None
+    media_urls: List[str] = []
+    thumbnail_url: Optional[str] = None
+    hashtags: List[str] = []
+    mentions: List[str] = []
+    visibility: str = "public"
+    ai_generated: bool = False
+
+
+@router.post("/posts", response_model=PostResponse, status_code=201)
+async def create_post_via_feed(
+    request: CreatePostRequest,
+    db: DB,
+    current_user: CurrentUser,
+):
+    """
+    Create a new post via /feed/posts endpoint.
+    This is for frontend compatibility - redirects to main posts logic.
+    """
+    service = FeedService(db)
+
+    post = await service.create_post(
+        user_id=current_user.id,
+        post_type=request.post_type,
+        content_text=request.content_text,
+        media_urls=request.media_urls or [],
+        thumbnail_url=request.thumbnail_url,
+        hashtags=request.hashtags or [],
+        mentions=request.mentions or [],
+        visibility=request.visibility,
+        ai_generated=request.ai_generated,
+    )
+
+    return PostResponse(
+        id=post.id,
+        post_type=post.post_type,
+        content_text=post.content_text,
+        media_urls=post.media_urls,
+        thumbnail_url=post.thumbnail_url,
+        view_count=post.view_count,
+        like_count=post.like_count,
+        comment_count=post.comment_count,
+        share_count=post.share_count,
+        save_count=post.save_count,
+        hashtags=post.hashtags,
+        ai_generated=post.ai_generated,
+        created_at=post.created_at.isoformat(),
+    )
