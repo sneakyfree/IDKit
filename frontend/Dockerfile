@@ -13,7 +13,7 @@ WORKDIR /app
 
 # Install dependencies based on lockfile
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production=false
+RUN npm ci
 
 # =============================================================================
 # Builder Stage

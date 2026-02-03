@@ -1,4 +1,4 @@
-// File: /home/user1-gpu/Desktop/grants_folder/IDKit/frontend/src/app/page.tsx
+// File: /root/clawd/IDKit-review/frontend/src/app/page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

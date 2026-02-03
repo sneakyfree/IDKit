@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"lib/i18n.ts -> ../../messages/en.json\":{\"id\":\"lib/i18n.ts -> ../../messages/en.json\",\"files\":[\"static/chunks/_app-pages-browser_messages_en_json.js\"]}}"
+self.__REACT_LOADABLE_MANIFEST="{}"

@@ -1,0 +1,95 @@
+# IDKit Preview Deployment - Development Mode
+# Uses ports 3003 (frontend) and 8002 (backend) to avoid conflicts
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: idkit-postgres-preview
+    environment:
+      POSTGRES_USER: idkit
+      POSTGRES_PASSWORD: idkit_preview_secure_2025
+      POSTGRES_DB: idkit
+    volumes:
+      - idkit_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U idkit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - idkit-preview
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: idkit-redis-preview
+    command: redis-server --requirepass idkit_redis_preview_2025 --appendonly yes
+    volumes:
+      - idkit_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "idkit_redis_preview_2025", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - idkit-preview
+    restart: unless-stopped
+
+  # Backend API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: idkit-api-preview
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql+asyncpg://idkit:idkit_preview_secure_2025@postgres:5432/idkit
+      - REDIS_URL=redis://:idkit_redis_preview_2025@redis:6379/0
+      - JWT_SECRET_KEY=idkit_preview_jwt_secret_key_change_later
+      - GOOGLE_CLIENT_ID=1064757094532-2ipqud99qqmf6s9jg4con9q1fq4qqste.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - GOOGLE_REDIRECT_URI=https://idkit.thewindstorm.uk/api/v1/auth/google/callback
+      - ENVIRONMENT=development
+    ports:
+      - "8002:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - idkit-preview
+    restart: unless-stopped
+
+  # Frontend - Development Mode for faster startup
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: idkit-frontend-preview
+    environment:
+      - NEXT_PUBLIC_API_URL=https://idkit-api.thewindstorm.uk
+      - NODE_ENV=development
+    ports:
+      - "3004:3000"
+    depends_on:
+      - api
+    networks:
+      - idkit-preview
+    restart: unless-stopped
+
+networks:
+  idkit-preview:
+    driver: bridge
+
+volumes:
+  idkit_postgres_data:
+  idkit_redis_data:

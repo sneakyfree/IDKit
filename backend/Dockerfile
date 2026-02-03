@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy project files
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 COPY app ./app
 
 # Install dependencies
@@ -53,7 +53,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy application code
 COPY --chown=appuser:appgroup app ./app
 COPY --chown=appuser:appgroup alembic.ini ./
-COPY --chown=appuser:appgroup migrations ./migrations
+COPY --chown=appuser:appgroup alembic ./alembic
 
 # Create necessary directories
 RUN mkdir -p /app/cache && chown -R appuser:appgroup /app
