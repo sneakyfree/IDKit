@@ -7,7 +7,7 @@ Uses Pydantic Settings for type-safe configuration with environment variable sup
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, computed_field
+from pydantic import Field, computed_field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -48,8 +48,7 @@ class Settings(BaseSettings):
 
     # JWT Authentication
     jwt_secret_key: str = Field(
-        default="your-super-secret-key-change-in-production",
-        description="Secret key for JWT encoding",
+        description="Secret key for JWT encoding. REQUIRED — set via JWT_SECRET_KEY env var.",
     )
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24  # 24 hours
@@ -136,6 +135,18 @@ class Settings(BaseSettings):
     def is_production(self) -> bool:
         """Check if running in production."""
         return self.environment == "production"
+
+    @model_validator(mode="after")
+    def validate_secrets(self) -> "Settings":
+        """Ensure JWT secret is safe for production use."""
+        if "change-in-production" in self.jwt_secret_key:
+            raise ValueError(
+                "JWT_SECRET_KEY must be changed from default. "
+                "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+            )
+        if len(self.jwt_secret_key) < 32:
+            raise ValueError("JWT_SECRET_KEY must be at least 32 characters")
+        return self
 
 
 @lru_cache

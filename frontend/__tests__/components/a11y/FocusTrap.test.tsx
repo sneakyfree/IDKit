@@ -4,6 +4,25 @@ describe("FocusTrap", () => {
   beforeEach(() => {
     // Reset focus to body
     document.body.focus();
+    // JSDOM always returns null for offsetParent, which causes
+    // getFocusableElements() to filter out all elements.
+    // Stub offsetParent so focus trap logic works in tests.
+    Object.defineProperty(HTMLElement.prototype, "offsetParent", {
+      configurable: true,
+      get() {
+        return this.parentElement;
+      },
+    });
+  });
+
+  afterEach(() => {
+    // Restore default offsetParent behavior
+    Object.defineProperty(HTMLElement.prototype, "offsetParent", {
+      configurable: true,
+      get() {
+        return null;
+      },
+    });
   });
 
   it("should render children", async () => {

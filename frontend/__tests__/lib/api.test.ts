@@ -3,6 +3,7 @@
  * 
  * @jest-environment jsdom
  */
+export { };
 
 // Mock fetch globally
 const mockFetch = jest.fn();

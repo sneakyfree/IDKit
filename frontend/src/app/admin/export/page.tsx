@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Download, FileText, Database, Users, Calendar, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 
 /**
  * TASK 5.1.5: Admin Data Export UI
@@ -31,19 +32,29 @@ const EXPORT_TYPES: { type: ExportType; label: string; description: string; icon
     { type: "audit_logs", label: "Audit Logs", description: "System activity and security events", icon: <Calendar className="w-5 h-5" /> },
 ];
 
-const MOCK_JOBS: ExportJob[] = [
-    { id: "1", type: "users", status: "completed", format: "csv", createdAt: "2024-01-10T10:00:00Z", completedAt: "2024-01-10T10:05:00Z", downloadUrl: "#", size: "2.4 MB" },
-    { id: "2", type: "analytics", status: "completed", format: "json", createdAt: "2024-01-09T15:30:00Z", completedAt: "2024-01-09T15:45:00Z", downloadUrl: "#", size: "15.8 MB" },
-    { id: "3", type: "audit_logs", status: "failed", format: "csv", createdAt: "2024-01-08T09:00:00Z", error: "Export timeout - too much data" },
-];
 
 export default function AdminExportPage() {
-    const [jobs, setJobs] = useState<ExportJob[]>(MOCK_JOBS);
+    const [jobs, setJobs] = useState<ExportJob[]>([]);
     const [selectedType, setSelectedType] = useState<ExportType | null>(null);
     const [format, setFormat] = useState<"csv" | "json" | "xlsx">("csv");
     const [dateRange, setDateRange] = useState({ start: "", end: "" });
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [loadingJobs, setLoadingJobs] = useState(true);
+
+    useEffect(() => {
+        async function fetchJobs() {
+            try {
+                const response = await apiRequest<ExportJob[]>("/api/v1/admin/exports");
+                setJobs(Array.isArray(response) ? response : []);
+            } catch {
+                setJobs([]);
+            } finally {
+                setLoadingJobs(false);
+            }
+        }
+        fetchJobs();
+    }, []);
 
     const handleStartExport = async () => {
         if (!selectedType) return;
@@ -158,8 +169,8 @@ export default function AdminExportPage() {
                                 key={type}
                                 onClick={() => setSelectedType(type)}
                                 className={`p-4 rounded-xl text-left transition-colors ${selectedType === type
-                                        ? "bg-purple-600 ring-2 ring-purple-400"
-                                        : "bg-gray-800 hover:bg-gray-700"
+                                    ? "bg-purple-600 ring-2 ring-purple-400"
+                                    : "bg-gray-800 hover:bg-gray-700"
                                     }`}
                             >
                                 <div className="flex items-center gap-2 mb-2">

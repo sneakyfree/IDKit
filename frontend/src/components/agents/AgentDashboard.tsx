@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiRequest } from '@/lib/api';
 
 interface AgentCapability {
     id: string;
@@ -21,75 +22,32 @@ interface PendingApproval {
     status: 'pending' | 'approved' | 'rejected';
 }
 
-// Mock data for demo
-const MOCK_AGENTS: AgentCapability[] = [
-    {
-        id: '1',
-        name: 'Content Optimizer',
-        description: 'Analyzes and optimizes content for engagement and reach',
-        status: 'available',
-        tasksCompleted: 156,
-        avgResponseTime: 2.3,
-    },
-    {
-        id: '2',
-        name: 'Analytics Agent',
-        description: 'Gathers and analyzes performance metrics across platforms',
-        status: 'busy',
-        tasksCompleted: 89,
-        avgResponseTime: 4.1,
-    },
-    {
-        id: '3',
-        name: 'Strategy Agent',
-        description: 'Provides growth strategy recommendations based on data',
-        status: 'available',
-        tasksCompleted: 234,
-        avgResponseTime: 5.8,
-    },
-    {
-        id: '4',
-        name: 'Pricing Agent',
-        description: 'Recommends optimal pricing for brand deals and sponsorships',
-        status: 'offline',
-        tasksCompleted: 67,
-        avgResponseTime: 3.2,
-    },
-];
-
-const MOCK_PENDING: PendingApproval[] = [
-    {
-        id: 'ap-1',
-        agentName: 'Content Optimizer',
-        taskType: 'content_rewrite',
-        description: 'Rewrite caption for TikTok post #342 to improve engagement',
-        priority: 'high',
-        createdAt: '2 min ago',
-        status: 'pending',
-    },
-    {
-        id: 'ap-2',
-        agentName: 'Strategy Agent',
-        taskType: 'growth_plan',
-        description: 'Publish 3-month growth strategy to creator dashboard',
-        priority: 'medium',
-        createdAt: '15 min ago',
-        status: 'pending',
-    },
-    {
-        id: 'ap-3',
-        agentName: 'Pricing Agent',
-        taskType: 'rate_update',
-        description: 'Update sponsored post rate from $500 to $750 based on market analysis',
-        priority: 'high',
-        createdAt: '1 hour ago',
-        status: 'pending',
-    },
-];
-
 export default function AgentDashboard() {
-    const [agents] = useState<AgentCapability[]>(MOCK_AGENTS);
-    const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>(MOCK_PENDING);
+    const [agents, setAgents] = useState<AgentCapability[]>([]);
+    const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const [agentsRes, approvalsRes] = await Promise.allSettled([
+                    apiRequest<AgentCapability[]>('/api/v1/agents'),
+                    apiRequest<PendingApproval[]>('/api/v1/agents/approvals'),
+                ]);
+                if (agentsRes.status === 'fulfilled') {
+                    setAgents(Array.isArray(agentsRes.value) ? agentsRes.value : []);
+                }
+                if (approvalsRes.status === 'fulfilled') {
+                    setPendingApprovals(Array.isArray(approvalsRes.value) ? approvalsRes.value : []);
+                }
+            } catch {
+                // silently fail
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
     const [taskInput, setTaskInput] = useState('');
     const [selectedAgent, setSelectedAgent] = useState('');
 

@@ -43,44 +43,6 @@ interface Deliverable {
     completed: boolean;
 }
 
-const MOCK_SPONSORS: Sponsor[] = [
-    {
-        id: "1",
-        name: "TechFlow Inc",
-        industry: "Technology",
-        status: "active",
-        totalValue: 15000,
-        contactName: "Sarah Johnson",
-        contactEmail: "sarah@techflow.com",
-        deals: [
-            {
-                id: "d1",
-                sponsorId: "1",
-                name: "Q1 Campaign",
-                type: "campaign",
-                value: 5000,
-                startDate: "2024-01-01",
-                endDate: "2024-03-31",
-                status: "active",
-                paidAmount: 2500,
-                deliverables: [
-                    { id: "1", description: "3 sponsored posts", dueDate: "2024-02-15", completed: true },
-                    { id: "2", description: "1 product review video", dueDate: "2024-03-01", completed: false },
-                ],
-            },
-        ],
-    },
-    {
-        id: "2",
-        name: "FitLife Supplements",
-        industry: "Health & Wellness",
-        status: "negotiating",
-        totalValue: 8000,
-        contactName: "Mike Chen",
-        contactEmail: "mike@fitlife.com",
-        deals: [],
-    },
-];
 
 export default function SponsorshipPage() {
     const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -96,7 +58,8 @@ export default function SponsorshipPage() {
                 setLoading(true);
                 const response = await sponsorshipsApi.list();
                 // Transform API response to local interface
-                setSponsors(response.map(s => ({
+                const sponsorsList = Array.isArray(response) ? response : (response.sponsorships || []);
+                setSponsors(sponsorsList.map((s: { id: string; brand_name: string; brand_logo?: string; status: string; value_cents: number }) => ({
                     id: s.id,
                     name: s.brand_name,
                     logo: s.brand_logo,

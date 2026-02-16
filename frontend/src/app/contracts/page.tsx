@@ -32,49 +32,6 @@ const CONTRACT_TYPES = [
     { id: "custom", label: "Custom Contract" },
 ];
 
-const MOCK_CONTRACTS: Contract[] = [
-    {
-        id: "1",
-        title: "Q1 2024 Sponsorship - TechBrand",
-        type: "sponsorship",
-        status: "signed",
-        parties: [
-            { name: "Creator (You)", email: "you@example.com", signed: true, signedAt: "2024-01-05" },
-            { name: "TechBrand Inc", email: "legal@techbrand.com", signed: true, signedAt: "2024-01-06" },
-        ],
-        value: 5000,
-        startDate: "2024-01-15",
-        endDate: "2024-03-31",
-        createdAt: "2024-01-01",
-        documentUrl: "/contracts/techbrand-q1.pdf",
-    },
-    {
-        id: "2",
-        title: "Content Licensing - StockMedia",
-        type: "licensing",
-        status: "pending",
-        parties: [
-            { name: "Creator (You)", email: "you@example.com", signed: true, signedAt: "2024-01-10" },
-            { name: "StockMedia Ltd", email: "contracts@stockmedia.io", signed: false },
-        ],
-        value: 1200,
-        startDate: "2024-02-01",
-        createdAt: "2024-01-08",
-    },
-    {
-        id: "3",
-        title: "NDA - Brand Partnership Discussion",
-        type: "nda",
-        status: "expired",
-        parties: [
-            { name: "Creator (You)", email: "you@example.com", signed: true },
-            { name: "MysteryBrand", email: "legal@mysterybrand.com", signed: true },
-        ],
-        startDate: "2023-10-01",
-        endDate: "2024-01-01",
-        createdAt: "2023-09-25",
-    },
-];
 
 export default function ContractsPage() {
     const [contracts, setContracts] = useState<Contract[]>([]);
@@ -90,7 +47,8 @@ export default function ContractsPage() {
                 setLoading(true);
                 const response = await contractsApi.list();
                 // Transform API response to local interface
-                setContracts(response.map(c => ({
+                const contractsList = Array.isArray(response) ? response : (response.contracts || []);
+                setContracts(contractsList.map((c: { id: string; title: string; status: string; brand_name: string; value_cents: number; created_at: string; expires_at?: string }) => ({
                     id: c.id,
                     title: c.title,
                     type: "sponsorship" as const, // API returns brand_name, infer type

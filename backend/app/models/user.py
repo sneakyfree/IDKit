@@ -39,16 +39,22 @@ class User(Base, UUIDMixin, TimestampMixin):
         nullable=False,
     )
 
-    # OAuth provider info
-    oauth_provider: Mapped[str] = mapped_column(
+    # OAuth provider info (nullable for email/password users)
+    oauth_provider: Mapped[str | None] = mapped_column(
         String(50),
-        nullable=False,
-    )  # 'google', 'apple', etc.
+        nullable=True,
+    )  # 'google', 'apple', 'email', etc.
 
-    oauth_provider_id: Mapped[str] = mapped_column(
+    oauth_provider_id: Mapped[str | None] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,
     )  # Provider's user ID
+
+    # Password hash (for email/password auth; nullable for OAuth-only users)
+    password_hash: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
 
     # Optional name from OAuth
     full_name: Mapped[str | None] = mapped_column(
@@ -70,6 +76,12 @@ class User(Base, UUIDMixin, TimestampMixin):
     )
 
     is_verified: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    is_admin: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
         nullable=False,

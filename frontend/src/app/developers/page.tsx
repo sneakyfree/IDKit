@@ -62,7 +62,8 @@ export default function DeveloperPortalPage() {
                 setLoading(true);
                 setError(null);
                 const response = await developersApi.listApiKeys();
-                setKeys(response.map(k => ({
+                const apiKeys = Array.isArray(response) ? response : (response as any).keys || [];
+                setKeys(apiKeys.map((k: any) => ({
                     id: k.id,
                     name: k.name,
                     prefix: k.prefix,
@@ -312,8 +313,9 @@ function CreateKeyModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                 <h2 className="text-xl font-bold mb-6">Create API Key</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Key Name *</label>
+                        <label htmlFor="api-key-name" className="block text-sm text-gray-400 mb-1">Key Name *</label>
                         <input
+                            id="api-key-name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -323,7 +325,7 @@ function CreateKeyModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-2">Scopes</label>
+                        <label id="scopes-label" className="block text-sm text-gray-400 mb-2">Scopes</label>
                         <div className="flex flex-wrap gap-2">
                             {availableScopes.map((scope) => (
                                 <button

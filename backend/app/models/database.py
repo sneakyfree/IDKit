@@ -17,7 +17,7 @@ from app.config import settings
 # Create async engine
 engine = create_async_engine(
     settings.database_url,
-    echo=settings.debug,  # Log SQL in debug mode
+    echo=False,  # Set True only for local SQL debugging
     pool_pre_ping=True,  # Check connection health
     pool_size=10,
     max_overflow=20,

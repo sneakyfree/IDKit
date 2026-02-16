@@ -1,59 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { apiRequest } from "@/lib/api";
 
-// Mock podcast data
-const mockPodcasts = [
-  {
-    id: "1",
-    title: "Tech Talk with Jane",
-    description: "Weekly discussions about technology, AI, and the future",
-    coverUrl: null,
-    episodeCount: 24,
-    subscriberCount: 5200,
-    totalPlays: 45000,
-  },
-];
+interface Podcast {
+  id: string;
+  title: string;
+  description: string;
+  coverUrl: string | null;
+  episodeCount: number;
+  subscriberCount: number;
+  totalPlays: number;
+}
 
-const mockEpisodes = [
-  {
-    id: "1",
-    podcastId: "1",
-    title: "AI Trends 2024 - What to Expect",
-    description: "A deep dive into the AI trends shaping 2024",
-    duration: 1845, // seconds
-    status: "published",
-    publishedAt: "2024-01-15",
-    plays: 3200,
-  },
-  {
-    id: "2",
-    podcastId: "1",
-    title: "Building Your Personal Brand",
-    description: "How to build and maintain a strong personal brand online",
-    duration: 2100,
-    status: "published",
-    publishedAt: "2024-01-08",
-    plays: 2800,
-  },
-  {
-    id: "3",
-    podcastId: "1",
-    title: "The Future of Content Creation",
-    description: "Exploring how AI is changing content creation",
-    duration: 0,
-    status: "draft",
-    publishedAt: null,
-    plays: 0,
-  },
-];
+interface Episode {
+  id: string;
+  podcastId: string;
+  title: string;
+  description: string;
+  duration: number;
+  status: string;
+  publishedAt: string | null;
+  plays: number;
+}
 
 export default function PodcastPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const podcast = mockPodcasts[0];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await apiRequest<{ podcasts: Podcast[]; episodes: Episode[] } | Podcast[]>("/api/v1/podcasts");
+        if (Array.isArray(response)) {
+          setPodcasts(response);
+        } else {
+          setPodcasts(response.podcasts || []);
+          setEpisodes(response.episodes || []);
+        }
+      } catch {
+        setPodcasts([]);
+        setEpisodes([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const mockEpisodes = episodes;
+  const podcast = podcasts[0] || null;
 
   return (
     <main className="min-h-screen bg-black pb-20">
@@ -233,10 +233,11 @@ export default function PodcastPage() {
             {/* Quick Generate */}
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-300">
+                <label htmlFor="episode-topic" className="text-sm font-medium text-gray-300">
                   Episode Topic
                 </label>
                 <input
+                  id="episode-topic"
                   type="text"
                   placeholder="e.g., The Future of AI in Marketing"
                   className="mt-2 w-full bg-gray-800 rounded-xl py-3 px-4 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -244,7 +245,7 @@ export default function PodcastPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-300">Style</label>
+                <label id="style-label" className="text-sm font-medium text-gray-300">Style</label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   {["Conversational", "Educational", "Storytelling"].map((style) => (
                     <button
@@ -258,7 +259,7 @@ export default function PodcastPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-300">Duration</label>
+                <label id="duration-label" className="text-sm font-medium text-gray-300">Duration</label>
                 <div className="grid grid-cols-4 gap-2 mt-2">
                   {["5 min", "10 min", "15 min", "30 min"].map((duration) => (
                     <button

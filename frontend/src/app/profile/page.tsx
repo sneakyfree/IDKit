@@ -1,39 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { profiles } from "@/lib/api";
 
-// Mock user data
-const mockUser = {
-  id: "1",
-  username: "creator_jane",
-  displayName: "Jane Creator",
-  bio: "Content creator | AI enthusiast | Building the future of influencer marketing",
-  avatarUrl: null,
-  coverUrl: null,
-  isVerified: true,
-  followerCount: 12500,
-  followingCount: 342,
-  postCount: 89,
-  niches: ["Tech", "AI", "Lifestyle"],
-  website: "https://janecreator.com",
-};
+interface UserProfile {
+  id: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string | null;
+  coverUrl: string | null;
+  isVerified: boolean;
+  followerCount: number;
+  followingCount: number;
+  postCount: number;
+  niches: string[];
+  website: string;
+}
 
-// Mock posts data
-const mockPosts = [
-  { id: "1", thumbnailUrl: null, viewCount: 15200, type: "video" },
-  { id: "2", thumbnailUrl: null, viewCount: 8900, type: "video" },
-  { id: "3", thumbnailUrl: null, viewCount: 23100, type: "image" },
-  { id: "4", thumbnailUrl: null, viewCount: 5600, type: "video" },
-  { id: "5", thumbnailUrl: null, viewCount: 18400, type: "video" },
-  { id: "6", thumbnailUrl: null, viewCount: 9200, type: "image" },
-];
+interface Post {
+  id: string;
+  thumbnailUrl: string | null;
+  viewCount: number;
+  type: string;
+}
 
 type TabType = "posts" | "likes" | "saved";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<TabType>("posts");
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const response = await profiles.getMe();
+        setUser({
+          id: response.id || "1",
+          username: response.username || "creator",
+          displayName: response.display_name || response.username || "Creator",
+          bio: response.bio || "",
+          avatarUrl: response.avatar_url || null,
+          coverUrl: null,
+          isVerified: response.is_verified || false,
+          followerCount: response.follower_count || 0,
+          followingCount: response.following_count || 0,
+          postCount: response.post_count || 0,
+          niches: response.niche_tags || [],
+          website: response.website_url || "",
+        });
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+      </main>
+    );
+  }
+
+  const mockUser = user || {
+    id: "1", username: "creator", displayName: "Creator", bio: "",
+    avatarUrl: null, coverUrl: null, isVerified: false,
+    followerCount: 0, followingCount: 0, postCount: 0, niches: [], website: "",
+  };
+  const mockPosts = posts;
 
   return (
     <main className="min-h-screen bg-black pb-20">
@@ -146,31 +188,28 @@ export default function ProfilePage() {
       <div className="flex border-b border-gray-800 mt-6">
         <button
           onClick={() => setActiveTab("posts")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            activeTab === "posts"
-              ? "text-white border-b-2 border-white"
-              : "text-gray-500"
-          }`}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "posts"
+            ? "text-white border-b-2 border-white"
+            : "text-gray-500"
+            }`}
         >
           <GridIcon className="w-5 h-5 mx-auto" />
         </button>
         <button
           onClick={() => setActiveTab("likes")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            activeTab === "likes"
-              ? "text-white border-b-2 border-white"
-              : "text-gray-500"
-          }`}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "likes"
+            ? "text-white border-b-2 border-white"
+            : "text-gray-500"
+            }`}
         >
           <HeartIcon className="w-5 h-5 mx-auto" />
         </button>
         <button
           onClick={() => setActiveTab("saved")}
-          className={`flex-1 py-3 text-sm font-medium transition-colors ${
-            activeTab === "saved"
-              ? "text-white border-b-2 border-white"
-              : "text-gray-500"
-          }`}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "saved"
+            ? "text-white border-b-2 border-white"
+            : "text-gray-500"
+            }`}
         >
           <BookmarkIcon className="w-5 h-5 mx-auto" />
         </button>

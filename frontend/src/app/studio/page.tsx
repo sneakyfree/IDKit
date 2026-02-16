@@ -1,61 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { apiRequest } from "@/lib/api";
 
 type ContentType = "all" | "video" | "post" | "podcast";
 
-// Mock content data
-const mockContent = [
-  {
-    id: "1",
-    title: "How AI is Changing Content Creation",
-    type: "video",
-    status: "published",
-    createdAt: "2024-01-15",
-    views: 15200,
-    likes: 890,
-    thumbnailUrl: null,
-  },
-  {
-    id: "2",
-    title: "My Morning Routine - January Edition",
-    type: "video",
-    status: "draft",
-    createdAt: "2024-01-14",
-    views: 0,
-    likes: 0,
-    thumbnailUrl: null,
-  },
-  {
-    id: "3",
-    title: "5 Tips for Growing Your Audience",
-    type: "post",
-    status: "scheduled",
-    createdAt: "2024-01-13",
-    scheduledFor: "2024-01-20",
-    views: 0,
-    likes: 0,
-    thumbnailUrl: null,
-  },
-  {
-    id: "4",
-    title: "Tech Talk Episode 12 - AI Trends 2024",
-    type: "podcast",
-    status: "published",
-    createdAt: "2024-01-10",
-    views: 8500,
-    likes: 420,
-    thumbnailUrl: null,
-  },
-];
+interface ContentItem {
+  id: string;
+  title: string;
+  type: string;
+  status: string;
+  createdAt: string;
+  views: number;
+  likes: number;
+  thumbnailUrl: string | null;
+  scheduledFor?: string;
+}
 
 export default function StudioPage() {
   const [activeFilter, setActiveFilter] = useState<ContentType>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [content, setContent] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredContent = mockContent.filter((item) => {
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const response = await apiRequest<ContentItem[]>("/api/v1/content");
+        setContent(Array.isArray(response) ? response : []);
+      } catch {
+        setContent([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchContent();
+  }, []);
+
+  const filteredContent = content.filter((item) => {
     if (activeFilter !== "all" && item.type !== activeFilter) return false;
     if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()))
       return false;
@@ -96,11 +80,10 @@ export default function StudioPage() {
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                activeFilter === filter
+              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeFilter === filter
                   ? "bg-white text-black"
                   : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
+                }`}
             >
               {filter.charAt(0).toUpperCase() + filter.slice(1)}
             </button>
@@ -232,9 +215,8 @@ function StatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-        styles[status as keyof typeof styles] || styles.draft
-      }`}
+      className={`px-2 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.draft
+        }`}
     >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>

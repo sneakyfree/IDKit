@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Radio, Plus, Search, TrendingUp, Users, MessageCircle, Loader2, AlertCircle, CheckCircle, Pause, Play } from "lucide-react";
+import { listeningApi } from "@/lib/api";
 
 /**
  * Social Listening UI
@@ -43,62 +44,7 @@ const PLATFORMS = [
     { id: "reddit", label: "Reddit", color: "text-orange-400" },
 ];
 
-const MOCK_QUERIES: ListeningQuery[] = [
-    {
-        id: "1",
-        name: "Brand Mentions",
-        keywords: ["mybrand", "@mybrand", "#mybrand"],
-        excludeKeywords: ["spam", "bot"],
-        platforms: ["twitter", "instagram", "tiktok"],
-        status: "active",
-        createdAt: "2024-01-01",
-    },
-    {
-        id: "2",
-        name: "Industry Trends",
-        keywords: ["influencer marketing", "creator economy"],
-        excludeKeywords: [],
-        platforms: ["twitter", "reddit"],
-        status: "active",
-        createdAt: "2024-01-05",
-    },
-];
 
-const MOCK_MENTIONS: Mention[] = [
-    {
-        id: "1",
-        queryId: "1",
-        platform: "twitter",
-        content: "Just discovered @mybrand and it's amazing! The AI features are next level 🔥",
-        author: { username: "techinfluencer", followers: 25000 },
-        sentiment: "positive",
-        engagement: { likes: 145, comments: 23, shares: 12 },
-        url: "https://twitter.com/techinfluencer/status/123",
-        publishedAt: "2024-01-15T10:30:00Z",
-    },
-    {
-        id: "2",
-        queryId: "1",
-        platform: "instagram",
-        content: "Using #mybrand for my content creation workflow - game changer!",
-        author: { username: "contentcreator", followers: 50000 },
-        sentiment: "positive",
-        engagement: { likes: 892, comments: 45, shares: 0 },
-        url: "https://instagram.com/p/abc123",
-        publishedAt: "2024-01-14T15:20:00Z",
-    },
-    {
-        id: "3",
-        queryId: "1",
-        platform: "tiktok",
-        content: "mybrand review - is it worth it? Full breakdown",
-        author: { username: "reviewguy", followers: 120000 },
-        sentiment: "neutral",
-        engagement: { likes: 5400, comments: 234, shares: 89 },
-        url: "https://tiktok.com/@reviewguy/video/123",
-        publishedAt: "2024-01-13T18:00:00Z",
-    },
-];
 
 export default function SocialListeningPage() {
     const [queries, setQueries] = useState<ListeningQuery[]>([]);
@@ -109,12 +55,49 @@ export default function SocialListeningPage() {
     const [sentimentFilter, setSentimentFilter] = useState<"all" | Mention["sentiment"]>("all");
 
     useEffect(() => {
-        setTimeout(() => {
-            setQueries(MOCK_QUERIES);
-            setMentions(MOCK_MENTIONS);
-            setSelectedQuery(MOCK_QUERIES[0]?.id || null);
-            setLoading(false);
-        }, 800);
+        async function fetchData() {
+            try {
+                setLoading(true);
+                const response = await listeningApi.listQueries();
+                const apiQueries: ListeningQuery[] = (response.queries || []).map((q: any) => ({
+                    id: q.id as string,
+                    name: q.name as string,
+                    keywords: (q.keywords as string[]) || [],
+                    excludeKeywords: [],
+                    platforms: (q.platforms as string[]) || [],
+                    status: (q.status as "active" | "paused") || "active",
+                    createdAt: q.created_at as string || new Date().toISOString(),
+                }));
+                setQueries(apiQueries);
+                if (apiQueries.length > 0) {
+                    setSelectedQuery(apiQueries[0].id);
+                    try {
+                        const mentionsResp = await listeningApi.getMentions(apiQueries[0].id, { limit: 50 });
+                        setMentions((mentionsResp.mentions || []).map((m: any) => ({
+                            id: m.id as string,
+                            queryId: apiQueries[0].id,
+                            platform: (m.platform as Mention["platform"]) || "twitter",
+                            content: m.content as string || "",
+                            author: {
+                                username: (m.author_name as string) || "unknown",
+                                followers: (m.engagement as number) || 0,
+                            },
+                            sentiment: (m.sentiment as Mention["sentiment"]) || "neutral",
+                            engagement: { likes: (m.engagement as number) || 0, comments: 0, shares: 0 },
+                            url: (m.url as string) || "#",
+                            publishedAt: (m.posted_at as string) || new Date().toISOString(),
+                        })));
+                    } catch { /* no mentions yet */ }
+                }
+            } catch {
+                // fall back to empty state
+                setQueries([]);
+                setMentions([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
     }, []);
 
     const filteredMentions = mentions
@@ -175,9 +158,12 @@ export default function SocialListeningPage() {
                                 <div
                                     key={query.id}
                                     onClick={() => setSelectedQuery(query.id)}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedQuery(query.id); } }}
+                                    role="button"
+                                    tabIndex={0}
                                     className={`p-4 rounded-xl cursor-pointer transition-all ${selectedQuery === query.id
-                                            ? "bg-purple-600/20 border border-purple-500"
-                                            : "bg-gray-900 hover:bg-gray-800"
+                                        ? "bg-purple-600/20 border border-purple-500"
+                                        : "bg-gray-900 hover:bg-gray-800"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between mb-2">
@@ -348,8 +334,9 @@ function CreateQueryModal({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Query Name *</label>
+                        <label htmlFor="query-name" className="block text-sm text-gray-400 mb-1">Query Name *</label>
                         <input
+                            id="query-name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -359,8 +346,9 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Keywords (comma-separated) *</label>
+                        <label htmlFor="keywords-input" className="block text-sm text-gray-400 mb-1">Keywords (comma-separated) *</label>
                         <textarea
+                            id="keywords-input"
                             value={keywords}
                             onChange={(e) => setKeywords(e.target.value)}
                             required
@@ -371,8 +359,9 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Exclude Keywords</label>
+                        <label htmlFor="exclude-keywords" className="block text-sm text-gray-400 mb-1">Exclude Keywords</label>
                         <input
+                            id="exclude-keywords"
                             value={excludeKeywords}
                             onChange={(e) => setExcludeKeywords(e.target.value)}
                             placeholder="spam, bot, ad"
@@ -381,7 +370,7 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-2">Platforms</label>
+                        <label id="platforms-label" className="block text-sm text-gray-400 mb-2">Platforms</label>
                         <div className="flex flex-wrap gap-2">
                             {PLATFORMS.map((p) => (
                                 <button
@@ -389,8 +378,8 @@ function CreateQueryModal({
                                     type="button"
                                     onClick={() => togglePlatform(p.id)}
                                     className={`px-3 py-2 rounded-lg text-sm ${selectedPlatforms.includes(p.id)
-                                            ? "bg-purple-600"
-                                            : "bg-gray-800 hover:bg-gray-700"
+                                        ? "bg-purple-600"
+                                        : "bg-gray-800 hover:bg-gray-700"
                                         }`}
                                 >
                                     {p.label}

@@ -2,15 +2,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 
 // Mock the store
 const mockSetTheme = jest.fn();
+const mockInitializeTheme = jest.fn();
 jest.mock("@/lib/store", () => ({
-  useThemeStore: jest.fn((selector) =>
-    selector({
-      theme: "dark",
-      resolvedTheme: "dark",
-      setTheme: mockSetTheme,
-      initializeTheme: jest.fn(),
-    })
-  ),
+  useThemeStore: jest.fn(() => ({
+    theme: "dark",
+    resolvedTheme: "dark",
+    setTheme: mockSetTheme,
+    initializeTheme: mockInitializeTheme,
+  })),
 }));
 
 describe("ThemeToggle", () => {

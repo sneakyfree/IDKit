@@ -23,18 +23,16 @@ class TestConnectOnboarding:
         auth_headers: dict,
     ):
         """Test starting onboarding for user without Connect account."""
-        with patch("app.api.v1.payouts.get_stripe_service") as mock_stripe:
-            mock_service = MagicMock()
+        with patch("app.api.v1.payouts.stripe_service") as mock_service:
             mock_service.create_connect_account = AsyncMock(
-                return_value=MagicMock(id="acct_test123")
+                return_value={"account_id": "acct_test123"}
             )
             mock_service.create_account_link = AsyncMock(
-                return_value=MagicMock(url="https://connect.stripe.com/onboard/test")
+                return_value="https://connect.stripe.com/onboard/test"
             )
-            mock_stripe.return_value = mock_service
 
             response = await async_client.post(
-                "/api/v1/payouts/connect/onboard",
+                "/api/v1/payouts/onboard",
                 json={"return_url": "https://example.com/return"},
                 headers=auth_headers,
             )
@@ -49,7 +47,7 @@ class TestConnectOnboarding:
     ):
         """Test onboarding without authentication."""
         response = await unauthenticated_client.post(
-            "/api/v1/payouts/connect/onboard",
+            "/api/v1/payouts/onboard",
             json={"return_url": "https://example.com/return"},
         )
 
@@ -67,7 +65,7 @@ class TestConnectAccount:
     ):
         """Test getting status when no Connect account exists."""
         response = await async_client.get(
-            "/api/v1/payouts/connect/status",
+            "/api/v1/payouts/account",
             headers=auth_headers,
         )
 
@@ -81,7 +79,7 @@ class TestConnectAccount:
     ):
         """Test getting account status without auth."""
         response = await unauthenticated_client.get(
-            "/api/v1/payouts/connect/status",
+            "/api/v1/payouts/account",
         )
 
         assert response.status_code == 401
@@ -153,7 +151,7 @@ class TestPayoutHistory:
         auth_headers: dict,
     ):
         """Test getting payout history with limit."""
-        response = await unauthenticated_client.get(
+        response = await async_client.get(
             "/api/v1/payouts/history?limit=5",
             headers=auth_headers,
         )
@@ -171,8 +169,8 @@ class TestPayoutRequest:
         auth_headers: dict,
     ):
         """Test requesting payout without Connect account."""
-        response = await unauthenticated_client.post(
-            "/api/v1/payouts/request",
+        response = await async_client.post(
+            "/api/v1/payouts/initiate",
             json={"amount_cents": 10000},
             headers=auth_headers,
         )
@@ -187,8 +185,8 @@ class TestPayoutRequest:
         auth_headers: dict,
     ):
         """Test requesting payout below minimum amount."""
-        response = await unauthenticated_client.post(
-            "/api/v1/payouts/request",
+        response = await async_client.post(
+            "/api/v1/payouts/initiate",
             json={"amount_cents": 100},  # Too low
             headers=auth_headers,
         )
@@ -203,7 +201,7 @@ class TestPayoutRequest:
     ):
         """Test requesting payout without authentication."""
         response = await unauthenticated_client.post(
-            "/api/v1/payouts/request",
+            "/api/v1/payouts/initiate",
             json={"amount_cents": 10000},
         )
 
@@ -220,8 +218,8 @@ class TestDashboardLink:
         auth_headers: dict,
     ):
         """Test getting dashboard link without Connect account."""
-        response = await unauthenticated_client.get(
-            "/api/v1/payouts/dashboard",
+        response = await async_client.get(
+            "/api/v1/payouts/dashboard-link",
             headers=auth_headers,
         )
 
@@ -235,7 +233,7 @@ class TestDashboardLink:
     ):
         """Test getting dashboard link without auth."""
         response = await unauthenticated_client.get(
-            "/api/v1/payouts/dashboard",
+            "/api/v1/payouts/dashboard-link",
         )
 
         assert response.status_code == 401

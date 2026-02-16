@@ -1,37 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { apiRequest } from "@/lib/api";
 
-// Mock AI Twin data
-const mockTwins = [
-  {
-    id: "1",
-    name: "Professional Jane",
-    description: "Business and professional content voice",
-    avatarUrl: null,
-    voiceCloned: true,
-    avatarTrained: true,
-    lastUsed: "2024-01-15",
-    videosGenerated: 24,
-  },
-  {
-    id: "2",
-    name: "Casual Jane",
-    description: "Casual, fun content for social media",
-    avatarUrl: null,
-    voiceCloned: true,
-    avatarTrained: false,
-    lastUsed: "2024-01-10",
-    videosGenerated: 12,
-  },
-];
+interface Twin {
+  id: string;
+  name: string;
+  description: string;
+  avatarUrl: string | null;
+  voiceCloned: boolean;
+  avatarTrained: boolean;
+  lastUsed: string;
+  videosGenerated: number;
+}
 
 type TabType = "twins" | "voices" | "avatars";
 
 export default function TwinsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("twins");
+  const [twins, setTwins] = useState<Twin[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTwins() {
+      try {
+        const response = await apiRequest<Twin[]>("/api/v1/twins");
+        setTwins(Array.isArray(response) ? response : []);
+      } catch {
+        setTwins([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTwins();
+  }, []);
+
+  const mockTwins = twins;
 
   return (
     <main className="min-h-screen bg-black pb-20">
@@ -53,11 +59,10 @@ export default function TwinsPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                activeTab === tab
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === tab
                   ? "text-white border-b-2 border-purple-500"
                   : "text-gray-500"
-              }`}
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>

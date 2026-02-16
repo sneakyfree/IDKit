@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5857';
+import { apiRequest } from '@/lib/api';
 
 interface Scenario {
     id: string;
@@ -28,72 +28,25 @@ interface ScenarioStats {
     totalPotentialRevenue: number;
 }
 
-// Mock data for demo
-const MOCK_SCENARIOS: Scenario[] = [
-    {
-        id: '1',
-        title: 'TikTok Short-Form Expansion',
-        description: 'Your YouTube content performs well as short clips. Repurposing top performers could reach 2x audience.',
-        type: 'growth',
-        confidence: 0.87,
-        timeframe: '30 days',
-        potentialRevenue: 2500,
-        effort: 'medium',
-        status: 'new',
-        evidence: [
-            { source: 'YouTube Analytics', data: 'Top 10 videos avg 45% retention in first 60s', confidence: 0.92 },
-            { source: 'Industry Benchmark', data: 'Creators see 2-3x reach with cross-platform', confidence: 0.78 },
-        ],
-    },
-    {
-        id: '2',
-        title: 'Brand Partnership: Tech Accessories',
-        description: 'Based on your audience demographics, tech accessory brands are a strong match for sponsored content.',
-        type: 'monetization',
-        confidence: 0.82,
-        timeframe: '60 days',
-        potentialRevenue: 5000,
-        effort: 'medium',
-        status: 'new',
-        evidence: [
-            { source: 'Audience Analysis', data: '68% of audience interested in tech products', confidence: 0.85 },
-            { source: 'Market Data', data: 'Tech brands actively seeking micro-influencers', confidence: 0.75 },
-        ],
-    },
-    {
-        id: '3',
-        title: 'Collaboration with @TechReviewer',
-        description: 'Similar audience overlap detected. Joint content could boost both channels equally.',
-        type: 'collaboration',
-        confidence: 0.75,
-        timeframe: '14 days',
-        effort: 'low',
-        status: 'new',
-        evidence: [
-            { source: 'Audience Overlap', data: '32% audience overlap with complementary demographics', confidence: 0.80 },
-        ],
-    },
-    {
-        id: '4',
-        title: 'Weekly Tutorial Series',
-        description: 'Tutorial content has 3x higher engagement. A consistent series could build subscriber loyalty.',
-        type: 'content',
-        confidence: 0.91,
-        timeframe: '90 days',
-        potentialRevenue: 1500,
-        effort: 'high',
-        status: 'new',
-        evidence: [
-            { source: 'Content Analysis', data: 'Tutorial posts avg 8.2% engagement vs 2.7% overall', confidence: 0.95 },
-        ],
-    },
-];
-
 export default function ScenariosDashboard() {
-    const [scenarios, setScenarios] = useState<Scenario[]>(MOCK_SCENARIOS);
+    const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [filter, setFilter] = useState<string>('all');
     const [sortBy, setSortBy] = useState<'confidence' | 'revenue' | 'effort'>('confidence');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchScenarios() {
+            try {
+                const response = await apiRequest<Scenario[]>('/api/v1/scenarios');
+                setScenarios(Array.isArray(response) ? response : []);
+            } catch {
+                setScenarios([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchScenarios();
+    }, []);
 
     const stats: ScenarioStats = {
         total: scenarios.length,

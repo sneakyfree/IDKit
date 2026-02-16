@@ -65,12 +65,8 @@ export default function ScheduleCalendarPage() {
       const data = await response.json();
       setEvents(data);
     } catch (err) {
-      // Use mock data for demo
-      setEvents([
-        { id: "1", title: "Summer sale post", start: new Date().toISOString(), platform: "instagram", status: "pending", color: "#E1306C" },
-        { id: "2", title: "Product video", start: new Date(Date.now() + 86400000).toISOString(), platform: "tiktok", status: "pending", color: "#000000" },
-        { id: "3", title: "Blog announcement", start: new Date(Date.now() + 172800000).toISOString(), platform: "linkedin", status: "pending", color: "#0A66C2" },
-      ]);
+      setError(err instanceof Error ? err.message : "Failed to load schedule");
+      setEvents([]);
     } finally {
       setLoading(false);
     }

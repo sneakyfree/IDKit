@@ -44,27 +44,6 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
             }
         } catch (error) {
             console.error('Failed to fetch snapshots:', error);
-            // Mock data for demo
-            setSnapshots([
-                {
-                    id: 'snap-001',
-                    type: 'analytics_report',
-                    created_at: '2026-01-25T12:00:00Z',
-                    content_hash: 'sha256:abc123...',
-                    description: 'Weekly analytics snapshot',
-                    size_bytes: 45678,
-                    metadata: { model_version: '2.3.1' },
-                },
-                {
-                    id: 'snap-002',
-                    type: 'recommendation',
-                    created_at: '2026-01-24T15:30:00Z',
-                    content_hash: 'sha256:def456...',
-                    description: 'Content recommendation decision',
-                    size_bytes: 12345,
-                    metadata: { confidence: 0.87 },
-                },
-            ]);
         } finally {
             setLoading(false);
         }
@@ -94,7 +73,7 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
         return matchesText && matchesType;
     });
 
-    const snapshotTypes = [...new Set(snapshots.map(s => s.type))];
+    const snapshotTypes = Array.from(new Set(snapshots.map(s => s.type)));
 
     return (
         <div className={`bg-white dark:bg-gray-900 rounded-xl ${className}`}>

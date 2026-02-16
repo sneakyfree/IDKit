@@ -24,8 +24,8 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
     return (
         <div
             className={`mb-6 p-4 rounded-xl border ${hasHighSeverity
-                    ? 'bg-red-50 border-red-200'
-                    : 'bg-amber-50 border-amber-200'
+                ? 'bg-red-50 border-red-200'
+                : 'bg-amber-50 border-amber-200'
                 }`}
         >
             <div className="flex items-start space-x-3">
@@ -62,7 +62,7 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
                         className={`text-sm mt-1 ${hasHighSeverity ? 'text-red-700' : 'text-amber-700'
                             }`}
                     >
-                        Some of the information you provided doesn't match what we found from
+                        Some of the information you provided doesn&apos;t match what we found from
                         your connected accounts. Please review and confirm.
                     </p>
 
@@ -88,8 +88,8 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
                                     </div>
                                     <span
                                         className={`text-xs px-2 py-1 rounded-full ${c.severity === 'high'
-                                                ? 'bg-red-200 text-red-800'
-                                                : 'bg-amber-200 text-amber-800'
+                                            ? 'bg-red-200 text-red-800'
+                                            : 'bg-amber-200 text-amber-800'
                                             }`}
                                     >
                                         {c.discrepancy_description}
@@ -109,8 +109,8 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
                         <button
                             onClick={onResolve}
                             className={`px-4 py-2 text-sm font-medium rounded-lg ${hasHighSeverity
-                                    ? 'bg-red-600 text-white hover:bg-red-700'
-                                    : 'bg-amber-600 text-white hover:bg-amber-700'
+                                ? 'bg-red-600 text-white hover:bg-red-700'
+                                : 'bg-amber-600 text-white hover:bg-amber-700'
                                 } transition-colors`}
                         >
                             Review & Fix

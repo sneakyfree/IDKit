@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { BarChart3, Users, TrendingUp, Loader2, Download, Calendar, ArrowUpRight, ArrowDownRight, Eye, Heart, Share2 } from "lucide-react";
+import { collaborateApi, jointAnalyticsApi } from "@/lib/api";
 
 /**
  * Joint Analytics UI
@@ -41,43 +42,7 @@ interface JointMetrics {
     };
 }
 
-const MOCK_PROJECTS: JointProject[] = [
-    {
-        id: "1",
-        name: "Tech Review Collab 2024",
-        collaborators: ["You", "TechReviewer", "VideoEditor"],
-        startDate: "2024-01-01",
-        status: "active",
-    },
-    {
-        id: "2",
-        name: "Podcast: Creator Economy Series",
-        collaborators: ["You", "Co-Host"],
-        startDate: "2023-10-01",
-        status: "active",
-    },
-];
 
-const MOCK_METRICS: JointMetrics = {
-    projectId: "1",
-    period: "Last 30 days",
-    combined: {
-        views: 125000,
-        engagement: 8500,
-        revenue: 4200,
-        followers: 3200,
-    },
-    byCollaborator: [
-        { name: "You", views: 75000, engagement: 5100, revenue: 2520, contribution: 60 },
-        { name: "TechReviewer", views: 35000, engagement: 2380, revenue: 1176, contribution: 28 },
-        { name: "VideoEditor", views: 15000, engagement: 1020, revenue: 504, contribution: 12 },
-    ],
-    trends: {
-        views: 15.2,
-        engagement: 8.7,
-        revenue: 22.5,
-    },
-};
 
 export default function JointAnalyticsPage() {
     const [projects, setProjects] = useState<JointProject[]>([]);
@@ -87,12 +52,51 @@ export default function JointAnalyticsPage() {
     const [dateRange, setDateRange] = useState("30d");
 
     useEffect(() => {
-        setTimeout(() => {
-            setProjects(MOCK_PROJECTS);
-            setSelectedProject(MOCK_PROJECTS[0]?.id || null);
-            setMetrics(MOCK_METRICS);
-            setLoading(false);
-        }, 800);
+        async function fetchJointData() {
+            try {
+                setLoading(true);
+                const response = await collaborateApi.listProjects();
+                const apiProjects: JointProject[] = (response.projects || []).map((p: any) => ({
+                    id: p.id as string,
+                    name: (p.name as string) || "Project",
+                    collaborators: (p.collaborator_names as string[]) || ["You"],
+                    startDate: p.created_at as string || new Date().toISOString(),
+                    endDate: p.completed_at as string,
+                    status: ((p.status as string) === "completed" ? "completed" : "active") as JointProject["status"],
+                }));
+                setProjects(apiProjects);
+                if (apiProjects.length > 0) {
+                    setSelectedProject(apiProjects[0].id);
+                    try {
+                        const metricsResp = await jointAnalyticsApi.getCollaborationMetrics(apiProjects[0].id);
+                        const m = metricsResp as any;
+                        setMetrics({
+                            projectId: apiProjects[0].id,
+                            period: "Last 30 days",
+                            combined: {
+                                views: (m.combined_reach as number) || 0,
+                                engagement: (m.combined_engagement as number) || 0,
+                                revenue: ((m.revenue_total_cents as number) || 0) / 100,
+                                followers: 0,
+                            },
+                            byCollaborator: (m.top_performing || []).map((c: any) => ({
+                                name: c.platform as string || "Collaborator",
+                                views: 0,
+                                engagement: (c.engagement as number) || 0,
+                                revenue: 0,
+                                contribution: 0,
+                            })),
+                            trends: { views: 0, engagement: 0, revenue: 0 },
+                        });
+                    } catch { /* no metrics yet */ }
+                }
+            } catch {
+                setProjects([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchJointData();
     }, []);
 
     return (
@@ -124,8 +128,8 @@ export default function JointAnalyticsPage() {
                                     key={project.id}
                                     onClick={() => setSelectedProject(project.id)}
                                     className={`p-4 rounded-xl cursor-pointer transition-all ${selectedProject === project.id
-                                            ? "bg-purple-600/20 border border-purple-500"
-                                            : "bg-gray-900 hover:bg-gray-800"
+                                        ? "bg-purple-600/20 border border-purple-500"
+                                        : "bg-gray-900 hover:bg-gray-800"
                                         }`}
                                 >
                                     <h3 className="font-medium mb-1">{project.name}</h3>

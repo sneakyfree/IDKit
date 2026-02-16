@@ -74,6 +74,21 @@ class MeResponse(BaseModel):
     profile: Optional[ProfileResponse]
 
 
+class RegisterRequest(BaseModel):
+    """Email/password registration."""
+
+    email: EmailStr
+    password: str
+    full_name: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    """Email/password login."""
+
+    email: EmailStr
+    password: str
+
+
 # ==================== Token Utilities ====================
 
 
@@ -366,3 +381,81 @@ async def logout(response: Response):
     response.delete_cookie("refresh_token")
 
     return {"message": "Logged out successfully"}
+
+
+@router.post("/register", response_model=TokenResponse, status_code=201)
+async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    """Register a new account with email and password."""
+    if len(body.password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters",
+        )
+
+    # Check if email already exists
+    result = await db.execute(select(User).where(User.email == body.email))
+    if result.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already registered",
+        )
+
+    import bcrypt
+
+    hashed = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt()).decode()
+
+    user = User(
+        email=body.email,
+        password_hash=hashed,
+        oauth_provider="email",
+        oauth_provider_id=body.email,
+        full_name=body.full_name,
+    )
+    db.add(user)
+    await db.flush()
+
+    # Auto-create profile
+    username = await generate_unique_username(db, body.email)
+    profile = UserProfile(
+        user_id=user.id,
+        username=username,
+        display_name=body.full_name or body.email.split("@")[0],
+    )
+    db.add(profile)
+    await db.commit()
+    await db.refresh(user)
+
+    return create_tokens(user.id)
+
+
+@router.post("/login", response_model=TokenResponse)
+async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
+    """Login with email and password."""
+    result = await db.execute(select(User).where(User.email == body.email))
+    user = result.scalar_one_or_none()
+
+    if not user or not user.password_hash:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
+    import bcrypt
+
+    if not bcrypt.checkpw(body.password.encode(), user.password_hash.encode()):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account disabled",
+        )
+
+    user.last_login_at = datetime.now(timezone.utc)
+    await db.commit()
+
+    return create_tokens(user.id)
+

@@ -74,44 +74,7 @@ export function AgentActivityFeed({
                 const data = await res.json();
                 setActivities(data.activities || []);
             } else {
-                // Mock data for demo
-                setActivities([
-                    {
-                        id: '1',
-                        agent_type: 'content',
-                        action_type: 'task_completed',
-                        title: 'Content Analysis Completed',
-                        description: 'Analyzed 5 draft posts and suggested optimizations',
-                        timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-                        metadata: { posts_analyzed: 5, suggestions: 12 },
-                    },
-                    {
-                        id: '2',
-                        agent_type: 'analytics',
-                        action_type: 'decision_made',
-                        title: 'Optimal Posting Time Identified',
-                        description: 'Based on engagement patterns, recommending 7 PM EST for next post',
-                        timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-                        metadata: { confidence: 0.89 },
-                    },
-                    {
-                        id: '3',
-                        agent_type: 'revenue',
-                        action_type: 'approval_requested',
-                        title: 'Brand Deal Rate Adjustment',
-                        description: 'Recommending to increase sponsored post rate to $750',
-                        timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-                        metadata: { current_rate: 500, proposed_rate: 750 },
-                    },
-                    {
-                        id: '4',
-                        agent_type: 'moderation',
-                        action_type: 'info',
-                        title: 'Comment Moderation Active',
-                        description: 'Monitoring 3 new posts for policy violations',
-                        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-                    },
-                ]);
+                setActivities([]);
             }
         } catch (error) {
             console.error('Failed to fetch activities:', error);
@@ -155,8 +118,8 @@ export function AgentActivityFeed({
         .filter(a => !filterAction || a.action_type === filterAction)
         .slice(0, maxItems);
 
-    const agentTypes = [...new Set(activities.map(a => a.agent_type))];
-    const actionTypes = [...new Set(activities.map(a => a.action_type))];
+    const agentTypes = Array.from(new Set(activities.map(a => a.agent_type)));
+    const actionTypes = Array.from(new Set(activities.map(a => a.action_type)));
 
     return (
         <div className={`bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800 ${className}`}>

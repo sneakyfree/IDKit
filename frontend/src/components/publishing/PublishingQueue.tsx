@@ -199,7 +199,7 @@ export function PublishingQueueCard({
                     {/* Status & Time */}
                     <div className="flex items-center gap-3 mt-3">
                         <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
-                            <StatusIcon className={`h-3.5 w-3.5 ${statusConfig.animate ? 'animate-spin' : ''}`} />
+                            <StatusIcon className={`h-3.5 w-3.5 ${'animate' in statusConfig && statusConfig.animate ? 'animate-spin' : ''}`} />
                             {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                         </span>
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Plus, Download, Eye, Calendar, Loader2, BarChart3, Users, DollarSign, TrendingUp } from "lucide-react";
+import { reportsApi } from "@/lib/api";
 
 /**
  * Custom Reporting UI
@@ -44,31 +45,7 @@ const AVAILABLE_DIMENSIONS = [
     { id: "geography", label: "Geography" },
 ];
 
-const MOCK_REPORTS: ReportTemplate[] = [
-    {
-        id: "1",
-        name: "Weekly Performance Summary",
-        description: "Overview of all platform performance metrics",
-        metrics: ["impressions", "engagements", "followers"],
-        dimensions: ["platform", "date"],
-        dateRange: "7d",
-        format: "chart",
-        schedule: { frequency: "weekly", recipients: ["user@example.com"] },
-        createdAt: "2024-01-01",
-        lastRun: "2024-01-15",
-    },
-    {
-        id: "2",
-        name: "Revenue by Content Type",
-        description: "Revenue breakdown by content format",
-        metrics: ["revenue", "clicks"],
-        dimensions: ["content_type", "date"],
-        dateRange: "30d",
-        format: "table",
-        createdAt: "2024-01-05",
-        lastRun: "2024-01-14",
-    },
-];
+
 
 export default function CustomReportsPage() {
     const [reports, setReports] = useState<ReportTemplate[]>([]);
@@ -78,10 +55,32 @@ export default function CustomReportsPage() {
     const [generating, setGenerating] = useState<string | null>(null);
 
     useEffect(() => {
-        setTimeout(() => {
-            setReports(MOCK_REPORTS);
-            setLoading(false);
-        }, 800);
+        async function fetchReports() {
+            try {
+                setLoading(true);
+                const response = await reportsApi.list();
+                setReports((response.reports || []).map((r: any) => ({
+                    id: r.id as string,
+                    name: (r.name as string) || "Report",
+                    description: (r.description as string) || "",
+                    metrics: (r.metrics as string[]) || [],
+                    dimensions: (r.dimensions as string[]) || [],
+                    dateRange: (r.date_range as ReportTemplate["dateRange"]) || "30d",
+                    format: (r.format as ReportTemplate["format"]) || "chart",
+                    schedule: r.schedule_frequency ? {
+                        frequency: r.schedule_frequency as "daily" | "weekly" | "monthly",
+                        recipients: (r.schedule_recipients as string[]) || [],
+                    } : undefined,
+                    createdAt: r.created_at as string || new Date().toISOString(),
+                    lastRun: r.last_run_at as string,
+                })));
+            } catch {
+                setReports([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchReports();
     }, []);
 
     const handleGenerateReport = async (reportId: string) => {
@@ -301,8 +300,8 @@ function ReportBuilder({
                                     type="button"
                                     onClick={() => toggleMetric(metric.id)}
                                     className={`flex items-center gap-2 p-3 rounded-lg text-left ${selectedMetrics.includes(metric.id)
-                                            ? "bg-purple-600"
-                                            : "bg-gray-800 hover:bg-gray-700"
+                                        ? "bg-purple-600"
+                                        : "bg-gray-800 hover:bg-gray-700"
                                         }`}
                                 >
                                     <metric.icon className="w-4 h-4" />
@@ -322,8 +321,8 @@ function ReportBuilder({
                                     type="button"
                                     onClick={() => toggleDimension(dim.id)}
                                     className={`px-4 py-2 rounded-lg ${selectedDimensions.includes(dim.id)
-                                            ? "bg-purple-600"
-                                            : "bg-gray-800 hover:bg-gray-700"
+                                        ? "bg-purple-600"
+                                        : "bg-gray-800 hover:bg-gray-700"
                                         }`}
                                 >
                                     {dim.label}

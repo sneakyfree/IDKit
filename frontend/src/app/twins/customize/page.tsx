@@ -138,7 +138,7 @@ export default function AvatarCustomizationPage() {
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold">Avatar Customization</h1>
-                        <p className="text-sm text-gray-400">Personalize your AI Twin's appearance</p>
+                        <p className="text-sm text-gray-400">Personalize your AI Twin&apos;s appearance</p>
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -227,8 +227,8 @@ export default function AvatarCustomizationPage() {
                                     key={tab.key}
                                     onClick={() => setActiveTab(tab.key)}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${activeTab === tab.key
-                                            ? "bg-purple-600 text-white"
-                                            : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                                        ? "bg-purple-600 text-white"
+                                        : "bg-gray-800 text-gray-400 hover:bg-gray-700"
                                         }`}
                                 >
                                     {tab.icon}
@@ -248,8 +248,8 @@ export default function AvatarCustomizationPage() {
                                             key={option}
                                             onClick={() => updateCustomization(activeTab, option)}
                                             className={`w-12 h-12 rounded-full transition-all ${customization[activeTab] === option
-                                                    ? "ring-4 ring-purple-500 ring-offset-2 ring-offset-gray-900 scale-110"
-                                                    : "hover:scale-105"
+                                                ? "ring-4 ring-purple-500 ring-offset-2 ring-offset-gray-900 scale-110"
+                                                : "hover:scale-105"
                                                 }`}
                                             style={{ backgroundColor: option }}
                                             aria-label={`Select color ${option}`}
@@ -263,8 +263,8 @@ export default function AvatarCustomizationPage() {
                                             key={option}
                                             onClick={() => updateCustomization(activeTab, option)}
                                             className={`p-4 rounded-xl text-left transition-all ${customization[activeTab] === option
-                                                    ? "bg-purple-600 ring-2 ring-purple-400"
-                                                    : "bg-gray-800 hover:bg-gray-700"
+                                                ? "bg-purple-600 ring-2 ring-purple-400"
+                                                : "bg-gray-800 hover:bg-gray-700"
                                                 }`}
                                         >
                                             <span className="capitalize">{option}</span>

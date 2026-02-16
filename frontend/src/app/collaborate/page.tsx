@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Users, Plus, MessageSquare, FileText, Video, Loader2, CheckCircle, Clock, Send, Sparkles } from "lucide-react";
+import { collaborateApi } from "@/lib/api";
 
 /**
  * Content Co-Creation UI
@@ -45,37 +46,7 @@ interface ChatMessage {
     timestamp: string;
 }
 
-const MOCK_COLLABORATIONS: Collaboration[] = [
-    {
-        id: "1",
-        title: "Tech Review Collab 2024",
-        type: "video",
-        status: "in-progress",
-        collaborators: [
-            { id: "1", name: "You", role: "owner", joinedAt: "2024-01-01" },
-            { id: "2", name: "TechReviewer", role: "editor", joinedAt: "2024-01-02" },
-            { id: "3", name: "VideoEditor", role: "contributor", joinedAt: "2024-01-03" },
-        ],
-        createdAt: "2024-01-01",
-        deadline: "2024-02-15",
-        assets: [
-            { id: "1", name: "Script v2.docx", type: "script", uploadedBy: "You", uploadedAt: "2024-01-10", status: "approved" },
-            { id: "2", name: "B-roll footage.mp4", type: "video", uploadedBy: "TechReviewer", uploadedAt: "2024-01-12", status: "draft" },
-        ],
-    },
-    {
-        id: "2",
-        title: "Podcast Episode: Creator Economy",
-        type: "podcast",
-        status: "planning",
-        collaborators: [
-            { id: "1", name: "You", role: "owner", joinedAt: "2024-01-05" },
-            { id: "4", name: "GuestExpert", role: "contributor", joinedAt: "2024-01-06" },
-        ],
-        createdAt: "2024-01-05",
-        assets: [],
-    },
-];
+
 
 export default function CoCreationPage() {
     const [collaborations, setCollaborations] = useState<Collaboration[]>([]);
@@ -84,10 +55,26 @@ export default function CoCreationPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            setCollaborations(MOCK_COLLABORATIONS);
-            setLoading(false);
-        }, 800);
+        async function fetchProjects() {
+            try {
+                setLoading(true);
+                const response = await collaborateApi.listProjects();
+                setCollaborations((response.projects || []).map((p: any) => ({
+                    id: p.id as string,
+                    title: (p.name as string) || "Untitled",
+                    type: ((p.project_type as string) || "video") as Collaboration["type"],
+                    status: ((p.status as string) === "active" ? "in-progress" : (p.status as string) === "completed" ? "published" : "planning") as Collaboration["status"],
+                    collaborators: [],
+                    createdAt: p.created_at as string || new Date().toISOString(),
+                    assets: [],
+                })));
+            } catch {
+                setCollaborations([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchProjects();
     }, []);
 
     const stats = {

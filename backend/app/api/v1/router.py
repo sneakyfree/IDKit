@@ -6,6 +6,9 @@ Combines all API endpoint routers into a single router.
 
 from fastapi import APIRouter
 
+import logging
+_router_logger = logging.getLogger(__name__)
+
 from app.api.v1 import (
     admin,
     affiliates,
@@ -17,10 +20,13 @@ from app.api.v1 import (
     blockers,
     brand_deals,
     campaigns,
+    co_creation,
     collaborations,
-    competitors,
     compliance,
+    competitors,
     content,
+    contracts,
+    developer_keys,
     discovery,
     enterprise,
     explainability,
@@ -32,6 +38,7 @@ from app.api.v1 import (
     media_kits,
     moderation,
     notifications,
+    operations,
     payments,
     payouts,
     performance,
@@ -40,14 +47,19 @@ from app.api.v1 import (
     privacy,
     profiles,
     push,
+    reports,
     repurpose,
+    revenue_sharing,
     roi,
     scenarios,
     schedule,
     search,
     smart_reply,
     social,
+    social_listening,
+    sponsorships,
     subscribers,
+    tax,
     testing,
     trends,
     twins,
@@ -160,11 +172,54 @@ try:
     from app.api.v1 import calendar
     api_router.include_router(calendar.router, tags=["Calendar"])
 except ImportError:
-    pass  # Calendar module optional
+    _router_logger.warning("Calendar routes not loaded — module import failed", exc_info=True)
+except Exception as e:
+    _router_logger.error(f"Calendar routes failed to load: {e}", exc_info=True)
 
-# Stub Endpoints for New Features (Developer Portal, Contracts, etc.)
+# ==================== Gap Closure — Real Routes (replacing stubs.py) ====================
+
+# Sponsorship Management (FEAT-052)
+api_router.include_router(sponsorships.router, tags=["Sponsorships"])
+
+# Contract Management (FEAT-058/078)
+api_router.include_router(contracts.router, tags=["Contracts"])
+
+# Tax Documentation (FEAT-057)
+api_router.include_router(tax.router, tags=["Tax"])
+
+# Social Listening (FEAT-048)
+api_router.include_router(social_listening.router, tags=["Social Listening"])
+
+# Custom Reporting (FEAT-067)
+api_router.include_router(reports.router, tags=["Reports"])
+
+# Compliance & Backups (FEAT-106/108)
+api_router.include_router(operations.router, tags=["Operations"])
+
+# Content Co-Creation (FEAT-075)
+api_router.include_router(co_creation.router, tags=["Co-Creation"])
+
+# Revenue Sharing (FEAT-076)
+api_router.include_router(revenue_sharing.router, tags=["Revenue Sharing"])
+
+# Developer API Keys (FEAT-083)
+api_router.include_router(developer_keys.router, tags=["API Keys"])
+
+# Backup Management (Helix Repair D08)
 try:
-    from app.api.v1 import stubs
-    api_router.include_router(stubs.router, tags=["Stubs (Development)"])
+    from app.api.v1 import backups
+    api_router.include_router(backups.router, tags=["Backups"])
 except ImportError:
-    pass  # Stubs module optional
+    _router_logger.warning("Backups routes not loaded — module import failed", exc_info=True)
+except Exception as e:
+    _router_logger.error(f"Backups routes failed to load: {e}", exc_info=True)
+
+# Disaster Recovery (Helix Repair D09)
+try:
+    from app.api.v1 import disaster_recovery
+    api_router.include_router(disaster_recovery.router, tags=["Disaster Recovery"])
+except ImportError:
+    _router_logger.warning("Disaster Recovery routes not loaded — module import failed", exc_info=True)
+except Exception as e:
+    _router_logger.error(f"Disaster Recovery routes failed to load: {e}", exc_info=True)
+

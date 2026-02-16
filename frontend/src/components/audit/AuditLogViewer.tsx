@@ -18,8 +18,9 @@ import {
   MoreVertical,
   RefreshCw,
 } from 'lucide-react';
+import { apiRequest } from '@/lib/api';
 
-type ActionType = 
+type ActionType =
   | 'agent_action'
   | 'user_action'
   | 'system_event'
@@ -54,131 +55,6 @@ interface AuditLogViewerProps {
   pageSize?: number;
 }
 
-// Mock audit log data
-const mockAuditLogs: AuditLogEntry[] = [
-  {
-    id: 'log-001',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    action_type: 'agent_action',
-    actor_type: 'agent',
-    actor_id: 'content-agent',
-    actor_name: 'Content Agent',
-    action: 'Generated draft post',
-    target_type: 'content',
-    target_id: 'post-123',
-    target_name: 'Instagram caption for Nike',
-    status: 'success',
-    details: {
-      word_count: 150,
-      hashtags: 8,
-      mentions: 2,
-    },
-  },
-  {
-    id: 'log-002',
-    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    action_type: 'approval',
-    actor_type: 'user',
-    actor_id: 'user-456',
-    actor_name: 'John Creator',
-    action: 'Approved publishing',
-    target_type: 'content',
-    target_id: 'post-122',
-    target_name: 'Sponsored post for TechCorp',
-    status: 'success',
-    details: {
-      approval_type: 'content_publish',
-      scheduled_for: '2026-01-26T10:00:00Z',
-    },
-    ip_address: '192.168.1.1',
-    user_agent: 'Chrome/120.0',
-  },
-  {
-    id: 'log-003',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    action_type: 'rejection',
-    actor_type: 'user',
-    actor_id: 'user-456',
-    actor_name: 'John Creator',
-    action: 'Rejected brand deal',
-    target_type: 'deal',
-    target_id: 'deal-789',
-    target_name: '$500 post from CryptoScam Inc.',
-    status: 'success',
-    details: {
-      reason: 'Brand does not align with values',
-      deal_value: 500,
-    },
-  },
-  {
-    id: 'log-004',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    action_type: 'agent_action',
-    actor_type: 'agent',
-    actor_id: 'analytics-agent',
-    actor_name: 'Analytics Agent',
-    action: 'Generated weekly report',
-    target_type: 'report',
-    target_id: 'report-456',
-    target_name: 'Weekly Performance Report',
-    status: 'success',
-    details: {
-      metrics_analyzed: 42,
-      insights_generated: 8,
-    },
-  },
-  {
-    id: 'log-005',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    action_type: 'system_event',
-    actor_type: 'system',
-    actor_id: 'system',
-    actor_name: 'System',
-    action: 'Platform connected',
-    target_type: 'integration',
-    target_id: 'int-tiktok',
-    target_name: 'TikTok Account',
-    status: 'success',
-    details: {
-      platform: 'tiktok',
-      followers_synced: 125000,
-    },
-  },
-  {
-    id: 'log-006',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    action_type: 'data_change',
-    actor_type: 'user',
-    actor_id: 'user-456',
-    actor_name: 'John Creator',
-    action: 'Updated profile',
-    target_type: 'profile',
-    target_id: 'profile-456',
-    target_name: 'Creator Profile',
-    status: 'success',
-    details: {
-      fields_changed: ['bio', 'niche', 'rates'],
-    },
-  },
-  {
-    id: 'log-007',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    action_type: 'agent_action',
-    actor_type: 'agent',
-    actor_id: 'publishing-agent',
-    actor_name: 'Publishing Agent',
-    action: 'Failed to publish',
-    target_type: 'content',
-    target_id: 'post-120',
-    target_name: 'Scheduled Story',
-    status: 'failure',
-    details: {
-      error: 'Instagram API rate limit exceeded',
-      retry_at: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
-    },
-  },
-];
-
 export function AuditLogViewer({
   entityType,
   entityId,
@@ -195,48 +71,40 @@ export function AuditLogViewer({
   const [actorTypeFilter, setActorTypeFilter] = useState<'all' | 'user' | 'agent' | 'system'>('all');
   const [dateRange, setDateRange] = useState<'all' | '1h' | '24h' | '7d' | '30d'>('all');
 
-  const fetchLogs = useCallback(() => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
-    
-    // Simulated API call with filtering
-    setTimeout(() => {
-      let filtered = mockAuditLogs;
-      
-      if (actionTypeFilter !== 'all') {
-        filtered = filtered.filter((log) => log.action_type === actionTypeFilter);
+    try {
+      const params = new URLSearchParams();
+      if (actionTypeFilter !== 'all') params.set('action_type', actionTypeFilter);
+      if (actorTypeFilter !== 'all') params.set('actor_type', actorTypeFilter);
+      if (searchQuery) params.set('search', searchQuery);
+      if (dateRange !== 'all') params.set('date_range', dateRange);
+      params.set('page', String(currentPage));
+      params.set('page_size', String(pageSize));
+      if (entityType) params.set('entity_type', entityType);
+      if (entityId) params.set('entity_id', entityId);
+      if (userId) params.set('user_id', userId);
+
+      const response = await apiRequest<{ items: AuditLogEntry[]; total: number }>(`/api/v1/audit-logs?${params.toString()}`);
+      if (response && Array.isArray(response.items)) {
+        setLogs(response.items);
+        setTotalPages(Math.ceil(response.total / pageSize));
+      } else if (Array.isArray(response)) {
+        const allLogs = response as unknown as AuditLogEntry[];
+        setTotalPages(Math.ceil(allLogs.length / pageSize));
+        const start = (currentPage - 1) * pageSize;
+        setLogs(allLogs.slice(start, start + pageSize));
+      } else {
+        setLogs([]);
+        setTotalPages(1);
       }
-      
-      if (actorTypeFilter !== 'all') {
-        filtered = filtered.filter((log) => log.actor_type === actorTypeFilter);
-      }
-      
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        filtered = filtered.filter((log) =>
-          log.action.toLowerCase().includes(query) ||
-          log.actor_name.toLowerCase().includes(query) ||
-          log.target_name?.toLowerCase().includes(query)
-        );
-      }
-      
-      if (dateRange !== 'all') {
-        const now = Date.now();
-        const ranges: Record<string, number> = {
-          '1h': 60 * 60 * 1000,
-          '24h': 24 * 60 * 60 * 1000,
-          '7d': 7 * 24 * 60 * 60 * 1000,
-          '30d': 30 * 24 * 60 * 60 * 1000,
-        };
-        const cutoff = now - ranges[dateRange];
-        filtered = filtered.filter((log) => new Date(log.timestamp).getTime() > cutoff);
-      }
-      
-      setTotalPages(Math.ceil(filtered.length / pageSize));
-      const start = (currentPage - 1) * pageSize;
-      setLogs(filtered.slice(start, start + pageSize));
+    } catch {
+      setLogs([]);
+      setTotalPages(1);
+    } finally {
       setLoading(false);
-    }, 300);
-  }, [actionTypeFilter, actorTypeFilter, searchQuery, dateRange, currentPage, pageSize]);
+    }
+  }, [actionTypeFilter, actorTypeFilter, searchQuery, dateRange, currentPage, pageSize, entityType, entityId, userId]);
 
   useEffect(() => {
     fetchLogs();
@@ -290,7 +158,7 @@ export function AuditLogViewer({
         log.status,
       ]),
     ].map((row) => row.join(',')).join('\n');
-    
+
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -313,7 +181,7 @@ export function AuditLogViewer({
               <p className="text-sm text-gray-500">Complete activity history</p>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
             <button
               onClick={fetchLogs}
@@ -344,7 +212,7 @@ export function AuditLogViewer({
               className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-          
+
           <select
             value={actionTypeFilter}
             onChange={(e) => setActionTypeFilter(e.target.value as ActionType | 'all')}
@@ -357,7 +225,7 @@ export function AuditLogViewer({
             <option value="rejection">Rejections</option>
             <option value="data_change">Data Changes</option>
           </select>
-          
+
           <select
             value={actorTypeFilter}
             onChange={(e) => setActorTypeFilter(e.target.value as 'all' | 'user' | 'agent' | 'system')}
@@ -368,7 +236,7 @@ export function AuditLogViewer({
             <option value="agent">Agents</option>
             <option value="system">System</option>
           </select>
-          
+
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as 'all' | '1h' | '24h' | '7d' | '30d')}
@@ -484,11 +352,10 @@ export function AuditLogViewer({
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-8 h-8 text-sm rounded-lg ${
-                    currentPage === page
+                  className={`w-8 h-8 text-sm rounded-lg ${currentPage === page
                       ? 'bg-indigo-600 text-white'
                       : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
+                    }`}
                 >
                   {page}
                 </button>

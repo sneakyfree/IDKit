@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5857';
+import { apiRequest } from '@/lib/api';
 
 interface Blocker {
     id: string;
@@ -30,108 +30,34 @@ interface Unlocker {
     status: 'pending' | 'in_progress' | 'completed';
 }
 
-// Mock data
-const MOCK_BLOCKERS: Blocker[] = [
-    {
-        id: 'b1',
-        title: 'Missing FTC Disclosure on 3 Sponsored Posts',
-        category: 'compliance',
-        severity: 'critical',
-        whyNot: 'FTC requires clear disclosure of sponsored content. Missing #ad or #sponsored on recent posts could result in fines.',
-        evidence: [
-            { source: 'Content Audit', data: 'Posts on Jan 18, 19, 21 have brand mentions without disclosure', confidence: 0.98 },
-            { source: 'FTC Guidelines', data: 'Section 255 requires "clear and conspicuous" disclosure', confidence: 1.0 },
-        ],
-        impact: 85,
-        detectedAt: '2026-01-24T10:00:00Z',
-    },
-    {
-        id: 'b2',
-        title: 'Low Engagement Rate on Instagram',
-        category: 'growth',
-        severity: 'high',
-        whyNot: 'Your engagement rate dropped from 4.2% to 2.1% over the past 30 days. This affects algorithmic reach.',
-        evidence: [
-            { source: 'Instagram Insights', data: 'Engagement dropped 50% month-over-month', confidence: 0.95 },
-            { source: 'Industry Benchmark', data: 'Average engagement for your niche is 3.8%', confidence: 0.82 },
-        ],
-        impact: 72,
-        detectedAt: '2026-01-23T15:30:00Z',
-    },
-    {
-        id: 'b3',
-        title: 'Inconsistent Posting Schedule',
-        category: 'content',
-        severity: 'medium',
-        whyNot: 'Posting frequency varies from 0-5 posts per day with no predictable pattern. Algorithms favor consistency.',
-        evidence: [
-            { source: 'Content Calendar', data: 'Standard deviation of 2.3 posts/day over 30 days', confidence: 0.90 },
-        ],
-        impact: 55,
-        detectedAt: '2026-01-22T09:00:00Z',
-    },
-    {
-        id: 'b4',
-        title: 'No Affiliate Link Tracking',
-        category: 'monetization',
-        severity: 'medium',
-        whyNot: 'Affiliate links are missing UTM parameters. You cannot attribute revenue to specific content.',
-        evidence: [
-            { source: 'Link Audit', data: '12 affiliate links missing tracking parameters', confidence: 0.88 },
-        ],
-        impact: 45,
-        detectedAt: '2026-01-21T14:00:00Z',
-    },
-];
-
-const MOCK_UNLOCKERS: Unlocker[] = [
-    {
-        id: 'u1',
-        blockerId: 'b1',
-        title: 'Add FTC Disclosure to Sponsored Posts',
-        whatToDo: 'Edit the 3 posts to add #ad at the beginning of the caption. Use platform disclosure tools where available.',
-        timeframe: 'quick_win',
-        effort: 'low',
-        proofRequired: ['Screenshot of updated posts', 'Confirmation from platform disclosure tool'],
-        status: 'pending',
-    },
-    {
-        id: 'u2',
-        blockerId: 'b2',
-        title: 'Boost Engagement with Call-to-Actions',
-        whatToDo: 'Add specific questions and CTAs to your next 10 posts. Respond to comments within 1 hour of posting.',
-        timeframe: '30_days',
-        effort: 'medium',
-        proofRequired: ['Engagement rate increase of 1%+', 'Response time metrics'],
-        status: 'pending',
-    },
-    {
-        id: 'u3',
-        blockerId: 'b3',
-        title: 'Create Content Calendar',
-        whatToDo: 'Set up a content calendar with 5 posts/week scheduled for optimal times. Use scheduling tools to maintain consistency.',
-        timeframe: '30_days',
-        effort: 'medium',
-        proofRequired: ['Content calendar screenshot', '2 weeks of consistent posting'],
-        status: 'pending',
-    },
-    {
-        id: 'u4',
-        blockerId: 'b4',
-        title: 'Add UTM Parameters to Affiliate Links',
-        whatToDo: 'Update all affiliate links with proper UTM tracking. Use a link management tool for consistency.',
-        timeframe: 'quick_win',
-        effort: 'low',
-        proofRequired: ['Updated link audit showing tracking parameters'],
-        status: 'pending',
-    },
-];
-
 export default function BlockersDashboard() {
-    const [blockers, setBlockers] = useState<Blocker[]>(MOCK_BLOCKERS);
-    const [unlockers, setUnlockers] = useState<Unlocker[]>(MOCK_UNLOCKERS);
+    const [blockers, setBlockers] = useState<Blocker[]>([]);
+    const [unlockers, setUnlockers] = useState<Unlocker[]>([]);
     const [selectedBlocker, setSelectedBlocker] = useState<string | null>(null);
     const [filter, setFilter] = useState<string>('all');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const [blockersRes, unlockersRes] = await Promise.allSettled([
+                    apiRequest<Blocker[]>('/api/v1/blockers'),
+                    apiRequest<Unlocker[]>('/api/v1/unlockers'),
+                ]);
+                if (blockersRes.status === 'fulfilled') {
+                    setBlockers(Array.isArray(blockersRes.value) ? blockersRes.value : []);
+                }
+                if (unlockersRes.status === 'fulfilled') {
+                    setUnlockers(Array.isArray(unlockersRes.value) ? unlockersRes.value : []);
+                }
+            } catch {
+                // silently fail
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
 
     const getSeverityColor = (severity: string) => {
         const colors: Record<string, { bg: string; text: string; border: string }> = {

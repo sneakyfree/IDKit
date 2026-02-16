@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Upload, FileText, Loader2, Download, AlertCircle, CheckCircle } from "lucide-react";
 
 /**
- * TASK 5.1.1: Bulk Content Generation UI
+ * Bulk Content Generation UI
  * 
  * A 4-step wizard for generating 10-100 pieces of content from CSV/templates
  */
@@ -24,14 +24,10 @@ interface BulkJob {
     errors: { row: number; message: string }[];
 }
 
-const MOCK_TEMPLATES: Template[] = [
-    { id: "1", name: "Social Post", description: "Engaging social media post", variables: ["topic", "tone", "platform"] },
-    { id: "2", name: "Blog Article", description: "Full blog article", variables: ["title", "keywords", "length"] },
-    { id: "3", name: "Product Description", description: "E-commerce product copy", variables: ["product_name", "features", "price"] },
-];
-
 export default function BulkGenerationPage() {
     const [step, setStep] = useState(1);
+    const [templates, setTemplates] = useState<Template[]>([]);
+    const [templatesLoading, setTemplatesLoading] = useState(true);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [csvData, setCsvData] = useState<string[][]>([]);
     const [csvFile, setCsvFile] = useState<File | null>(null);
@@ -39,6 +35,34 @@ export default function BulkGenerationPage() {
     const [job, setJob] = useState<BulkJob | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Load templates from API on mount
+    useEffect(() => {
+        const loadTemplates = async () => {
+            setTemplatesLoading(true);
+            try {
+                const token = localStorage.getItem("token");
+                const headers: Record<string, string> = {};
+                if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/content/templates`,
+                    { headers }
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    setTemplates(Array.isArray(data) ? data : (data.templates || []));
+                } else {
+                    setTemplates([]);
+                }
+            } catch {
+                setTemplates([]);
+            } finally {
+                setTemplatesLoading(false);
+            }
+        };
+        loadTemplates();
+    }, []);
 
     // Step 1: Select Template
     const handleSelectTemplate = (template: Template) => {
@@ -205,7 +229,11 @@ export default function BulkGenerationPage() {
                 {step === 1 && (
                     <section aria-labelledby="template-heading">
                         <h2 id="template-heading" className="text-lg font-semibold mb-4">Select a Template</h2>
-                        {MOCK_TEMPLATES.length === 0 ? (
+                        {templatesLoading ? (
+                            <div className="flex items-center justify-center py-12">
+                                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                            </div>
+                        ) : templates.length === 0 ? (
                             <div className="bg-gray-900 rounded-xl p-8 text-center">
                                 <FileText className="w-12 h-12 mx-auto text-gray-600 mb-4" />
                                 <p className="text-gray-400 mb-4">No templates available</p>
@@ -215,7 +243,7 @@ export default function BulkGenerationPage() {
                             </div>
                         ) : (
                             <div className="grid gap-4">
-                                {MOCK_TEMPLATES.map((template) => (
+                                {templates.map((template: Template) => (
                                     <button
                                         key={template.id}
                                         onClick={() => handleSelectTemplate(template)}

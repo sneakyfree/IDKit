@@ -14,6 +14,7 @@ import {
     Eye,
     RotateCcw,
 } from 'lucide-react';
+import { apiRequest } from '@/lib/api';
 
 interface VersionEntry {
     version_id: string;
@@ -40,68 +41,6 @@ interface VersionHistoryProps {
     maxItems?: number;
 }
 
-// Mock data for demonstration
-const mockVersions: VersionEntry[] = [
-    {
-        version_id: 'v-001',
-        version_number: '3.2.1',
-        entity_type: 'model',
-        entity_name: 'Pricing Engine',
-        created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-        created_by: 'system',
-        changes: [
-            { field: 'base_rate_multiplier', old_value: 1.2, new_value: 1.25 },
-            { field: 'engagement_weight', old_value: 0.3, new_value: 0.35 },
-        ],
-        commit_message: 'Updated pricing weights for Q1 2026',
-        is_current: true,
-        hash: 'a7f3d2e',
-    },
-    {
-        version_id: 'v-002',
-        version_number: '3.2.0',
-        entity_type: 'model',
-        entity_name: 'Pricing Engine',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-        created_by: 'admin@idkit.io',
-        changes: [
-            { field: 'min_sponsorship', old_value: 500, new_value: 750 },
-        ],
-        commit_message: 'Raised minimum sponsorship threshold',
-        is_current: false,
-        hash: 'b8e4c3f',
-    },
-    {
-        version_id: 'v-003',
-        version_number: '2.1.0',
-        entity_type: 'rule',
-        entity_name: 'FTC Disclosure',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        created_by: 'system',
-        changes: [
-            { field: 'required_text', old_value: '#ad', new_value: '#ad #sponsored' },
-        ],
-        commit_message: 'Updated FTC disclosure requirements',
-        is_current: true,
-        hash: 'c9f5d4g',
-    },
-    {
-        version_id: 'v-004',
-        version_number: '1.5.0',
-        entity_type: 'config',
-        entity_name: 'Agent Guardrails',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-        created_by: 'creator@example.com',
-        changes: [
-            { field: 'auto_publish', old_value: true, new_value: false },
-            { field: 'risk_tolerance', old_value: 'high', new_value: 'medium' },
-        ],
-        commit_message: 'Tightened agent permissions',
-        is_current: true,
-        hash: 'd0g6e5h',
-    },
-];
-
 export function VersionHistory({
     entityType = 'all',
     entityId,
@@ -116,16 +55,22 @@ export function VersionHistory({
     const [filter, setFilter] = useState<string>(entityType);
 
     useEffect(() => {
-        // Simulated API call
-        setLoading(true);
-        setTimeout(() => {
-            let filtered = mockVersions;
-            if (entityType !== 'all') {
-                filtered = mockVersions.filter((v) => v.entity_type === entityType);
+        async function fetchVersions() {
+            setLoading(true);
+            try {
+                const params = new URLSearchParams();
+                if (entityType !== 'all') params.set('entity_type', entityType);
+                if (entityId) params.set('entity_id', entityId);
+                params.set('limit', String(maxItems));
+                const response = await apiRequest<VersionEntry[]>(`/api/v1/versions?${params.toString()}`);
+                setVersions(Array.isArray(response) ? response : []);
+            } catch {
+                setVersions([]);
+            } finally {
+                setLoading(false);
             }
-            setVersions(filtered.slice(0, maxItems));
-            setLoading(false);
-        }, 500);
+        }
+        fetchVersions();
     }, [entityType, entityId, maxItems]);
 
     const toggleExpanded = (versionId: string) => {
@@ -226,8 +171,8 @@ export function VersionHistory({
                             key={type}
                             onClick={() => setFilter(type)}
                             className={`px-3 py-1.5 text-sm rounded-full whitespace-nowrap transition-colors ${filter === type
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                                 }`}
                         >
                             {type.charAt(0).toUpperCase() + type.slice(1)}

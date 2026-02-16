@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Download, AlertCircle, CheckCircle, Clock, Calendar, Loader2, DollarSign } from "lucide-react";
+import { taxApi } from "@/lib/api";
 
 /**
  * Tax Documentation UI
@@ -33,35 +34,7 @@ interface TaxInfo {
     };
 }
 
-const MOCK_DOCUMENTS: TaxDocument[] = [
-    {
-        id: "1",
-        type: "1099-NEC",
-        year: 2025,
-        status: "available",
-        amount: 15420.50,
-        generatedAt: "2026-01-15",
-        downloadUrl: "/api/tax/1099-nec-2025.pdf",
-    },
-    {
-        id: "2",
-        type: "Summary",
-        year: 2025,
-        status: "available",
-        amount: 15420.50,
-        generatedAt: "2026-01-15",
-        downloadUrl: "/api/tax/summary-2025.pdf",
-    },
-    {
-        id: "3",
-        type: "1099-NEC",
-        year: 2024,
-        status: "available",
-        amount: 8750.00,
-        generatedAt: "2025-01-20",
-        downloadUrl: "/api/tax/1099-nec-2024.pdf",
-    },
-];
+
 
 export default function TaxDocumentsPage() {
     const [documents, setDocuments] = useState<TaxDocument[]>([]);
@@ -73,22 +46,43 @@ export default function TaxDocumentsPage() {
     const years = [2026, 2025, 2024, 2023];
 
     useEffect(() => {
-        setTimeout(() => {
-            setDocuments(MOCK_DOCUMENTS);
-            setTaxInfo({
-                taxId: "***-**-1234",
-                taxIdType: "SSN",
-                businessType: "individual",
-                address: {
-                    street: "123 Creator Lane",
-                    city: "Los Angeles",
-                    state: "CA",
-                    zip: "90001",
-                    country: "United States",
-                },
-            });
-            setLoading(false);
-        }, 800);
+        async function fetchTaxData() {
+            try {
+                setLoading(true);
+                const [docsResp, profileResp] = await Promise.all([
+                    taxApi.listDocuments(),
+                    taxApi.getTaxInfo().catch(() => null),
+                ]);
+                setDocuments((docsResp.documents || []).map((d: any) => ({
+                    id: d.id as string,
+                    type: (d.document_type as TaxDocument["type"]) || "Summary",
+                    year: (d.tax_year as number) || new Date().getFullYear(),
+                    status: (d.status as TaxDocument["status"]) || "pending",
+                    amount: d.amount_cents ? (d.amount_cents as number) / 100 : undefined,
+                    generatedAt: d.generated_at as string,
+                    downloadUrl: d.download_url as string,
+                })));
+                if (profileResp) {
+                    setTaxInfo({
+                        taxId: (profileResp as any).tax_id_masked || "***-**-****",
+                        taxIdType: ((profileResp as any).tax_id_type || "SSN") as TaxInfo["taxIdType"],
+                        businessType: ((profileResp as any).business_type || "individual") as TaxInfo["businessType"],
+                        address: {
+                            street: (profileResp as any).address?.street || "",
+                            city: (profileResp as any).address?.city || "",
+                            state: (profileResp as any).address?.state || "",
+                            zip: (profileResp as any).address?.zip || "",
+                            country: (profileResp as any).address?.country || "United States",
+                        },
+                    });
+                }
+            } catch {
+                setDocuments([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchTaxData();
     }, []);
 
     const filteredDocs = documents.filter(d => d.year === selectedYear);

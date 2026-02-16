@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Globe, Plus, Trash2, CheckCircle, XCircle, Loader2, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 
 /**
  * TASK 5.1.4: Custom Domains UI
@@ -26,31 +27,6 @@ interface DNSRecord {
     verified: boolean;
 }
 
-const MOCK_DOMAINS: CustomDomain[] = [
-    {
-        id: "1",
-        domain: "creator.mybrand.com",
-        status: "active",
-        sslStatus: "active",
-        createdAt: "2024-01-01",
-        verifiedAt: "2024-01-02",
-        dnsRecords: [
-            { type: "CNAME", name: "creator", value: "custom.idkit.io", verified: true },
-            { type: "TXT", name: "_idkit-verify", value: "idkit-verification=abc123", verified: true },
-        ],
-    },
-    {
-        id: "2",
-        domain: "app.startup.co",
-        status: "pending",
-        sslStatus: "pending",
-        createdAt: "2024-01-10",
-        dnsRecords: [
-            { type: "CNAME", name: "app", value: "custom.idkit.io", verified: false },
-            { type: "TXT", name: "_idkit-verify", value: "idkit-verification=xyz789", verified: false },
-        ],
-    },
-];
 
 export default function CustomDomainsPage() {
     const [domains, setDomains] = useState<CustomDomain[]>([]);
@@ -61,11 +37,17 @@ export default function CustomDomainsPage() {
     const [verifying, setVerifying] = useState<string | null>(null);
 
     useEffect(() => {
-        // Simulate API fetch
-        setTimeout(() => {
-            setDomains(MOCK_DOMAINS);
-            setLoading(false);
-        }, 800);
+        async function fetchDomains() {
+            try {
+                const response = await apiRequest<CustomDomain[]>("/api/v1/domains");
+                setDomains(Array.isArray(response) ? response : []);
+            } catch {
+                setDomains([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchDomains();
     }, []);
 
     const handleAddDomain = async (domain: string) => {
@@ -372,7 +354,7 @@ function AddDomainModal({ onClose, onAdd }: { onClose: () => void; onAdd: (domai
                     </div>
 
                     <p className="text-sm text-gray-500 mb-6">
-                        After adding, you'll need to configure DNS records with your provider.
+                        After adding, you&apos;ll need to configure DNS records with your provider.
                     </p>
 
                     <div className="flex gap-4">

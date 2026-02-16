@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DollarSign, Users, PieChart, Plus, Loader2, CheckCircle, Clock, ArrowRight, Settings } from "lucide-react";
+import { revenueSharingApi } from "@/lib/api";
 
 /**
  * Revenue Sharing UI
@@ -31,36 +32,7 @@ interface Participant {
     pending: number;
 }
 
-const MOCK_SHARES: RevenueShare[] = [
-    {
-        id: "1",
-        name: "Podcast Revenue Split",
-        type: "ongoing",
-        status: "active",
-        participants: [
-            { id: "1", name: "You", email: "you@example.com", percentage: 60, earned: 3600, paidOut: 3000, pending: 600 },
-            { id: "2", name: "Co-Host", email: "cohost@example.com", percentage: 40, earned: 2400, paidOut: 2000, pending: 400 },
-        ],
-        totalRevenue: 6000,
-        period: "monthly",
-        createdAt: "2024-01-01",
-        lastPayout: "2024-01-15",
-    },
-    {
-        id: "2",
-        name: "Collab Video Project",
-        type: "project",
-        status: "completed",
-        participants: [
-            { id: "1", name: "You", email: "you@example.com", percentage: 50, earned: 1500, paidOut: 1500, pending: 0 },
-            { id: "3", name: "VideoEditor", email: "editor@example.com", percentage: 30, earned: 900, paidOut: 900, pending: 0 },
-            { id: "4", name: "ThumbnailDesigner", email: "design@example.com", percentage: 20, earned: 600, paidOut: 600, pending: 0 },
-        ],
-        totalRevenue: 3000,
-        period: "per-project",
-        createdAt: "2023-12-01",
-    },
-];
+
 
 export default function RevenueSharingPage() {
     const [shares, setShares] = useState<RevenueShare[]>([]);
@@ -69,10 +41,46 @@ export default function RevenueSharingPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            setShares(MOCK_SHARES);
-            setLoading(false);
-        }, 800);
+        async function fetchAgreements() {
+            try {
+                setLoading(true);
+                const response = await revenueSharingApi.listAgreements();
+                setShares((response.agreements || []).map((a: any) => ({
+                    id: a.id as string,
+                    name: (a.name as string) || (a.partner_name as string) || "Untitled",
+                    type: "ongoing" as const,
+                    status: (a.status as RevenueShare["status"]) || "active",
+                    participants: [
+                        {
+                            id: "self",
+                            name: "You",
+                            email: "",
+                            percentage: 100 - ((a.split_percentage as number) || 50),
+                            earned: ((a.total_earned_cents as number) || 0) / 100 * (1 - ((a.split_percentage as number) || 50) / 100),
+                            paidOut: 0,
+                            pending: 0,
+                        },
+                        {
+                            id: "partner",
+                            name: (a.partner_name as string) || "Partner",
+                            email: "",
+                            percentage: (a.split_percentage as number) || 50,
+                            earned: ((a.total_earned_cents as number) || 0) / 100 * ((a.split_percentage as number) || 50) / 100,
+                            paidOut: ((a.total_paid_cents as number) || 0) / 100,
+                            pending: 0,
+                        },
+                    ],
+                    totalRevenue: ((a.total_earned_cents as number) || 0) / 100,
+                    period: "monthly" as const,
+                    createdAt: a.created_at as string || new Date().toISOString(),
+                })));
+            } catch {
+                setShares([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchAgreements();
     }, []);
 
     const totals = {
@@ -180,6 +188,9 @@ function ShareCard({ share, onClick }: { share: RevenueShare; onClick: () => voi
     return (
         <div
             onClick={onClick}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }}
+            role="button"
+            tabIndex={0}
             className="bg-gray-900 rounded-xl p-5 hover:bg-gray-800/50 transition-colors cursor-pointer"
         >
             <div className="flex items-center justify-between mb-4">

@@ -5,7 +5,7 @@
 :root {
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 0, 0, 0;
-  
+
   /* Theme variables - default to dark */
   --bg-primary: #0a0a0a;
   --bg-secondary: #1a1a1a;
@@ -27,7 +27,7 @@
 [data-theme="light"] {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 255, 255, 255;
-  
+
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f5;
   --bg-tertiary: #e5e5e5;
@@ -101,6 +101,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -108,9 +109,12 @@ body {
 
 /* Pulse animation for likes */
 @keyframes heart-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.2);
   }
@@ -118,4 +122,92 @@ body {
 
 .heart-pulse {
   animation: heart-pulse 0.3s ease-out;
+}
+
+/* ---- Phase 4: Accessibility & Mobile UX ---- */
+
+/* WCAG AA Focus Outlines */
+:focus-visible {
+  outline: 2px solid var(--border-focus, #a78bfa);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .heart-pulse,
+  .spinner {
+    animation: none !important;
+  }
+}
+
+/* Mobile Touch Targets (WCAG 2.5.5) */
+@media (pointer: coarse) {
+
+  button,
+  [role="button"],
+  a,
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase padding on compact interactive elements */
+  .action-btn {
+    padding: 12px;
+  }
+}
+
+/* Safe Area Insets for Mobile (notch, home bar) */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  nav[aria-label="Main navigation"] {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Slide-up animation for bottom sheets */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Skip to main content visible on focus */
+.skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: var(--accent, #a78bfa);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
 }

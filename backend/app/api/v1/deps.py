@@ -134,7 +134,7 @@ async def require_admin(
     Raises:
         HTTPException: 403 if user is not an admin
     """
-    if not getattr(current_user, 'is_admin', False):
+    if not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required",
@@ -151,7 +151,7 @@ async def require_verified(
     Raises:
         HTTPException: 403 if user is not verified
     """
-    if not getattr(current_user, 'is_verified', False):
+    if not current_user.is_verified:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Email verification required",
@@ -161,21 +161,82 @@ async def require_verified(
 
 class RateLimitDep:
     """
-    Rate limiting dependency.
-    
+    Rate limiting dependency using Redis sliding window.
+
     Usage:
         @router.get("/endpoint")
         async def endpoint(rate_limit: bool = Depends(RateLimitDep(requests=10, period=60))):
             ...
     """
-    
+
     def __init__(self, requests: int = 100, period: int = 60):
         self.requests = requests
         self.period = period
-    
-    async def __call__(self):
-        # In production, this would check Redis for rate limit
-        # For now, we just return True
+
+    async def __call__(
+        self,
+        credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    ) -> bool:
+        """Check rate limit using Redis sliding window counter."""
+        import time
+
+        try:
+            from app.main import redis_client
+        except (ImportError, AttributeError):
+            if settings.debug:
+                return True
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Rate limiting service unavailable",
+            )
+
+        if redis_client is None:
+            if settings.debug:
+                return True
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Rate limiting service unavailable",
+            )
+
+        # Identify client by JWT subject or fallback to "anon"
+        client_id = "anon"
+        if credentials:
+            try:
+                payload = jwt.decode(
+                    credentials.credentials,
+                    settings.jwt_secret_key,
+                    algorithms=["HS256"],
+                )
+                client_id = payload.get("sub", "anon")
+            except Exception:
+                client_id = "anon"
+
+        key = f"ratelimit:{client_id}:{self.period}"
+        now = time.time()
+
+        try:
+            pipe = redis_client.pipeline()
+            pipe.zremrangebyscore(key, 0, now - self.period)
+            pipe.zadd(key, {str(now): now})
+            pipe.zcard(key)
+            pipe.expire(key, self.period)
+            results = await pipe.execute()
+            request_count = results[2]
+        except Exception:
+            if settings.debug:
+                return True
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Rate limiting service unavailable",
+            )
+
+        if request_count > self.requests:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Rate limit exceeded. Max {self.requests} requests per {self.period}s.",
+                headers={"Retry-After": str(self.period)},
+            )
+
         return True
 
 

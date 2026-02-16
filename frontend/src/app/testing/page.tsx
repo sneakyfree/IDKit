@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, BarChart3, CheckCircle, XCircle, Loader2, TrendingUp, Users, Percent } from "lucide-react";
+import { testing } from "@/lib/api";
 
 /**
  * TASK 5.1.3: A/B Testing UI
@@ -34,36 +35,6 @@ interface Variation {
   };
 }
 
-const MOCK_TESTS: ABTest[] = [
-  {
-    id: "1",
-    name: "Summer CTA Test",
-    metric: "clicks",
-    status: "running",
-    variations: [
-      { id: "a", name: "Variation A", content: "Shop Now →", metrics: { impressions: 5430, clicks: 312, conversions: 45, rate: 5.7 } },
-      { id: "b", name: "Variation B", content: "Get 50% Off", metrics: { impressions: 5520, clicks: 428, conversions: 62, rate: 7.8 } },
-    ],
-    trafficSplit: [50, 50],
-    startedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    confidence: 87,
-  },
-  {
-    id: "2",
-    name: "Email Subject Line",
-    metric: "conversions",
-    status: "completed",
-    variations: [
-      { id: "a", name: "Control", content: "Check out our new products", metrics: { impressions: 10000, clicks: 850, conversions: 120, rate: 1.2 } },
-      { id: "b", name: "Urgency", content: "Last chance! 24 hours only", metrics: { impressions: 10000, clicks: 1240, conversions: 185, rate: 1.85 } },
-    ],
-    trafficSplit: [50, 50],
-    startedAt: new Date(Date.now() - 86400000 * 14).toISOString(),
-    endedAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-    winner: "b",
-    confidence: 96,
-  },
-];
 
 export default function ABTestingPage() {
   const [tests, setTests] = useState<ABTest[]>([]);
@@ -72,11 +43,39 @@ export default function ABTestingPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      setTests(MOCK_TESTS);
-      setLoading(false);
-    }, 800);
+    async function fetchTests() {
+      try {
+        const response = await testing.list();
+        const items = Array.isArray(response) ? response : [];
+        setTests(items.map((t) => ({
+          id: t.id,
+          name: t.name,
+          metric: (t.winner_criteria || 'clicks') as ABTest['metric'],
+          status: (t.status || 'draft') as ABTest['status'],
+          variations: Array.isArray(t.variants) ? t.variants.map((v) => ({
+            id: v.id,
+            name: v.name,
+            content: JSON.stringify(v.content || ''),
+            metrics: {
+              impressions: 0,
+              clicks: 0,
+              conversions: 0,
+              rate: 0,
+            },
+          })) : [],
+          trafficSplit: [50, 50],
+          startedAt: t.started_at || undefined,
+          endedAt: t.ended_at || undefined,
+          winner: t.winner_variant_id || undefined,
+          confidence: t.statistical_significance || undefined,
+        })));
+      } catch {
+        setTests([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTests();
   }, []);
 
   const filteredTests = tests.filter(t => filter === "all" || t.status === filter);
@@ -219,8 +218,8 @@ function TestCard({ test }: { test: ABTest }) {
           <div
             key={variation.id}
             className={`p-4 rounded-xl border ${test.winner === variation.id
-                ? "border-green-500 bg-green-500/10"
-                : "border-gray-800 bg-gray-800/50"
+              ? "border-green-500 bg-green-500/10"
+              : "border-gray-800 bg-gray-800/50"
               }`}
           >
             <div className="flex items-center justify-between mb-2">

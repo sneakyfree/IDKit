@@ -105,8 +105,8 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                                 <label
                                     key={option}
                                     className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${selected
-                                            ? 'border-purple-500 bg-purple-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                        ? 'border-purple-500 bg-purple-50'
+                                        : 'border-gray-200 hover:border-gray-300'
                                         }`}
                                 >
                                     <input
@@ -123,8 +123,8 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                                     />
                                     <span
                                         className={`w-5 h-5 rounded border mr-3 flex items-center justify-center ${selected
-                                                ? 'bg-purple-500 border-purple-500'
-                                                : 'border-gray-300'
+                                            ? 'bg-purple-500 border-purple-500'
+                                            : 'border-gray-300'
                                             }`}
                                     >
                                         {selected && (
@@ -157,8 +157,8 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                             type="button"
                             onClick={() => onChange(true, false)}
                             className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${value === true
-                                    ? 'bg-purple-500 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-purple-500 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             Yes
@@ -167,8 +167,8 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                             type="button"
                             onClick={() => onChange(false, false)}
                             className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${value === false
-                                    ? 'bg-purple-500 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-purple-500 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             No
@@ -267,7 +267,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                         className="mr-2 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
                     />
                     <span className="group-hover:text-gray-900 transition-colors">
-                        I'm not sure about this
+                        I&apos;m not sure about this
                     </span>
                 </label>
             )}

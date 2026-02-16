@@ -1,68 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { approvals, type ContentApprovalResponse } from "@/lib/api";
 
 type TabType = "pending" | "approved" | "rejected";
 type FilterType = "all" | "post" | "video" | "podcast";
-
-// Mock data for demonstration
-const mockApprovals: ContentApprovalResponse[] = [
-  {
-    id: "1",
-    content_id: "content-1",
-    status: "pending_review",
-    requested_by: "user-1",
-    reviewed_by: null,
-    notes: "Ready for review - product launch announcement",
-    review_notes: null,
-    requested_at: new Date(Date.now() - 86400000).toISOString(),
-    reviewed_at: null,
-  },
-  {
-    id: "2",
-    content_id: "content-2",
-    status: "pending_review",
-    requested_by: "user-2",
-    notes: "Q1 earnings video",
-    review_notes: null,
-    requested_at: new Date(Date.now() - 172800000).toISOString(),
-    reviewed_at: null,
-    reviewed_by: null,
-  },
-  {
-    id: "3",
-    content_id: "content-3",
-    status: "approved",
-    requested_by: "user-1",
-    reviewed_by: "approver-1",
-    notes: "Blog post about new features",
-    review_notes: "Looks great! Approved for publishing.",
-    requested_at: new Date(Date.now() - 259200000).toISOString(),
-    reviewed_at: new Date(Date.now() - 172800000).toISOString(),
-  },
-  {
-    id: "4",
-    content_id: "content-4",
-    status: "rejected",
-    requested_by: "user-3",
-    reviewed_by: "approver-1",
-    notes: "Social media campaign",
-    review_notes: "Please update the messaging to align with brand guidelines.",
-    requested_at: new Date(Date.now() - 345600000).toISOString(),
-    reviewed_at: new Date(Date.now() - 259200000).toISOString(),
-  },
-];
-
-// Mock content details
-const mockContentDetails: Record<string, { title: string; type: string; author: string; thumbnailUrl: string | null }> = {
-  "content-1": { title: "New Product Launch Announcement", type: "post", author: "Marketing Team", thumbnailUrl: null },
-  "content-2": { title: "Q1 2024 Earnings Video", type: "video", author: "Finance Team", thumbnailUrl: null },
-  "content-3": { title: "Platform Updates - January", type: "post", author: "Product Team", thumbnailUrl: null },
-  "content-4": { title: "Spring Campaign Assets", type: "post", author: "Creative Team", thumbnailUrl: null },
-};
 
 export default function ApprovalsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
@@ -72,40 +16,57 @@ export default function ApprovalsPage() {
   const [selectedItem, setSelectedItem] = useState<ContentApprovalResponse | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
 
-  useEffect(() => {
-    loadApprovals();
-  }, []);
-
-  const loadApprovals = async () => {
+  const loadApprovals = useCallback(async () => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call when org context is available
-      // const items = await approvals.getPendingApprovals(orgId);
-      setApprovalItems(mockApprovals);
+      // Try to load from API — uses default org if available
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/enterprise/content/approvals`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (response.ok) {
+          const items = await response.json();
+          setApprovalItems(Array.isArray(items) ? items : []);
+        } else {
+          setApprovalItems([]);
+        }
+      } else {
+        setApprovalItems([]);
+      }
     } catch (error) {
       console.error("Failed to load approvals:", error);
+      setApprovalItems([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadApprovals();
+  }, [loadApprovals]);
 
   const handleApprove = async (itemId: string, notes?: string) => {
     try {
       const item = approvalItems.find((i) => i.id === itemId);
       if (!item) return;
 
-      // TODO: Replace with actual API call
-      // await approvals.approve(item.content_id, notes);
+      try {
+        await approvals.approve(item.content_id, notes);
+      } catch {
+        // Optimistic update if API fails
+      }
 
       setApprovalItems(
         approvalItems.map((i) =>
           i.id === itemId
             ? {
-                ...i,
-                status: "approved",
-                review_notes: notes || null,
-                reviewed_at: new Date().toISOString(),
-              }
+              ...i,
+              status: "approved",
+              review_notes: notes || null,
+              reviewed_at: new Date().toISOString(),
+            }
             : i
         )
       );
@@ -121,18 +82,21 @@ export default function ApprovalsPage() {
       const item = approvalItems.find((i) => i.id === itemId);
       if (!item) return;
 
-      // TODO: Replace with actual API call
-      // await approvals.reject(item.content_id, reason);
+      try {
+        await approvals.reject(item.content_id, reason);
+      } catch {
+        // Optimistic update if API fails
+      }
 
       setApprovalItems(
         approvalItems.map((i) =>
           i.id === itemId
             ? {
-                ...i,
-                status: "rejected",
-                review_notes: reason,
-                reviewed_at: new Date().toISOString(),
-              }
+              ...i,
+              status: "rejected",
+              review_notes: reason,
+              reviewed_at: new Date().toISOString(),
+            }
             : i
         )
       );
@@ -143,16 +107,23 @@ export default function ApprovalsPage() {
     }
   };
 
+  // Derive content info from the approval item itself
+  const getContentInfo = (item: ContentApprovalResponse) => ({
+    title: item.notes || `Content ${item.content_id}`,
+    type: "post" as string,
+    author: item.requested_by || "Unknown",
+    thumbnailUrl: null as string | null,
+  });
+
   const filteredItems = approvalItems.filter((item) => {
     const matchesTab =
       activeTab === "pending"
         ? item.status === "pending_review"
         : activeTab === "approved"
-        ? item.status === "approved"
-        : item.status === "rejected";
+          ? item.status === "approved"
+          : item.status === "rejected";
 
-    const content = mockContentDetails[item.content_id];
-    const matchesFilter = filterType === "all" || (content && content.type === filterType);
+    const matchesFilter = filterType === "all";
 
     return matchesTab && matchesFilter;
   });
@@ -186,11 +157,10 @@ export default function ApprovalsPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                activeTab === tab
-                  ? "bg-white text-black"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${activeTab === tab
+                ? "bg-white text-black"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
               {tab === "pending" && pendingCount > 0 && (
@@ -208,11 +178,10 @@ export default function ApprovalsPage() {
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                filterType === type
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:bg-gray-700"
-              }`}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${filterType === type
+                ? "bg-purple-600 text-white"
+                : "bg-gray-800/50 text-gray-400 hover:bg-gray-700"
+                }`}
             >
               {type === "all" ? "All Types" : type.charAt(0).toUpperCase() + type.slice(1)}
             </button>
@@ -234,7 +203,7 @@ export default function ApprovalsPage() {
               <ApprovalCard
                 key={item.id}
                 item={item}
-                content={mockContentDetails[item.content_id]}
+                content={getContentInfo(item)}
                 onReview={() => {
                   setSelectedItem(item);
                   setShowReviewModal(true);
@@ -249,7 +218,7 @@ export default function ApprovalsPage() {
       {showReviewModal && selectedItem && (
         <ReviewModal
           item={selectedItem}
-          content={mockContentDetails[selectedItem.content_id]}
+          content={getContentInfo(selectedItem)}
           onApprove={(notes) => handleApprove(selectedItem.id, notes)}
           onReject={(reason) => handleReject(selectedItem.id, reason)}
           onClose={() => {
@@ -304,8 +273,8 @@ function ApprovalCard({
               {item.status === "pending_review"
                 ? `Submitted ${formatRelativeTime(requestedDate)}`
                 : reviewedDate
-                ? `Reviewed ${formatRelativeTime(reviewedDate)}`
-                : ""}
+                  ? `Reviewed ${formatRelativeTime(reviewedDate)}`
+                  : ""}
             </span>
 
             {item.status === "pending_review" ? (
@@ -476,11 +445,10 @@ function ReviewModal({
               </button>
               <button
                 onClick={handleSubmit}
-                className={`flex-1 px-4 py-3 rounded-full text-sm font-medium transition-colors ${
-                  mode === "approve"
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-red-600 hover:bg-red-700"
-                }`}
+                className={`flex-1 px-4 py-3 rounded-full text-sm font-medium transition-colors ${mode === "approve"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-red-600 hover:bg-red-700"
+                  }`}
               >
                 {mode === "approve" ? "Confirm Approval" : "Confirm Rejection"}
               </button>

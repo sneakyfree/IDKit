@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Users, Plus, Mail, Calendar, Phone, Globe, Trash2, Edit, CheckCircle, Clock, Loader2 } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 
 /**
  * Podcast Guest Management UI
@@ -31,42 +32,6 @@ interface GuestEpisode {
     status: "planning" | "scheduled" | "recorded" | "editing" | "published";
 }
 
-const MOCK_GUESTS: PodcastGuest[] = [
-    {
-        id: "1",
-        name: "Dr. Sarah Mitchell",
-        email: "sarah@example.com",
-        phone: "+1 555-0123",
-        website: "https://sarahmitchell.com",
-        bio: "AI researcher and bestselling author with expertise in machine learning",
-        status: "confirmed",
-        episodes: [
-            { id: "e1", episodeTitle: "The Future of AI", recordingDate: "2024-02-15", status: "scheduled" },
-        ],
-        socialLinks: [
-            { platform: "twitter", url: "https://twitter.com/drsarah" },
-            { platform: "linkedin", url: "https://linkedin.com/in/sarahmitchell" },
-        ],
-    },
-    {
-        id: "2",
-        name: "Marcus Johnson",
-        email: "marcus@startup.co",
-        bio: "Founder & CEO of multiple successful startups in the fintech space",
-        status: "invited",
-        episodes: [],
-    },
-    {
-        id: "3",
-        name: "Lisa Chen",
-        email: "lisa@creativelabs.io",
-        bio: "Creative director and influencer marketing expert",
-        status: "recorded",
-        episodes: [
-            { id: "e2", episodeTitle: "Building Your Brand", recordingDate: "2024-01-20", status: "editing" },
-        ],
-    },
-];
 
 export default function GuestManagementPage() {
     const [guests, setGuests] = useState<PodcastGuest[]>([]);
@@ -76,10 +41,17 @@ export default function GuestManagementPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            setGuests(MOCK_GUESTS);
-            setLoading(false);
-        }, 800);
+        async function fetchGuests() {
+            try {
+                const response = await apiRequest<PodcastGuest[]>("/api/v1/podcasts/guests");
+                setGuests(Array.isArray(response) ? response : []);
+            } catch {
+                setGuests([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchGuests();
     }, []);
 
     const stats = {
@@ -235,7 +207,7 @@ function GuestCard({ guest, onClick, onUpdateStatus }: {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 min-w-0 cursor-pointer" onClick={onClick}>
+                <div className="flex-1 min-w-0 cursor-pointer" onClick={onClick} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }} role="button" tabIndex={0}>
                     <h3 className="font-semibold">{guest.name}</h3>
                     <p className="text-sm text-gray-400 truncate">{guest.bio}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">

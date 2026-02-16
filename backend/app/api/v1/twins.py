@@ -758,3 +758,125 @@ async def get_generated_asset(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
+
+
+# ==================== Appearance & Voice Presets ====================
+
+
+class AvatarAppearanceUpdate(BaseModel):
+    """Request to update avatar appearance settings."""
+
+    lighting: Optional[str] = None
+    background: Optional[str] = None
+    expression_preset: Optional[str] = None
+    clothing_style: Optional[str] = None
+    camera_angle: Optional[float] = Field(default=None, ge=-30, le=30)
+    zoom_level: Optional[float] = Field(default=None, ge=0, le=100)
+
+
+@router.patch("/{twin_id}/appearance")
+async def update_appearance(
+    twin_id: uuid.UUID,
+    request: AvatarAppearanceUpdate,
+    db: DB,
+    current_user: CurrentUser,
+):
+    """Update avatar appearance settings (T08)."""
+    service = AiTwinService(db)
+    twin = await service.get_twin(twin_id, current_user.id)
+
+    if not twin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="AI Twin not found",
+        )
+
+    # Persist to avatar config
+    result = await db.execute(
+        select(AvatarConfig).where(AvatarConfig.ai_twin_id == twin_id)
+    )
+    config = result.scalar_one_or_none()
+
+    if config:
+        update_data = request.model_dump(exclude_unset=True)
+        if "camera_angle" in update_data:
+            config.camera_angle = str(update_data["camera_angle"])
+        if "background" in update_data:
+            config.background_type = update_data["background"]
+        if "expression_preset" in update_data:
+            config.emotion_default = update_data["expression_preset"]
+        if "zoom_level" in update_data:
+            config.zoom_level = str(update_data["zoom_level"])
+        await db.commit()
+
+    return {"status": "updated", "twin_id": str(twin_id)}
+
+
+@router.get("/voice-presets")
+async def list_voice_presets(
+    current_user: CurrentUser,
+):
+    """List available voice presets (T09)."""
+    presets = [
+        {"id": "professional", "name": "Professional", "description": "Clear, authoritative, corporate-ready", "category": "Business", "tags": ["corporate", "formal"]},
+        {"id": "casual", "name": "Casual", "description": "Warm, friendly, conversational", "category": "Social", "tags": ["friendly", "warm"]},
+        {"id": "dramatic", "name": "Dramatic", "description": "Intense, theatrical, impactful", "category": "Creative", "tags": ["intense", "storytelling"]},
+        {"id": "whispering", "name": "Whispering", "description": "Intimate, soft-spoken ASMR style", "category": "Creative", "tags": ["asmr", "intimate"]},
+        {"id": "news_anchor", "name": "News Anchor", "description": "Polished, neutral, broadcast-quality", "category": "Business", "tags": ["broadcast", "neutral"]},
+        {"id": "motivational", "name": "Motivational", "description": "Energetic, inspiring, uplifting", "category": "Creative", "tags": ["energy", "inspiring"]},
+        {"id": "documentary", "name": "Documentary", "description": "Deep, contemplative, narrative", "category": "Creative", "tags": ["narrative", "deep"]},
+        {"id": "podcast_host", "name": "Podcast Host", "description": "Engaging, natural, conversational", "category": "Social", "tags": ["podcast", "engaging"]},
+        {"id": "tutorial", "name": "Tutorial", "description": "Patient, clear, instructional", "category": "Education", "tags": ["teaching", "clear"]},
+        {"id": "excited", "name": "Excited", "description": "High-energy, enthusiastic, upbeat", "category": "Social", "tags": ["energy", "upbeat"]},
+        {"id": "sarcastic", "name": "Sarcastic", "description": "Dry wit, slightly ironic tone", "category": "Social", "tags": ["humor", "wit"]},
+        {"id": "storyteller", "name": "Storyteller", "description": "Captivating, expressive, varied pace", "category": "Creative", "tags": ["story", "expressive"]},
+        {"id": "sales_pitch", "name": "Sales Pitch", "description": "Persuasive, confident, action-oriented", "category": "Business", "tags": ["sales", "persuasive"]},
+        {"id": "meditation", "name": "Meditation", "description": "Calm, soothing, peaceful", "category": "Wellness", "tags": ["calm", "peaceful"]},
+        {"id": "gaming", "name": "Gaming", "description": "Hype, fast-paced, dynamic", "category": "Social", "tags": ["gaming", "hype"]},
+        {"id": "luxury_brand", "name": "Luxury Brand", "description": "Smooth, sophisticated, premium", "category": "Business", "tags": ["luxury", "premium"]},
+        {"id": "tech_review", "name": "Tech Review", "description": "Analytical, informed, detailed", "category": "Education", "tags": ["tech", "analytical"]},
+        {"id": "comedy", "name": "Comedy", "description": "Fun, playful, comedic timing", "category": "Creative", "tags": ["funny", "playful"]},
+        {"id": "fitness_coach", "name": "Fitness Coach", "description": "Commanding, encouraging, high-energy", "category": "Wellness", "tags": ["fitness", "encouraging"]},
+        {"id": "audiobook", "name": "Audiobook", "description": "Rich, measured, immersive", "category": "Creative", "tags": ["audiobook", "immersive"]},
+    ]
+    return {"presets": presets, "total": len(presets)}
+
+
+@router.patch("/{twin_id}/voice")
+async def update_voice_preset(
+    twin_id: uuid.UUID,
+    db: DB,
+    current_user: CurrentUser,
+    voice_preset_id: Optional[str] = None,
+):
+    """Apply a voice preset to an AI Twin (T09)."""
+    service = AiTwinService(db)
+    twin = await service.get_twin(twin_id, current_user.id)
+
+    if not twin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="AI Twin not found",
+        )
+
+    # Update voice config
+    result = await db.execute(
+        select(VoiceConfig).where(VoiceConfig.ai_twin_id == twin_id)
+    )
+    config = result.scalar_one_or_none()
+
+    if config and voice_preset_id:
+        # Map preset to voice parameters
+        preset_params = {
+            "professional": {"stability": 0.8, "similarity_boost": 0.7, "style": 0.3},
+            "casual": {"stability": 0.5, "similarity_boost": 0.8, "style": 0.6},
+            "dramatic": {"stability": 0.3, "similarity_boost": 0.9, "style": 0.9},
+            "motivational": {"stability": 0.4, "similarity_boost": 0.85, "style": 0.8},
+        }
+        params = preset_params.get(voice_preset_id, {"stability": 0.5, "similarity_boost": 0.75, "style": 0.5})
+        config.stability = params["stability"]
+        config.similarity_boost = params["similarity_boost"]
+        config.style = params["style"]
+        await db.commit()
+
+    return {"status": "updated", "twin_id": str(twin_id), "preset": voice_preset_id}

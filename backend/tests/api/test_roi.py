@@ -26,7 +26,7 @@ class TestROICalculation:
         today = date.today()
         start = today - timedelta(days=30)
 
-        response = await unauthenticated_client.post(
+        response = await async_client.post(
             "/api/v1/roi/calculate",
             json={
                 "start_date": start.isoformat(),
@@ -67,7 +67,7 @@ class TestROICalculation:
         """Test ROI calculation with end date before start date."""
         today = date.today()
 
-        response = await unauthenticated_client.post(
+        response = await async_client.post(
             "/api/v1/roi/calculate",
             json={
                 "start_date": today.isoformat(),
@@ -190,7 +190,7 @@ class TestCostEntries:
         auth_headers: dict,
     ):
         """Test adding a cost entry."""
-        response = await unauthenticated_client.post(
+        response = await async_client.post(
             "/api/v1/roi/costs",
             json={
                 "amount_cents": 9999,
@@ -216,7 +216,7 @@ class TestCostEntries:
         auth_headers: dict,
     ):
         """Test adding cost entry with invalid amount."""
-        response = await unauthenticated_client.post(
+        response = await async_client.post(
             "/api/v1/roi/costs",
             json={
                 "amount_cents": -100,
@@ -256,7 +256,7 @@ class TestCostEntries:
     ):
         """Test getting cost entries with filters."""
         today = date.today()
-        response = await unauthenticated_client.get(
+        response = await async_client.get(
             f"/api/v1/roi/costs?start_date={today.isoformat()}&category=software",
             headers=auth_headers,
         )
@@ -271,7 +271,7 @@ class TestCostEntries:
     ):
         """Test deleting a cost entry."""
         # First create an entry
-        create_response = await unauthenticated_client.post(
+        create_response = await async_client.post(
             "/api/v1/roi/costs",
             json={
                 "amount_cents": 5000,

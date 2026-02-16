@@ -172,7 +172,7 @@ export default function VoicePresetsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Voice Presets</h1>
-                        <p className="text-gray-400">Choose or customize your AI Twin's voice</p>
+                        <p className="text-gray-400">Choose or customize your AI Twin&apos;s voice</p>
                     </div>
                     <button
                         onClick={() => setShowCreateModal(true)}
@@ -211,16 +211,16 @@ export default function VoicePresetsPage() {
                                     key={preset.id}
                                     onClick={() => handleSelectPreset(preset)}
                                     className={`bg-gray-900 rounded-xl p-5 cursor-pointer transition-all ${selectedPreset?.id === preset.id
-                                            ? "ring-2 ring-purple-500"
-                                            : "hover:bg-gray-800/50"
+                                        ? "ring-2 ring-purple-500"
+                                        : "hover:bg-gray-800/50"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${preset.category === "professional" ? "bg-blue-600/20 text-blue-400" :
-                                                    preset.category === "casual" ? "bg-green-600/20 text-green-400" :
-                                                        preset.category === "character" ? "bg-purple-600/20 text-purple-400" :
-                                                            "bg-gray-600/20 text-gray-400"
+                                                preset.category === "casual" ? "bg-green-600/20 text-green-400" :
+                                                    preset.category === "character" ? "bg-purple-600/20 text-purple-400" :
+                                                        "bg-gray-600/20 text-gray-400"
                                                 }`}>
                                                 <Mic className="w-6 h-6" />
                                             </div>

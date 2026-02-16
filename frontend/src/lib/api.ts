@@ -7,7 +7,7 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface ApiOptions {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   headers?: Record<string, string>;
 }
@@ -23,7 +23,7 @@ class ApiError extends Error {
   }
 }
 
-async function apiRequest<T>(
+export async function apiRequest<T>(
   endpoint: string,
   options: ApiOptions = {}
 ): Promise<T> {
@@ -46,7 +46,45 @@ async function apiRequest<T>(
     config.body = JSON.stringify(body);
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, config);
+  let response = await fetch(`${API_BASE}${endpoint}`, config);
+
+  // Auto-refresh on 401 if refresh token is available
+  if (response.status === 401 && typeof window !== "undefined") {
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (refreshToken) {
+      try {
+        const refreshResponse = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+        if (refreshResponse.ok) {
+          const tokens = await refreshResponse.json();
+          localStorage.setItem("access_token", tokens.access_token);
+          if (tokens.refresh_token) {
+            localStorage.setItem("refresh_token", tokens.refresh_token);
+          }
+          // Retry original request with new token
+          const retryConfig: RequestInit = {
+            ...config,
+            headers: {
+              ...config.headers as Record<string, string>,
+              Authorization: `Bearer ${tokens.access_token}`,
+            },
+          };
+          response = await fetch(`${API_BASE}${endpoint}`, retryConfig);
+        } else {
+          // Refresh failed — clear tokens and redirect to login
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = "/auth";
+        }
+      } catch {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+      }
+    }
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: "Unknown error" }));
@@ -811,21 +849,16 @@ interface CreateApiKeyRequest {
 
 export const developersApi = {
   listApiKeys: () =>
-    apiRequest<ApiKey[]>("/api/v1/api-keys"),
+    apiRequest<{ keys: ApiKey[]; total: number }>("/api/v1/api-keys"),
 
   createApiKey: (data: CreateApiKeyRequest) =>
-    apiRequest<ApiKey & { secret: string }>("/api/v1/api-keys", {
+    apiRequest<{ key: ApiKey; secret: string; warning: string }>("/api/v1/api-keys", {
       method: "POST",
       body: data,
     }),
 
   revokeApiKey: (id: string) =>
     apiRequest<void>(`/api/v1/api-keys/${id}`, { method: "DELETE" }),
-
-  getUsage: (keyId: string, period: "day" | "week" | "month" = "week") =>
-    apiRequest<{ timestamps: string[]; requests: number[] }>(
-      `/api/v1/api-keys/${keyId}/usage?period=${period}`
-    ),
 };
 
 // ==================== Contracts API ====================
@@ -858,8 +891,10 @@ interface CreateContractRequest {
 }
 
 export const contractsApi = {
-  list: () =>
-    apiRequest<Contract[]>("/api/v1/contracts"),
+  list: (status?: string) =>
+    apiRequest<{ contracts: Contract[]; total: number }>(
+      `/api/v1/contracts${status ? `?status=${status}` : ""}`
+    ),
 
   get: (id: string) =>
     apiRequest<Contract>(`/api/v1/contracts/${id}`),
@@ -870,10 +905,13 @@ export const contractsApi = {
   sign: (id: string) =>
     apiRequest<Contract>(`/api/v1/contracts/${id}/sign`, { method: "POST" }),
 
-  updateDeliverable: (contractId: string, deliverableId: string, status: Deliverable["status"]) =>
-    apiRequest<Deliverable>(`/api/v1/contracts/${contractId}/deliverables/${deliverableId}`, {
-      method: "PATCH",
-      body: { status },
+  delete: (id: string) =>
+    apiRequest<void>(`/api/v1/contracts/${id}`, { method: "DELETE" }),
+
+  addDeliverable: (contractId: string, data: { description: string; due_date?: string }) =>
+    apiRequest<Deliverable>(`/api/v1/contracts/${contractId}/deliverables`, {
+      method: "POST",
+      body: data,
     }),
 };
 
@@ -890,13 +928,15 @@ interface ContractTemplate {
 }
 
 export const contractTemplatesApi = {
-  list: () =>
-    apiRequest<ContractTemplate[]>("/api/v1/contracts/templates"),
+  list: (category?: string) =>
+    apiRequest<{ templates: ContractTemplate[]; total: number }>(
+      `/api/v1/contracts/templates/list${category ? `?category=${category}` : ""}`
+    ),
 
   get: (id: string) =>
     apiRequest<ContractTemplate>(`/api/v1/contracts/templates/${id}`),
 
-  create: (data: Omit<ContractTemplate, "id" | "usage_count">) =>
+  create: (data: { name: string; content_template: string; category?: string; description?: string }) =>
     apiRequest<ContractTemplate>("/api/v1/contracts/templates", { method: "POST", body: data }),
 };
 
@@ -927,26 +967,33 @@ interface Message {
 }
 
 export const collaborateApi = {
-  listProjects: () =>
-    apiRequest<CollaborationProject[]>("/api/v1/collaborations"),
+  listProjects: (status?: string) =>
+    apiRequest<{ projects: CollaborationProject[]; total: number }>(
+      `/api/v1/co-creation/projects${status ? `?status_filter=${status}` : ""}`
+    ),
 
-  createProject: (data: { name: string; description: string }) =>
-    apiRequest<CollaborationProject>("/api/v1/collaborations", { method: "POST", body: data }),
+  createProject: (data: { name: string; description: string; project_type?: string }) =>
+    apiRequest<CollaborationProject>("/api/v1/co-creation/projects", { method: "POST", body: data }),
 
   getProject: (id: string) =>
-    apiRequest<CollaborationProject>(`/api/v1/collaborations/${id}`),
+    apiRequest<CollaborationProject>(`/api/v1/co-creation/projects/${id}`),
 
-  inviteCollaborator: (projectId: string, email: string) =>
-    apiRequest<void>(`/api/v1/collaborations/${projectId}/invite`, {
+  inviteCollaborator: (projectId: string, userId: string, role = "member") =>
+    apiRequest<void>(`/api/v1/co-creation/projects/${projectId}/invite`, {
       method: "POST",
-      body: { email },
+      body: { user_id: userId, role },
     }),
 
   sendMessage: (projectId: string, content: string) =>
-    apiRequest<Message>(`/api/v1/collaborations/${projectId}/messages`, {
+    apiRequest<Message>(`/api/v1/co-creation/projects/${projectId}/messages`, {
       method: "POST",
       body: { content },
     }),
+
+  getMessages: (projectId: string, limit = 50, offset = 0) =>
+    apiRequest<{ messages: Message[]; total: number }>(
+      `/api/v1/co-creation/projects/${projectId}/messages?limit=${limit}&offset=${offset}`
+    ),
 };
 
 // ==================== Revenue Sharing API ====================
@@ -969,17 +1016,25 @@ interface ProcessPayoutResponse {
 }
 
 export const revenueSharingApi = {
-  listAgreements: () =>
-    apiRequest<RevenueAgreement[]>("/api/v1/revenue-sharing"),
+  listAgreements: (status?: string) =>
+    apiRequest<{ agreements: RevenueAgreement[]; total: number }>(
+      `/api/v1/revenue-sharing${status ? `?status_filter=${status}` : ""}`
+    ),
 
-  createAgreement: (data: { partner_email: string; split_percentage: number }) =>
+  createAgreement: (data: { partner_id: string; name: string; split_percentage: number; description?: string }) =>
     apiRequest<RevenueAgreement>("/api/v1/revenue-sharing", { method: "POST", body: data }),
 
-  processPayout: (id: string) =>
-    apiRequest<ProcessPayoutResponse>(`/api/v1/revenue-sharing/${id}/payout`, { method: "POST" }),
+  getAgreement: (id: string) =>
+    apiRequest<RevenueAgreement>(`/api/v1/revenue-sharing/${id}`),
 
-  pauseAgreement: (id: string) =>
-    apiRequest<RevenueAgreement>(`/api/v1/revenue-sharing/${id}/pause`, { method: "POST" }),
+  updateStatus: (id: string, status: string) =>
+    apiRequest<RevenueAgreement>(`/api/v1/revenue-sharing/${id}/status`, {
+      method: "PATCH",
+      body: { status },
+    }),
+
+  recordRevenue: (id: string, data: { amount_cents: number; period_start: string; period_end: string }) =>
+    apiRequest<unknown>(`/api/v1/revenue-sharing/${id}/revenue`, { method: "POST", body: data }),
 };
 
 // ==================== Social Listening API ====================
@@ -1008,25 +1063,33 @@ interface Mention {
 }
 
 export const listeningApi = {
-  listQueries: () =>
-    apiRequest<ListeningQuery[]>("/api/v1/listening/queries"),
+  listQueries: (status?: string) =>
+    apiRequest<{ queries: ListeningQuery[]; total: number }>(
+      `/api/v1/listening/queries${status ? `?status_filter=${status}` : ""}`
+    ),
 
   createQuery: (data: { name: string; keywords: string[]; platforms: string[] }) =>
     apiRequest<ListeningQuery>("/api/v1/listening/queries", { method: "POST", body: data }),
 
-  getMentions: (queryId: string, filters?: { sentiment?: string; platform?: string }) => {
+  getQuery: (queryId: string) =>
+    apiRequest<ListeningQuery>(`/api/v1/listening/queries/${queryId}`),
+
+  deleteQuery: (queryId: string) =>
+    apiRequest<void>(`/api/v1/listening/queries/${queryId}`, { method: "DELETE" }),
+
+  getMentions: (queryId: string, filters?: { sentiment?: string; platform?: string; limit?: number }) => {
     const params = new URLSearchParams();
     if (filters?.sentiment) params.append("sentiment", filters.sentiment);
     if (filters?.platform) params.append("platform", filters.platform);
+    if (filters?.limit) params.append("limit", String(filters.limit));
     const qs = params.toString();
-    return apiRequest<Mention[]>(`/api/v1/listening/queries/${queryId}/mentions${qs ? `?${qs}` : ""}`);
+    return apiRequest<{ mentions: Mention[]; total: number }>(`/api/v1/listening/queries/${queryId}/mentions${qs ? `?${qs}` : ""}`);
   },
 
-  toggleQuery: (queryId: string, active: boolean) =>
-    apiRequest<ListeningQuery>(`/api/v1/listening/queries/${queryId}`, {
-      method: "PATCH",
-      body: { status: active ? "active" : "paused" },
-    }),
+  getSentiment: (queryId: string) =>
+    apiRequest<{ positive: number; neutral: number; negative: number; total: number }>(
+      `/api/v1/listening/queries/${queryId}/sentiment`
+    ),
 };
 
 // ==================== Custom Reports API ====================
@@ -1051,16 +1114,19 @@ interface ReportResult {
 
 export const reportsApi = {
   list: () =>
-    apiRequest<Report[]>("/api/v1/reports"),
+    apiRequest<{ reports: Report[]; total: number }>("/api/v1/reports"),
 
-  create: (data: { name: string; description: string; metrics: string[]; platforms: string[] }) =>
+  get: (id: string) =>
+    apiRequest<Report>(`/api/v1/reports/${id}`),
+
+  create: (data: { name: string; description?: string; metrics: string[]; platforms: string[]; export_format?: string }) =>
     apiRequest<Report>("/api/v1/reports", { method: "POST", body: data }),
 
   generate: (id: string) =>
-    apiRequest<ReportResult>(`/api/v1/reports/${id}/generate`, { method: "POST" }),
+    apiRequest<Report>(`/api/v1/reports/${id}/generate`, { method: "POST" }),
 
-  schedule: (id: string, schedule: { frequency: string; time: string }) =>
-    apiRequest<Report>(`/api/v1/reports/${id}/schedule`, { method: "PUT", body: schedule }),
+  schedule: (id: string, schedule: { frequency: string; day?: string; time?: string }) =>
+    apiRequest<Report>(`/api/v1/reports/${id}/schedule`, { method: "POST", body: schedule }),
 
   delete: (id: string) =>
     apiRequest<void>(`/api/v1/reports/${id}`, { method: "DELETE" }),
@@ -1103,18 +1169,24 @@ interface TaxDocument {
 
 export const taxApi = {
   getTaxInfo: () =>
-    apiRequest<TaxInfo>("/api/v1/tax"),
+    apiRequest<TaxInfo>("/api/v1/tax/profile"),
 
   updateTaxInfo: (data: Partial<TaxInfo>) =>
-    apiRequest<TaxInfo>("/api/v1/tax", { method: "PUT", body: data }),
+    apiRequest<TaxInfo>("/api/v1/tax/profile", { method: "PUT", body: data }),
+
+  submitW9: () =>
+    apiRequest<{ w9_submitted: boolean; w9_submitted_at: string }>("/api/v1/tax/profile/w9", { method: "POST" }),
 
   listDocuments: (year?: number) => {
     const qs = year ? `?year=${year}` : "";
-    return apiRequest<TaxDocument[]>(`/api/v1/tax/documents${qs}`);
+    return apiRequest<{ documents: TaxDocument[]; total: number }>(`/api/v1/tax/documents${qs}`);
   },
 
-  downloadDocument: (documentId: string) =>
-    apiRequest<{ download_url: string }>(`/api/v1/tax/documents/${documentId}/download`),
+  generateDocument: (type: string, year: number, totalAmountCents: number) =>
+    apiRequest<TaxDocument>("/api/v1/tax/documents/generate", {
+      method: "POST",
+      body: { type, year, total_amount_cents: totalAmountCents },
+    }),
 };
 
 // ==================== Compliance Reporting API ====================
@@ -1136,22 +1208,21 @@ interface ComplianceCheck {
 }
 
 export const complianceApi = {
-  listReports: () =>
-    apiRequest<ComplianceReport[]>("/api/v1/admin/compliance"),
+  listReports: (type?: string, limit = 20) =>
+    apiRequest<{ reports: ComplianceReport[]; total: number }>(
+      `/api/v1/ops/compliance/reports${type ? `?type=${type}` : ""}${limit ? `${type ? "&" : "?"}limit=${limit}` : ""}`
+    ),
 
   generateReport: (type: ComplianceReport["type"]) =>
-    apiRequest<ComplianceReport>("/api/v1/admin/compliance/generate", {
+    apiRequest<ComplianceReport>("/api/v1/ops/compliance/audit", {
       method: "POST",
       body: { type },
     }),
 
-  getChecks: () =>
-    apiRequest<ComplianceCheck[]>("/api/v1/admin/compliance/checks"),
-
-  runCheck: (checkId: string) =>
-    apiRequest<ComplianceCheck>(`/api/v1/admin/compliance/checks/${checkId}/run`, {
-      method: "POST",
-    }),
+  getChecks: (category?: string) =>
+    apiRequest<{ checks: ComplianceCheck[]; total: number }>(
+      `/api/v1/ops/compliance/checks${category ? `?category=${category}` : ""}`
+    ),
 };
 
 // ==================== Backup Management API ====================
@@ -1175,23 +1246,23 @@ interface BackupSchedule {
 }
 
 export const backupsApi = {
-  list: () =>
-    apiRequest<Backup[]>("/api/v1/admin/backups"),
+  list: (limit = 20) =>
+    apiRequest<{ backups: Backup[]; total: number }>(`/api/v1/ops/backups?limit=${limit}`),
 
   create: (type: "full" | "incremental" = "full") =>
-    apiRequest<Backup>("/api/v1/admin/backups", { method: "POST", body: { type } }),
+    apiRequest<Backup>("/api/v1/ops/backups", { method: "POST", body: { type } }),
 
-  restore: (id: string) =>
-    apiRequest<{ job_id: string }>(`/api/v1/admin/backups/${id}/restore`, { method: "POST" }),
+  get: (id: string) =>
+    apiRequest<Backup>(`/api/v1/ops/backups/${id}`),
 
   listSchedules: () =>
-    apiRequest<BackupSchedule[]>("/api/v1/admin/backups/schedules"),
+    apiRequest<{ schedules: BackupSchedule[]; total: number }>("/api/v1/ops/backups/schedules/list"),
 
-  toggleSchedule: (id: string, enabled: boolean) =>
-    apiRequest<BackupSchedule>(`/api/v1/admin/backups/schedules/${id}`, {
-      method: "PATCH",
-      body: { enabled },
-    }),
+  createSchedule: (data: { name: string; frequency: string; backup_type?: string; retention_days?: number }) =>
+    apiRequest<BackupSchedule>("/api/v1/ops/backups/schedules", { method: "POST", body: data }),
+
+  toggleSchedule: (id: string) =>
+    apiRequest<BackupSchedule>(`/api/v1/ops/backups/schedules/${id}/toggle`, { method: "POST" }),
 };
 
 // ==================== Sponsorship Management API ====================
@@ -1217,26 +1288,36 @@ interface SponsorshipDeliverable {
 }
 
 export const sponsorshipsApi = {
-  list: () =>
-    apiRequest<Sponsorship[]>("/api/v1/sponsorships"),
+  list: (status?: string) =>
+    apiRequest<{ sponsorships: Sponsorship[]; total: number }>(
+      `/api/v1/sponsorships${status ? `?status=${status}` : ""}`
+    ),
 
   create: (data: {
     brand_name: string;
     value_cents: number;
-    start_date: string;
-    end_date: string;
-    deliverables: Omit<SponsorshipDeliverable, "id" | "status">[];
+    start_date?: string;
+    end_date?: string;
   }) =>
     apiRequest<Sponsorship>("/api/v1/sponsorships", { method: "POST", body: data }),
 
   get: (id: string) =>
     apiRequest<Sponsorship>(`/api/v1/sponsorships/${id}`),
 
-  updateDeliverable: (sponsorshipId: string, deliverableId: string, status: SponsorshipDeliverable["status"]) =>
-    apiRequest<SponsorshipDeliverable>(
-      `/api/v1/sponsorships/${sponsorshipId}/deliverables/${deliverableId}`,
-      { method: "PATCH", body: { status } }
-    ),
+  update: (id: string, data: Partial<{ brand_name: string; status: string; value_cents: number }>) =>
+    apiRequest<Sponsorship>(`/api/v1/sponsorships/${id}`, { method: "PATCH", body: data }),
+
+  delete: (id: string) =>
+    apiRequest<void>(`/api/v1/sponsorships/${id}`, { method: "DELETE" }),
+
+  addDeliverable: (sponsorshipId: string, data: { type: string; platform: string; description?: string; due_date?: string }) =>
+    apiRequest<SponsorshipDeliverable>(`/api/v1/sponsorships/${sponsorshipId}/deliverables`, {
+      method: "POST",
+      body: data,
+    }),
+
+  getAnalytics: () =>
+    apiRequest<unknown>("/api/v1/sponsorships/analytics/summary"),
 };
 
 // ==================== Offline Mode API ====================

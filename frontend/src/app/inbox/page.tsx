@@ -1,88 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/nav/BottomNav";
+import { apiRequest } from "@/lib/api";
 
 type TabType = "all" | "comments" | "mentions" | "messages";
 
-// Mock notifications data
-const mockNotifications = [
-  {
-    id: "1",
-    type: "like",
-    user: { name: "Alex Kim", username: "alexkim", avatar: null },
-    content: "liked your video",
-    post: "How AI is Changing Everything",
-    time: "2m ago",
-    read: false,
-  },
-  {
-    id: "2",
-    type: "comment",
-    user: { name: "Sarah Chen", username: "sarahchen", avatar: null },
-    content: 'commented: "This is so helpful! Thanks for sharing 🙌"',
-    post: "Morning Routine 2024",
-    time: "15m ago",
-    read: false,
-  },
-  {
-    id: "3",
-    type: "follow",
-    user: { name: "Mike Johnson", username: "mikej", avatar: null },
-    content: "started following you",
-    post: null,
-    time: "1h ago",
-    read: false,
-  },
-  {
-    id: "4",
-    type: "mention",
-    user: { name: "Tech Daily", username: "techdaily", avatar: null },
-    content: 'mentioned you: "Check out @creator_jane\'s latest video on AI trends!"',
-    post: null,
-    time: "3h ago",
-    read: true,
-  },
-  {
-    id: "5",
-    type: "collab",
-    user: { name: "Brand Partner", username: "brandpartner", avatar: null },
-    content: "sent you a collaboration request",
-    post: null,
-    time: "5h ago",
-    read: true,
-  },
-];
+interface Notification {
+  id: string;
+  type: string;
+  user: { name: string; username: string; avatar: string | null };
+  content: string;
+  post: string | null;
+  time: string;
+  read: boolean;
+}
 
-const mockMessages = [
-  {
-    id: "1",
-    user: { name: "Alex Kim", username: "alexkim", avatar: null },
-    lastMessage: "Hey! Would love to collaborate on a video",
-    time: "10m ago",
-    unread: 2,
-  },
-  {
-    id: "2",
-    user: { name: "Brand Partner", username: "brandpartner", avatar: null },
-    lastMessage: "Thanks for considering our offer! Let me know...",
-    time: "2h ago",
-    unread: 0,
-  },
-  {
-    id: "3",
-    user: { name: "Sarah Chen", username: "sarahchen", avatar: null },
-    lastMessage: "The video is live! Check it out 🎉",
-    time: "1d ago",
-    unread: 0,
-  },
-];
+interface Message {
+  id: string;
+  user: { name: string; username: string; avatar: string | null };
+  lastMessage: string;
+  time: string;
+  unread: number;
+}
 
 export default function InboxPage() {
   const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const unreadCount = mockNotifications.filter((n) => !n.read).length;
+  useEffect(() => {
+    async function fetchInbox() {
+      try {
+        const [notifResponse, msgResponse] = await Promise.allSettled([
+          apiRequest<Notification[]>("/api/v1/notifications"),
+          apiRequest<Message[]>("/api/v1/messages"),
+        ]);
+        if (notifResponse.status === "fulfilled") {
+          setNotifications(Array.isArray(notifResponse.value) ? notifResponse.value : []);
+        }
+        if (msgResponse.status === "fulfilled") {
+          setMessages(Array.isArray(msgResponse.value) ? msgResponse.value : []);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchInbox();
+  }, []);
+
+  const mockNotifications = notifications;
+  const mockMessages = messages;
+
+  const unreadCount = mockNotifications.filter((n: Notification) => !n.read).length;
 
   return (
     <main className="min-h-screen bg-black pb-20">
@@ -103,11 +77,10 @@ export default function InboxPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-                activeTab === tab
-                  ? "text-white border-b-2 border-purple-500"
-                  : "text-gray-500"
-              }`}
+              className={`flex-1 py-3 text-sm font-medium transition-colors relative ${activeTab === tab
+                ? "text-white border-b-2 border-purple-500"
+                : "text-gray-500"
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
               {tab === "messages" && mockMessages.some((m) => m.unread > 0) && (
@@ -132,9 +105,8 @@ export default function InboxPage() {
               <Link
                 key={notification.id}
                 href={`/notifications/${notification.id}`}
-                className={`flex gap-3 p-4 hover:bg-gray-900 transition-colors ${
-                  !notification.read ? "bg-gray-900/50" : ""
-                }`}
+                className={`flex gap-3 p-4 hover:bg-gray-900 transition-colors ${!notification.read ? "bg-gray-900/50" : ""
+                  }`}
               >
                 {/* Avatar */}
                 <div className="relative">
@@ -233,7 +205,7 @@ export default function InboxPage() {
           </div>
           <h3 className="font-medium text-gray-400">No notifications yet</h3>
           <p className="text-sm text-gray-500 mt-1">
-            When you get notifications, they'll show up here
+            When you get notifications, they&apos;ll show up here
           </p>
         </div>
       )}

@@ -15,6 +15,15 @@ on:
         options:
           - staging
           - production
+      strategy:
+        description: 'Deployment strategy'
+        required: true
+        default: 'rolling'
+        type: choice
+        options:
+          - rolling
+          - blue-green
+          - canary
 
 env:
   DOCKER_REGISTRY: ghcr.io

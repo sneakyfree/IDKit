@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Plus, Download, Copy, Edit, Trash2, Search, Loader2, CheckCircle, Star } from "lucide-react";
+import { contractTemplatesApi } from "@/lib/api";
 
 /**
  * Contract Templates UI
@@ -38,65 +39,7 @@ const TEMPLATE_CATEGORIES = [
     { id: "general", label: "General" },
 ];
 
-const MOCK_TEMPLATES: ContractTemplate[] = [
-    {
-        id: "1",
-        name: "Standard Sponsorship Agreement",
-        category: "sponsorship",
-        description: "Comprehensive sponsorship agreement for brand deals",
-        popularity: 95,
-        isCustom: false,
-        sections: [
-            { id: "1", title: "Parties", content: "This agreement is made between {{creator_name}} and {{sponsor_name}}...", required: true, variables: ["creator_name", "sponsor_name"] },
-            { id: "2", title: "Scope of Work", content: "The Creator agrees to produce {{content_count}} pieces of content...", required: true, variables: ["content_count", "content_type"] },
-            { id: "3", title: "Compensation", content: "Sponsor agrees to pay {{total_amount}} USD...", required: true, variables: ["total_amount", "payment_schedule"] },
-            { id: "4", title: "Content Rights", content: "Sponsor receives {{usage_rights}} usage rights...", required: false, variables: ["usage_rights", "duration"] },
-        ],
-        createdAt: "2024-01-01",
-    },
-    {
-        id: "2",
-        name: "Content Collaboration Agreement",
-        category: "collaboration",
-        description: "Agreement for co-creating content with other creators",
-        popularity: 82,
-        isCustom: false,
-        sections: [
-            { id: "1", title: "Parties", content: "This agreement is between the collaborating parties...", required: true, variables: ["party_1", "party_2"] },
-            { id: "2", title: "Project Scope", content: "Description of the collaborative project...", required: true, variables: ["project_name", "deliverables"] },
-            { id: "3", title: "Revenue Split", content: "Revenue shall be split as follows...", required: true, variables: ["party_1_share", "party_2_share"] },
-        ],
-        createdAt: "2024-01-05",
-    },
-    {
-        id: "3",
-        name: "Non-Disclosure Agreement (NDA)",
-        category: "nda",
-        description: "Standard NDA for protecting confidential information",
-        popularity: 78,
-        isCustom: false,
-        sections: [
-            { id: "1", title: "Parties", content: "Between {{disclosing_party}} and {{receiving_party}}...", required: true, variables: ["disclosing_party", "receiving_party"] },
-            { id: "2", title: "Confidential Information", content: "Definition of what constitutes confidential information...", required: true, variables: [] },
-            { id: "3", title: "Term", content: "This agreement shall remain in effect for {{duration}}...", required: true, variables: ["duration"] },
-        ],
-        createdAt: "2024-01-03",
-    },
-    {
-        id: "4",
-        name: "Content Licensing Agreement",
-        category: "licensing",
-        description: "License your content for use by third parties",
-        popularity: 65,
-        isCustom: false,
-        sections: [
-            { id: "1", title: "Grant of License", content: "Licensor grants to Licensee...", required: true, variables: ["license_type", "territory"] },
-            { id: "2", title: "Compensation", content: "Licensee shall pay {{license_fee}}...", required: true, variables: ["license_fee", "royalty_rate"] },
-            { id: "3", title: "Attribution", content: "Licensee shall provide attribution as follows...", required: false, variables: ["attribution_text"] },
-        ],
-        createdAt: "2024-01-02",
-    },
-];
+
 
 export default function ContractTemplatesPage() {
     const [templates, setTemplates] = useState<ContractTemplate[]>([]);
@@ -106,10 +49,33 @@ export default function ContractTemplatesPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => {
-            setTemplates(MOCK_TEMPLATES);
-            setLoading(false);
-        }, 800);
+        async function fetchTemplates() {
+            try {
+                setLoading(true);
+                const response = await contractTemplatesApi.list();
+                setTemplates((response.templates || []).map((t: any) => ({
+                    id: t.id as string,
+                    name: (t.name as string) || "Template",
+                    category: (t.category as ContractTemplate["category"]) || "general",
+                    description: (t.description as string) || "",
+                    popularity: (t.usage_count as number) || 0,
+                    isCustom: !!t.is_custom,
+                    sections: (t.variables || []).map((v: any, idx: number) => ({
+                        id: String(idx),
+                        title: v.name as string || "Section",
+                        content: "",
+                        required: !!v.required,
+                        variables: [v.name as string],
+                    })),
+                    createdAt: t.created_at as string || new Date().toISOString(),
+                })));
+            } catch {
+                setTemplates([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchTemplates();
     }, []);
 
     const filteredTemplates = templates

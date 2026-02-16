@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Shield, FileText, Download, CheckCircle, AlertCircle, Clock, Loader2, ChevronRight } from "lucide-react";
+import { complianceApi } from "@/lib/api";
 
 /**
  * Compliance Reporting UI
@@ -29,57 +30,7 @@ interface ComplianceCheck {
     recommendation?: string;
 }
 
-const MOCK_REPORTS: ComplianceReport[] = [
-    {
-        id: "1",
-        name: "GDPR Compliance Report",
-        type: "gdpr",
-        status: "compliant",
-        lastGenerated: "2024-01-15",
-        nextDue: "2024-04-15",
-        findings: 2,
-        criticalFindings: 0,
-    },
-    {
-        id: "2",
-        name: "CCPA Privacy Assessment",
-        type: "ccpa",
-        status: "compliant",
-        lastGenerated: "2024-01-10",
-        nextDue: "2024-07-10",
-        findings: 1,
-        criticalFindings: 0,
-    },
-    {
-        id: "3",
-        name: "Security Audit Report",
-        type: "audit",
-        status: "warning",
-        lastGenerated: "2024-01-05",
-        findings: 5,
-        criticalFindings: 1,
-    },
-    {
-        id: "4",
-        name: "PCI DSS Assessment",
-        type: "pci",
-        status: "pending",
-        nextDue: "2024-02-01",
-        findings: 0,
-        criticalFindings: 0,
-    },
-];
 
-const MOCK_CHECKS: ComplianceCheck[] = [
-    { id: "1", category: "Data Protection", name: "Encryption at Rest", status: "pass", description: "All sensitive data is encrypted using AES-256" },
-    { id: "2", category: "Data Protection", name: "Encryption in Transit", status: "pass", description: "TLS 1.3 enabled for all connections" },
-    { id: "3", category: "Access Control", name: "MFA Enforcement", status: "pass", description: "Multi-factor authentication enabled for all admin accounts" },
-    { id: "4", category: "Access Control", name: "Role-Based Access", status: "pass", description: "RBAC implemented with principle of least privilege" },
-    { id: "5", category: "Audit", name: "Activity Logging", status: "warning", description: "Audit logs retained for 90 days", recommendation: "Extend retention to 1 year for SOC2 compliance" },
-    { id: "6", category: "Privacy", name: "Data Retention Policy", status: "pass", description: "Automated data deletion after retention period" },
-    { id: "7", category: "Privacy", name: "Consent Management", status: "pass", description: "Explicit consent collected and tracked" },
-    { id: "8", category: "Security", name: "Vulnerability Scanning", status: "warning", description: "Last scan: 15 days ago", recommendation: "Schedule weekly automated scans" },
-];
 
 export default function ComplianceReportingPage() {
     const [reports, setReports] = useState<ComplianceReport[]>([]);
@@ -89,11 +40,39 @@ export default function ComplianceReportingPage() {
     const [generating, setGenerating] = useState<string | null>(null);
 
     useEffect(() => {
-        setTimeout(() => {
-            setReports(MOCK_REPORTS);
-            setChecks(MOCK_CHECKS);
-            setLoading(false);
-        }, 800);
+        async function fetchCompliance() {
+            try {
+                setLoading(true);
+                const [reportsResp, checksResp] = await Promise.all([
+                    complianceApi.listReports(),
+                    complianceApi.getChecks().catch(() => ({ checks: [] })),
+                ]);
+                setReports((reportsResp.reports || []).map((r: any) => ({
+                    id: r.id as string,
+                    name: (r.name as string) || "Report",
+                    type: (r.report_type as ComplianceReport["type"]) || "audit",
+                    status: (r.status as ComplianceReport["status"]) || "pending",
+                    lastGenerated: r.generated_at as string,
+                    nextDue: r.next_due as string,
+                    findings: (r.findings_count as number) || 0,
+                    criticalFindings: (r.critical_count as number) || 0,
+                })));
+                setChecks(((checksResp as any).checks || []).map((c: any) => ({
+                    id: c.id as string,
+                    category: (c.category as string) || "General",
+                    name: (c.name as string) || "Check",
+                    status: (c.status as ComplianceCheck["status"]) || "pass",
+                    description: (c.description as string) || "",
+                    recommendation: c.recommendation as string,
+                })));
+            } catch {
+                setReports([]);
+                setChecks([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchCompliance();
     }, []);
 
     const stats = {

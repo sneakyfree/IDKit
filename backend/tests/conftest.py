@@ -148,8 +148,10 @@ class MockUser:
         self.oauth_provider_id = "google_test_123"
         self.is_active = True
         self.is_verified = True
+        self.is_admin = False
         self.subscription_tier = "pro"
         self.avatar_url = None
+        self.password_hash = None
         self.last_login_at = None
         self.created_at = None
         self.updated_at = None
@@ -227,11 +229,11 @@ async def test_user(db_session: AsyncSession) -> dict:
     await db_session.execute(
         text("""
             INSERT INTO users (id, email, oauth_provider, oauth_provider_id, 
-                             full_name, is_active, is_verified, subscription_tier,
-                             created_at, updated_at)
+                             full_name, is_active, is_verified, is_admin,
+                             subscription_tier, created_at, updated_at)
             VALUES (:id, :email, :oauth_provider, :oauth_provider_id,
-                   :full_name, :is_active, :is_verified, :subscription_tier,
-                   :created_at, :updated_at)
+                   :full_name, :is_active, :is_verified, :is_admin,
+                   :subscription_tier, :created_at, :updated_at)
         """),
         {
             "id": user_id.bytes,  # Store as bytes for SQLAlchemy UUID compatibility
@@ -241,6 +243,7 @@ async def test_user(db_session: AsyncSession) -> dict:
             "full_name": "Test User",
             "is_active": True,
             "is_verified": True,
+            "is_admin": False,
             "subscription_tier": "pro",
             "created_at": now,
             "updated_at": now,
