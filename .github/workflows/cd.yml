@@ -182,7 +182,7 @@ jobs:
 
       - name: Notify on success
         if: success()
-        uses: slackapi/slack-github-action@v1
+        uses: slackapi/slack-github-action@v2
         with:
           payload: |
             {
@@ -301,7 +301,7 @@ jobs:
 
       - name: Notify on success
         if: success()
-        uses: slackapi/slack-github-action@v1
+        uses: slackapi/slack-github-action@v2
         with:
           payload: |
             {
@@ -322,7 +322,7 @@ jobs:
 
       - name: Notify on failure
         if: failure()
-        uses: slackapi/slack-github-action@v1
+        uses: slackapi/slack-github-action@v2
         with:
           payload: |
             {
@@ -368,7 +368,7 @@ jobs:
           kubectl rollout status deployment/idkit-frontend --namespace=idkit --timeout=300s
 
       - name: Notify rollback
-        uses: slackapi/slack-github-action@v1
+        uses: slackapi/slack-github-action@v2
         with:
           payload: |
             {
