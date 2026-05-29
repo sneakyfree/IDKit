@@ -1,2 +1,52 @@
+# Dependencies
 node_modules/
 frontend/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+venv/
+.venv/
+
+# Next.js / frontend build
+.next/
+out/
+build/
+dist/
+
+# Test artifacts
+frontend/test-results/
+frontend/playwright-report/
+frontend/.auth/
+coverage/
+.coverage
+htmlcov/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Env / secrets (templates .env.example stay tracked)
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Misc build cache
+*.tsbuildinfo
+frontend/test-results/
