@@ -94,7 +94,7 @@ export default function ExportsPage() {
                     <Download className="w-8 h-8 text-purple-400" />
                     <div>
                         <h1 className="text-2xl font-bold">Export Center</h1>
-                        <p className="text-gray-400 text-sm">Download your data in any format</p>
+                        <p className="text-gray-200 text-sm">Download your data in any format</p>
                     </div>
                 </div>
 
@@ -109,9 +109,9 @@ export default function ExportsPage() {
                                     : "border-gray-800 bg-gray-900 hover:border-gray-700"
                                 }`}
                         >
-                            <cat.icon className={`w-5 h-5 mb-2 ${activeTab === cat.id ? "text-purple-400" : "text-gray-500"}`} />
+                            <cat.icon className={`w-5 h-5 mb-2 ${activeTab === cat.id ? "text-purple-400" : "text-gray-300"}`} />
                             <p className="font-medium text-sm">{cat.label}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{cat.description}</p>
+                            <p className="text-xs text-gray-300 mt-0.5">{cat.description}</p>
                         </button>
                     ))}
                 </div>
@@ -121,7 +121,7 @@ export default function ExportsPage() {
                     <h3 className="font-medium mb-4">Export Settings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-2">Format</label>
+                            <label className="block text-sm text-gray-200 mb-2">Format</label>
                             <div className="flex gap-2">
                                 {(["csv", "json", "pdf"] as ExportFormat[]).map((f) => (
                                     <button
@@ -129,7 +129,7 @@ export default function ExportsPage() {
                                         onClick={() => setFormat(f)}
                                         className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium uppercase transition-colors ${format === f
                                                 ? "border-purple-500 bg-purple-500/10 text-purple-300"
-                                                : "border-gray-700 bg-gray-800 text-gray-400"
+                                                : "border-gray-700 bg-gray-800 text-gray-200"
                                             }`}
                                     >
                                         {f}
@@ -138,8 +138,8 @@ export default function ExportsPage() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-2">Date Range</label>
-                            <select
+                            <label className="block text-sm text-gray-200 mb-2">Date Range</label>
+                            <select aria-label="Filter or select option"
                                 value={dateRange}
                                 onChange={(e) => setDateRange(e.target.value)}
                                 className="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white"
@@ -155,7 +155,7 @@ export default function ExportsPage() {
                             <button
                                 onClick={handleExport}
                                 disabled={exporting}
-                                className="w-full px-4 py-2.5 bg-purple-600 rounded-lg hover:bg-purple-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full px-4 py-2.5 bg-purple-600 rounded-lg hover:bg-purple-500 transition-colors disabled:opacity-80 flex items-center justify-center gap-2"
                             >
                                 {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                                 Export {CATEGORIES.find((c) => c.id === activeTab)?.label}
@@ -183,7 +183,7 @@ export default function ExportsPage() {
                                         )}
                                         <div>
                                             <p className="text-sm font-medium capitalize">{e.category} Export</p>
-                                            <p className="text-xs text-gray-500">
+                                            <p className="text-xs text-gray-300">
                                                 {e.format.toUpperCase()} · {new Date(e.created_at).toLocaleString()}
                                             </p>
                                         </div>

@@ -3,14 +3,14 @@ import { test, expect } from "@playwright/test";
 test.describe("Settings Page", () => {
   test("should display privacy settings page", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Check page title/header
     await expect(page.locator("h1, h2").first()).toContainText(/privacy|settings/i);
   });
 
   test("should have privacy toggles", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Look for toggle switches or checkboxes
     const toggles = page.locator(
       'input[type="checkbox"], [role="switch"], button[class*="toggle"]'
@@ -24,7 +24,7 @@ test.describe("Settings Page", () => {
 
   test("should have tab navigation", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Look for tabs (Settings, Your Data, Your Rights)
     const tabs = page.locator('[role="tab"], button[class*="tab"]');
     const tabCount = await tabs.count().catch(() => 0);
@@ -39,7 +39,7 @@ test.describe("Settings Page", () => {
 
   test("should have data export option", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Look for export data button or section
     const exportButton = page
       .getByRole("button", { name: /export|download/i })
@@ -57,7 +57,7 @@ test.describe("Settings Page", () => {
 
   test("should have account deletion option", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Look for delete account button or section
     const deleteButton = page
       .getByRole("button", { name: /delete.*account/i })
@@ -77,7 +77,7 @@ test.describe("Settings Page", () => {
 test.describe("Privacy Settings Interactions", () => {
   test("should toggle privacy settings", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Find a toggle switch
     const toggle = page
       .locator('input[type="checkbox"], [role="switch"], button[class*="toggle"]')
@@ -100,7 +100,7 @@ test.describe("Privacy Settings Interactions", () => {
 
   test("should show confirmation for sensitive actions", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Find delete account button
     const deleteButton = page
       .getByRole("button", { name: /delete.*account/i })

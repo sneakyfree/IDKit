@@ -58,12 +58,12 @@ export function TransformationRoadmap({
                             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 90-Day Transformation
                             </h2>
-                            <p className="text-sm text-gray-500">{goal}</p>
+                            <p className="text-sm text-gray-300">{goal}</p>
                         </div>
                     </div>
                     <div className="text-right">
                         <div className="text-2xl font-bold text-indigo-600">Week {currentWeek}</div>
-                        <div className="text-sm text-gray-500">of {totalWeeks}</div>
+                        <div className="text-sm text-gray-300">of {totalWeeks}</div>
                     </div>
                 </div>
 
@@ -75,7 +75,7 @@ export function TransformationRoadmap({
                             style={{ width: `${progressPercent}%` }}
                         />
                     </div>
-                    <div className="flex justify-between mt-2 text-xs text-gray-500">
+                    <div className="flex justify-between mt-2 text-xs text-gray-300">
                         <span>{new Date(startDate).toLocaleDateString()}</span>
                         <span>{completedMilestones} of {milestones.length} milestones</span>
                         <span>
@@ -110,7 +110,7 @@ export function TransformationRoadmap({
                                     ) : milestone.status === 'current' ? (
                                         <Flame className="h-5 w-5 text-white" />
                                     ) : (
-                                        <Circle className="h-5 w-5 text-gray-500" />
+                                        <Circle className="h-5 w-5 text-gray-300" />
                                     )}
                                 </div>
 
@@ -131,7 +131,7 @@ export function TransformationRoadmap({
                                         <div className="flex items-center justify-between">
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs text-gray-500">Week {milestone.week}</span>
+                                                    <span className="text-xs text-gray-300">Week {milestone.week}</span>
                                                     {milestone.status === 'current' && (
                                                         <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 text-xs rounded-full">
                                                             Current
@@ -139,14 +139,14 @@ export function TransformationRoadmap({
                                                     )}
                                                 </div>
                                                 <h3 className={`font-medium mt-1 ${milestone.status === 'completed'
-                                                        ? 'text-gray-500 line-through'
+                                                        ? 'text-gray-300 line-through'
                                                         : 'text-gray-900 dark:text-white'
                                                     }`}>
                                                     {milestone.title}
                                                 </h3>
-                                                <p className="text-sm text-gray-500 mt-1">{milestone.description}</p>
+                                                <p className="text-sm text-gray-300 mt-1">{milestone.description}</p>
                                             </div>
-                                            <ChevronRight className={`h-5 w-5 text-gray-400 transition-transform ${expandedMilestone === milestone.id ? 'rotate-90' : ''
+                                            <ChevronRight className={`h-5 w-5 text-gray-200 transition-transform ${expandedMilestone === milestone.id ? 'rotate-90' : ''
                                                 }`} />
                                         </div>
 
@@ -160,7 +160,7 @@ export function TransformationRoadmap({
                                                     }}
                                                 />
                                             </div>
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-gray-300">
                                                 {milestone.tasks.filter(t => t.completed).length}/{milestone.tasks.length}
                                             </span>
                                         </div>
@@ -181,7 +181,7 @@ export function TransformationRoadmap({
                                                         className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                     />
                                                     <span className={`text-sm ${task.completed
-                                                            ? 'text-gray-500 line-through'
+                                                            ? 'text-gray-300 line-through'
                                                             : 'text-gray-700 dark:text-gray-300'
                                                         }`}>
                                                         {task.title}

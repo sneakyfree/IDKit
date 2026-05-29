@@ -43,7 +43,7 @@ const ACTION_COLORS = {
     decision_made: 'text-blue-500',
     approval_requested: 'text-yellow-500',
     error: 'text-red-500',
-    info: 'text-gray-500',
+    info: 'text-gray-300',
 };
 
 interface AgentActivityFeedProps {
@@ -130,15 +130,15 @@ export function AgentActivityFeed({
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                         Agent Activity
                     </h3>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-300">
                         {filteredActivities.length} events
                     </span>
                 </div>
 
                 {showFilters && (
                     <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4 text-gray-400" />
-                        <select
+                        <Filter className="h-4 w-4 text-gray-200" />
+                        <select aria-label="Filter or select option"
                             value={filterAgent || ''}
                             onChange={(e) => setFilterAgent(e.target.value || null)}
                             className="text-sm border dark:border-gray-700 rounded px-2 py-1 bg-white dark:bg-gray-800"
@@ -148,7 +148,7 @@ export function AgentActivityFeed({
                                 <option key={type} value={type}>{type}</option>
                             ))}
                         </select>
-                        <select
+                        <select aria-label="Filter or select option"
                             value={filterAction || ''}
                             onChange={(e) => setFilterAction(e.target.value || null)}
                             className="text-sm border dark:border-gray-700 rounded px-2 py-1 bg-white dark:bg-gray-800"
@@ -165,9 +165,9 @@ export function AgentActivityFeed({
             {/* Activity List */}
             <div className="divide-y dark:divide-gray-800 max-h-[500px] overflow-y-auto">
                 {loading ? (
-                    <div className="p-8 text-center text-gray-500">Loading activities...</div>
+                    <div className="p-8 text-center text-gray-300">Loading activities...</div>
                 ) : filteredActivities.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">No activity to show</div>
+                    <div className="p-8 text-center text-gray-300">No activity to show</div>
                 ) : (
                     filteredActivities.map((activity) => {
                         const Icon = ACTION_ICONS[activity.action_type];
@@ -196,11 +196,11 @@ export function AgentActivityFeed({
                                                     </span>
                                                     <Icon className={`h-4 w-4 ${iconColor}`} />
                                                 </div>
-                                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                                                <p className="text-sm text-gray-200 dark:text-gray-200 mt-0.5">
                                                     {activity.description}
                                                 </p>
                                             </div>
-                                            <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
+                                            <span className="text-xs text-gray-300 whitespace-nowrap ml-2">
                                                 {formatTimeAgo(activity.timestamp)}
                                             </span>
                                         </div>
@@ -220,7 +220,7 @@ export function AgentActivityFeed({
                                             <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">
                                                 {Object.entries(activity.metadata).map(([key, value]) => (
                                                     <div key={key} className="flex gap-2">
-                                                        <span className="text-gray-500">{key}:</span>
+                                                        <span className="text-gray-300">{key}:</span>
                                                         <span className="text-gray-900 dark:text-gray-100">{String(value)}</span>
                                                     </div>
                                                 ))}

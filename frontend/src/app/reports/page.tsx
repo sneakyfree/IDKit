@@ -70,7 +70,7 @@ export default function ReportsPage() {
     const [dateRange, setDateRange] = useState("last_30_days");
     const [creating, setCreating] = useState(false);
 
-    const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+    const headers = { Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("token") : ""}` };
 
     const fetchReports = useCallback(async () => {
         try {
@@ -149,7 +149,7 @@ export default function ReportsPage() {
                         <BarChart3 className="w-8 h-8 text-purple-400" />
                         <div>
                             <h1 className="text-2xl font-bold">Custom Reports</h1>
-                            <p className="text-gray-400 text-sm">{reports.length} saved reports</p>
+                            <p className="text-gray-200 text-sm">{reports.length} saved reports</p>
                         </div>
                     </div>
                     <button
@@ -167,19 +167,19 @@ export default function ReportsPage() {
                             <div className="flex items-center justify-between mb-3">
                                 <FileText className="w-5 h-5 text-purple-400" />
                                 <button onClick={() => handleDelete(r.id)} className="p-1 hover:bg-gray-800 rounded">
-                                    <Trash2 className="w-4 h-4 text-gray-500" />
+                                    <Trash2 className="w-4 h-4 text-gray-300" />
                                 </button>
                             </div>
                             <h3 className="font-medium mb-1">{r.name}</h3>
-                            <p className="text-sm text-gray-500 mb-3">{r.type} chart</p>
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                            <p className="text-sm text-gray-300 mb-3">{r.type} chart</p>
+                            <div className="flex items-center gap-2 text-xs text-gray-200">
                                 <Clock className="w-3 h-3" />
                                 {r.last_run ? `Last run: ${new Date(r.last_run).toLocaleDateString()}` : "Never run"}
                             </div>
                         </div>
                     ))}
                     {reports.length === 0 && (
-                        <div className="col-span-full text-center py-16 text-gray-500">
+                        <div className="col-span-full text-center py-16 text-gray-300">
                             <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" />
                             <p>No reports yet. Click &quot;Build Report&quot; to create your first custom report.</p>
                         </div>
@@ -191,14 +191,14 @@ export default function ReportsPage() {
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
                         <div className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                             <div className="p-6 border-b border-gray-800">
-                                <h2 className="text-xl font-bold">Report Builder</h2>
-                                <p className="text-sm text-gray-500">Select metrics, choose visualization, and schedule your report.</p>
+                                <h2 className="text-xl font-bold text-white">Report Builder</h2>
+                                <p className="text-sm text-gray-300">Select metrics, choose visualization, and schedule your report.</p>
                             </div>
 
                             <div className="p-6 space-y-6">
                                 {/* Name */}
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Report Name</label>
+                                    <label className="block text-sm text-gray-200 mb-2">Report Name</label>
                                     <input
                                         type="text"
                                         value={reportName}
@@ -210,7 +210,7 @@ export default function ReportsPage() {
 
                                 {/* Metrics Picker */}
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">
+                                    <label className="block text-sm text-gray-200 mb-2">
                                         <Filter className="w-4 h-4 inline mr-1" /> Metrics ({selectedMetrics.length} selected)
                                     </label>
                                     <div className="grid grid-cols-2 gap-2">
@@ -220,7 +220,7 @@ export default function ReportsPage() {
                                                 onClick={() => toggleMetric(m.id)}
                                                 className={`text-left p-3 rounded-lg border transition-colors text-sm ${selectedMetrics.includes(m.id)
                                                         ? "border-purple-500 bg-purple-500/10 text-purple-300"
-                                                        : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
+                                                        : "border-gray-700 bg-gray-800 text-gray-200 hover:border-gray-600"
                                                     }`}
                                             >
                                                 <span className="block font-medium">{m.label}</span>
@@ -232,7 +232,7 @@ export default function ReportsPage() {
 
                                 {/* Chart Type */}
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-2">Chart Type</label>
+                                    <label className="block text-sm text-gray-200 mb-2">Chart Type</label>
                                     <div className="flex gap-2">
                                         {CHART_TYPES.map((ct) => (
                                             <button
@@ -240,7 +240,7 @@ export default function ReportsPage() {
                                                 onClick={() => setChartType(ct.id)}
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${chartType === ct.id
                                                         ? "border-purple-500 bg-purple-500/10 text-purple-300"
-                                                        : "border-gray-700 bg-gray-800 text-gray-400"
+                                                        : "border-gray-700 bg-gray-800 text-gray-200"
                                                     }`}
                                             >
                                                 <ct.icon className="w-4 h-4" /> {ct.label}
@@ -252,8 +252,8 @@ export default function ReportsPage() {
                                 {/* Platform & Date */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm text-gray-400 mb-2">Platform</label>
-                                        <select
+                                        <label className="block text-sm text-gray-200 mb-2">Platform</label>
+                                        <select aria-label="Filter or select option"
                                             value={platform}
                                             onChange={(e) => setPlatform(e.target.value)}
                                             className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
@@ -264,8 +264,8 @@ export default function ReportsPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm text-gray-400 mb-2">Date Range</label>
-                                        <select
+                                        <label className="block text-sm text-gray-200 mb-2">Date Range</label>
+                                        <select aria-label="Filter or select option"
                                             value={dateRange}
                                             onChange={(e) => setDateRange(e.target.value)}
                                             className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
@@ -290,7 +290,7 @@ export default function ReportsPage() {
                                 <button
                                     onClick={handleCreate}
                                     disabled={creating || !reportName || selectedMetrics.length === 0}
-                                    className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80 flex items-center justify-center gap-2"
                                 >
                                     {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                                     Create Report

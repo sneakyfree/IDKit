@@ -9,6 +9,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Payouts Page", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/settings/payouts");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display payouts page", async ({ page }) => {
@@ -49,7 +50,7 @@ test.describe("Payouts - Connected Account", () => {
 
     test("should display balance when connected", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for balance section
         const balanceSection = page.getByText(/balance|available|pending/i);
 
@@ -63,7 +64,7 @@ test.describe("Payouts - Connected Account", () => {
 
     test("should show payout history section", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for history section (may be empty or have transactions)
         const pageContent = await page.locator("main").textContent();
 
@@ -78,7 +79,7 @@ test.describe("Payouts - Connected Account", () => {
 
     test("should have payout request button when eligible", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // If connected and has balance, should show payout button
         const payoutButton = page.getByRole("button", { name: /request payout|withdraw/i });
         const hasPayoutButton = await payoutButton.isVisible().catch(() => false);
@@ -95,7 +96,7 @@ test.describe("Payouts - Connected Account", () => {
 test.describe("Payouts - Stripe Connect Flow", () => {
     test("should show connect button for new users", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // For users without Stripe account, should show connect CTA
         // This test verifies the onboarding flow exists
         const pageContent = await page.locator("main").textContent();
@@ -106,7 +107,7 @@ test.describe("Payouts - Stripe Connect Flow", () => {
 
     test("should display Stripe branding", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for Stripe references
         const pageContent = await page.locator("main").textContent();
 
@@ -119,7 +120,7 @@ test.describe("Payouts - From Settings Navigation", () => {
     test("should navigate to payouts from settings", async ({ page }) => {
         // Start from settings page
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Find and click payouts link
         const payoutsLink = page.getByRole("link", { name: /payout/i });
         await expect(payoutsLink).toBeVisible();
@@ -132,7 +133,7 @@ test.describe("Payouts - From Settings Navigation", () => {
 
     test("should show payouts in billing section", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for billing section
         const billingSection = page.getByText(/billing|payment/i);
         await expect(billingSection).toBeVisible();
@@ -142,7 +143,7 @@ test.describe("Payouts - From Settings Navigation", () => {
 test.describe("Payouts - Form Validation", () => {
     test("should validate payout amount", async ({ page }) => {
         await page.goto("/settings/payouts");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // If payout form is visible (user is connected with balance)
         const amountInput = page.locator('input[type="number"]');
         const hasAmountInput = await amountInput.isVisible().catch(() => false);

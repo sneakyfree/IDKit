@@ -145,7 +145,7 @@ export function ThemeToggle({
             <span className="text-white capitalize">{theme}</span>
           )}
           <svg
-            className={`w-4 h-4 text-gray-500 transition-transform ${
+            className={`w-4 h-4 text-gray-300 transition-transform ${
               isOpen ? "rotate-180" : ""
             }`}
             fill="none"
@@ -217,7 +217,7 @@ export function ThemeToggle({
           className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
             theme === option.value
               ? "bg-gray-700 text-white"
-              : "text-gray-400 hover:text-white"
+              : "text-gray-200 hover:text-white"
           }`}
           aria-label={`${option.label} theme`}
           aria-pressed={theme === option.value}

@@ -115,7 +115,7 @@ export default function CustomDomainsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Custom Domains</h1>
-                        <p className="text-gray-400">Connect your own domain for white-label branding</p>
+                        <p className="text-gray-200">Connect your own domain for white-label branding</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -132,7 +132,7 @@ export default function CustomDomainsPage() {
                         <Globe className="w-5 h-5 text-purple-400" />
                         <div>
                             <p className="font-medium">Enterprise Feature</p>
-                            <p className="text-sm text-gray-400">Custom domains are included in Enterprise plans.</p>
+                            <p className="text-sm text-gray-200">Custom domains are included in Enterprise plans.</p>
                         </div>
                     </div>
                 </div>
@@ -156,9 +156,9 @@ export default function CustomDomainsPage() {
                 {/* Empty State */}
                 {!loading && domains.length === 0 && (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <Globe className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <Globe className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No custom domains</h3>
-                        <p className="text-gray-500 mb-6">Add your first domain to enable white-label branding.</p>
+                        <p className="text-gray-300 mb-6">Add your first domain to enable white-label branding.</p>
                         <button
                             onClick={() => setShowAddModal(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700"
@@ -181,10 +181,10 @@ export default function CustomDomainsPage() {
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <Globe className="w-5 h-5 text-gray-400" />
+                                        <Globe className="w-5 h-5 text-gray-200" />
                                         <div>
                                             <h3 className="font-semibold">{domain.domain}</h3>
-                                            <p className="text-sm text-gray-500">Added {new Date(domain.createdAt).toLocaleDateString()}</p>
+                                            <p className="text-sm text-gray-300">Added {new Date(domain.createdAt).toLocaleDateString()}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function CustomDomainsPage() {
                                     <button
                                         onClick={() => handleVerifyDomain(selectedDomain.id)}
                                         disabled={verifying === selectedDomain.id}
-                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-80"
                                     >
                                         {verifying === selectedDomain.id ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -242,7 +242,7 @@ export default function CustomDomainsPage() {
                         {/* Status */}
                         <div className="grid grid-cols-2 gap-4 mb-6">
                             <div className="bg-gray-800 rounded-xl p-4">
-                                <p className="text-sm text-gray-400 mb-1">Domain Status</p>
+                                <p className="text-sm text-gray-200 mb-1">Domain Status</p>
                                 <div className="flex items-center gap-2">
                                     {selectedDomain.status === "active" ? (
                                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -255,7 +255,7 @@ export default function CustomDomainsPage() {
                                 </div>
                             </div>
                             <div className="bg-gray-800 rounded-xl p-4">
-                                <p className="text-sm text-gray-400 mb-1">SSL Certificate</p>
+                                <p className="text-sm text-gray-200 mb-1">SSL Certificate</p>
                                 <div className="flex items-center gap-2">
                                     {selectedDomain.sslStatus === "active" ? (
                                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -272,7 +272,7 @@ export default function CustomDomainsPage() {
                         {/* DNS Records */}
                         <div>
                             <h4 className="font-medium mb-3">DNS Records</h4>
-                            <p className="text-sm text-gray-400 mb-4">
+                            <p className="text-sm text-gray-200 mb-4">
                                 Add these records to your DNS provider:
                             </p>
                             <div className="space-y-3">
@@ -290,11 +290,11 @@ export default function CustomDomainsPage() {
                                         </div>
                                         <div className="grid grid-cols-2 gap-4 text-sm">
                                             <div>
-                                                <p className="text-gray-500 text-xs mb-1">Name</p>
+                                                <p className="text-gray-300 text-xs mb-1">Name</p>
                                                 <code className="text-white">{record.name}</code>
                                             </div>
                                             <div>
-                                                <p className="text-gray-500 text-xs mb-1">Value</p>
+                                                <p className="text-gray-300 text-xs mb-1">Value</p>
                                                 <code className="text-white break-all">{record.value}</code>
                                             </div>
                                         </div>
@@ -341,7 +341,7 @@ function AddDomainModal({ onClose, onAdd }: { onClose: () => void; onAdd: (domai
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-sm text-gray-400 mb-1">Domain</label>
+                        <label className="block text-sm text-gray-200 mb-1">Domain</label>
                         <input
                             type="text"
                             value={domain}
@@ -353,7 +353,7 @@ function AddDomainModal({ onClose, onAdd }: { onClose: () => void; onAdd: (domai
                         {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
                     </div>
 
-                    <p className="text-sm text-gray-500 mb-6">
+                    <p className="text-sm text-gray-300 mb-6">
                         After adding, you&apos;ll need to configure DNS records with your provider.
                     </p>
 
@@ -368,7 +368,7 @@ function AddDomainModal({ onClose, onAdd }: { onClose: () => void; onAdd: (domai
                         <button
                             type="submit"
                             disabled={!domain}
-                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                         >
                             Add Domain
                         </button>

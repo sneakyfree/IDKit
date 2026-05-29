@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Content Schedule Page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/schedule");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should display the schedule page", async ({ page }) => {
@@ -82,6 +83,7 @@ test.describe("Content Schedule Page", () => {
 test.describe("Schedule Modal", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/schedule");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should open schedule modal when clicking schedule button", async ({ page }) => {

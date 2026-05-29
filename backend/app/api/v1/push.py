@@ -176,7 +176,7 @@ async def send_notification(
     try:
         priority = NotificationPriority(request.priority)
     except ValueError:
-        priority = NotificationPriority.NORMAL
+        priority = NotificationPriority.DEFAULT
 
     notification = PushNotification(
         user_id=user_id,
@@ -224,7 +224,7 @@ async def send_bulk_notification(
     try:
         priority = NotificationPriority(request.priority)
     except ValueError:
-        priority = NotificationPriority.NORMAL
+        priority = NotificationPriority.DEFAULT
 
     notifications = [
         PushNotification(
@@ -340,12 +340,11 @@ def _get_channel_description(channel) -> str:
     from app.services.notifications import NotificationChannel
 
     descriptions = {
-        NotificationChannel.GENERAL: "General app notifications",
         NotificationChannel.ENGAGEMENT: "Likes, comments, and shares",
-        NotificationChannel.FOLLOWERS: "New followers and mentions",
         NotificationChannel.CONTENT: "Content generation and publishing",
+        NotificationChannel.SOCIAL: "DMs and mentions",
+        NotificationChannel.MARKETING: "Brand deals and opportunities",
         NotificationChannel.ANALYTICS: "Analytics insights and reports",
-        NotificationChannel.MONETIZATION: "Brand deals and earnings",
         NotificationChannel.SYSTEM: "System updates and alerts",
     }
     return descriptions.get(channel, "")
@@ -372,14 +371,15 @@ async def send_test_notification():
         title="Test Notification",
         body="This is a test notification from IDKit!",
         channel=NotificationChannel.SYSTEM,
-        priority=NotificationPriority.NORMAL,
-        data={"test": True},
+        priority=NotificationPriority.DEFAULT,
+        action_data={"test": True},
     )
 
     result = await service.send(notification)
 
     return {
-        "success": result.get("success", False),
+        "success": result.status == "sent",
+        "status": result.status,
         "message": "Test notification sent",
         "notification_id": notification.notification_id,
     }

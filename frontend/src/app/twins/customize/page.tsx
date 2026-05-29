@@ -138,13 +138,13 @@ export default function AvatarCustomizationPage() {
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold">Avatar Customization</h1>
-                        <p className="text-sm text-gray-400">Personalize your AI Twin&apos;s appearance</p>
+                        <p className="text-sm text-gray-200">Personalize your AI Twin&apos;s appearance</p>
                     </div>
                     <div className="flex gap-2">
                         <button
                             onClick={handleUndo}
                             disabled={historyIndex.current === 0}
-                            className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50"
+                            className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-80"
                             aria-label="Undo"
                         >
                             <RotateCcw className="w-5 h-5" />
@@ -158,7 +158,7 @@ export default function AvatarCustomizationPage() {
                         <button
                             onClick={handleSave}
                             disabled={generating}
-                            className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-80 flex items-center gap-2"
                         >
                             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                             Save
@@ -177,12 +177,12 @@ export default function AvatarCustomizationPage() {
                                 <img src={previewUrl} alt="Avatar preview" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-center p-8">
-                                    <User className="w-24 h-24 mx-auto text-gray-600 mb-4" />
-                                    <p className="text-gray-500 mb-4">No preview generated yet</p>
+                                    <User className="w-24 h-24 mx-auto text-gray-200 mb-4" />
+                                    <p className="text-gray-300 mb-4">No preview generated yet</p>
                                     <button
                                         onClick={handleGeneratePreview}
                                         disabled={generating}
-                                        className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2 mx-auto"
+                                        className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-80 flex items-center gap-2 mx-auto"
                                     >
                                         {generating ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -197,7 +197,7 @@ export default function AvatarCustomizationPage() {
 
                         {/* Current Settings Summary */}
                         <div className="mt-4 p-4 bg-gray-800 rounded-xl">
-                            <h3 className="text-sm font-medium text-gray-400 mb-2">Current Settings</h3>
+                            <h3 className="text-sm font-medium text-gray-200 mb-2">Current Settings</h3>
                             <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full" style={{ backgroundColor: customization.skinTone }} />
@@ -228,7 +228,7 @@ export default function AvatarCustomizationPage() {
                                     onClick={() => setActiveTab(tab.key)}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${activeTab === tab.key
                                         ? "bg-purple-600 text-white"
-                                        : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                                        : "bg-gray-800 text-gray-200 hover:bg-gray-700"
                                         }`}
                                 >
                                     {tab.icon}
@@ -282,7 +282,7 @@ export default function AvatarCustomizationPage() {
                                     if (currentIndex > 0) setActiveTab(tabs[currentIndex - 1].key);
                                 }}
                                 disabled={activeTab === tabs[0].key}
-                                className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50"
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-80"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                                 Previous
@@ -293,7 +293,7 @@ export default function AvatarCustomizationPage() {
                                     if (currentIndex < tabs.length - 1) setActiveTab(tabs[currentIndex + 1].key);
                                 }}
                                 disabled={activeTab === tabs[tabs.length - 1].key}
-                                className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                                className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-80"
                             >
                                 Next
                                 <ChevronRight className="w-4 h-4" />

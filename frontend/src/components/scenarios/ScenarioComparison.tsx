@@ -67,7 +67,7 @@ export function ScenarioComparison({
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Compare Scenarios
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-300">
                             Analyze projections side-by-side
                         </p>
                     </div>
@@ -75,7 +75,7 @@ export function ScenarioComparison({
                 {onClose && (
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                        className="p-2 text-gray-300 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -111,7 +111,7 @@ export function ScenarioComparison({
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 {scenario.title}
                             </h3>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-gray-300 mt-1">
                                 {scenario.description}
                             </p>
                         </div>
@@ -122,7 +122,7 @@ export function ScenarioComparison({
                                 <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                                     <div className="flex items-center gap-2">
                                         <DollarSign className="h-4 w-4 text-green-500" />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">Revenue</span>
+                                        <span className="text-sm text-gray-200 dark:text-gray-200">Revenue</span>
                                     </div>
                                     <div className="text-right">
                                         <div className="font-semibold text-gray-900 dark:text-white">
@@ -140,7 +140,7 @@ export function ScenarioComparison({
                                 <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                                     <div className="flex items-center gap-2">
                                         <Users className="h-4 w-4 text-blue-500" />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">Followers</span>
+                                        <span className="text-sm text-gray-200 dark:text-gray-200">Followers</span>
                                     </div>
                                     <div className="text-right">
                                         <div className="font-semibold text-gray-900 dark:text-white">
@@ -158,7 +158,7 @@ export function ScenarioComparison({
                                 <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="h-4 w-4 text-purple-500" />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400">Engagement</span>
+                                        <span className="text-sm text-gray-200 dark:text-gray-200">Engagement</span>
                                     </div>
                                     <div className="text-right">
                                         <div className="font-semibold text-gray-900 dark:text-white">
@@ -174,7 +174,7 @@ export function ScenarioComparison({
                         </div>
 
                         {/* Time Horizon & Confidence */}
-                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div className="flex items-center justify-between text-sm text-gray-300 mb-4">
                             <span className="flex items-center gap-1">
                                 <Clock className="h-4 w-4" />
                                 {scenario.time_horizon}
@@ -186,13 +186,13 @@ export function ScenarioComparison({
 
                         {/* Assumptions */}
                         <div className="mb-4">
-                            <div className="text-xs font-medium text-gray-500 uppercase mb-2">
+                            <div className="text-xs font-medium text-gray-300 uppercase mb-2">
                                 Key Assumptions
                             </div>
                             <ul className="space-y-1">
                                 {scenario.assumptions.slice(0, 3).map((assumption, i) => (
-                                    <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
-                                        <span className="text-gray-400">•</span>
+                                    <li key={i} className="text-sm text-gray-200 dark:text-gray-200 flex items-start gap-2">
+                                        <span className="text-gray-200">•</span>
                                         {assumption}
                                     </li>
                                 ))}

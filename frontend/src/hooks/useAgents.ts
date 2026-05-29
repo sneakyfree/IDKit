@@ -70,7 +70,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/capabilities`, { headers });
+            const res = await fetch(`${API_BASE}/api/v1/agents/capabilities`, { headers });
             if (!res.ok) {
                 if (res.status === 401) throw new Error('Authentication required');
                 throw new Error('Failed to fetch agent capabilities');
@@ -88,7 +88,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/pending`, { headers });
+            const res = await fetch(`${API_BASE}/api/v1/agents/pending`, { headers });
             if (!res.ok) {
                 if (res.status === 401) throw new Error('Authentication required');
                 throw new Error('Failed to fetch pending approvals');
@@ -106,7 +106,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/history`, { headers });
+            const res = await fetch(`${API_BASE}/api/v1/agents/history`, { headers });
             if (!res.ok) {
                 if (res.status === 401) throw new Error('Authentication required');
                 throw new Error('Failed to fetch task history');
@@ -124,7 +124,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/task`, {
+            const res = await fetch(`${API_BASE}/api/v1/agents/task`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ agent_id: agentId, task_type: taskType, input }),
@@ -147,7 +147,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/approve/${approvalId}`, {
+            const res = await fetch(`${API_BASE}/api/v1/agents/approve/${approvalId}`, {
                 method: 'POST',
                 headers,
             });
@@ -170,7 +170,7 @@ export function useAgents(authToken?: string): UseAgentsReturn {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/v1/agents/agents/reject/${approvalId}`, {
+            const res = await fetch(`${API_BASE}/api/v1/agents/reject/${approvalId}`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ reason }),

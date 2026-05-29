@@ -173,7 +173,7 @@ export default function SDKPage() {
                         <Package className="w-10 h-10 text-purple-400" />
                         <h1 className="text-3xl font-bold">IDKit SDKs</h1>
                     </div>
-                    <p className="text-gray-400 max-w-xl mx-auto">
+                    <p className="text-gray-200 max-w-xl mx-auto">
                         Official client libraries for the IDKit API. Auto-generated from OpenAPI spec,
                         fully typed, and ready for production.
                     </p>
@@ -187,7 +187,7 @@ export default function SDKPage() {
                             onClick={() => setSelectedLang(lang)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${selectedLang === lang
                                     ? "bg-purple-600 text-white shadow-lg shadow-purple-600/25"
-                                    : "bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800"
+                                    : "bg-gray-900 text-gray-200 hover:text-white hover:bg-gray-800 border border-gray-800"
                                 }`}
                         >
                             <span className="text-xs font-mono font-bold opacity-75">{SDK_DATA[lang].icon}</span>
@@ -200,7 +200,7 @@ export default function SDKPage() {
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
                     {/* Install Section */}
                     <div className="p-6 border-b border-gray-800">
-                        <div className="flex items-center gap-2 text-gray-400 text-sm mb-3">
+                        <div className="flex items-center gap-2 text-gray-200 text-sm mb-3">
                             <Terminal className="w-4 h-4" />
                             <span>Installation</span>
                         </div>
@@ -213,11 +213,11 @@ export default function SDKPage() {
                                 {copied === "install" ? (
                                     <CheckCircle className="w-4 h-4 text-green-400" />
                                 ) : (
-                                    <Copy className="w-4 h-4 text-gray-500" />
+                                    <Copy className="w-4 h-4 text-gray-300" />
                                 )}
                             </button>
                         </div>
-                        <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 mt-3 text-sm text-gray-300">
                             <span>Package: <code className="text-gray-300">{sdk.package}</code></span>
                             <span>Version: <code className="text-gray-300">v{sdk.version}</code></span>
                         </div>
@@ -226,7 +226,7 @@ export default function SDKPage() {
                     {/* Quickstart Section */}
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2 text-gray-400 text-sm">
+                            <div className="flex items-center gap-2 text-gray-200 text-sm">
                                 <Code2 className="w-4 h-4" />
                                 <span>Quickstart</span>
                             </div>
@@ -256,7 +256,7 @@ export default function SDKPage() {
                         <BookOpen className="w-5 h-5 text-purple-400" />
                         <div>
                             <p className="font-medium">API Reference</p>
-                            <p className="text-sm text-gray-500">Full endpoint documentation</p>
+                            <p className="text-sm text-gray-300">Full endpoint documentation</p>
                         </div>
                     </a>
                     <a
@@ -266,7 +266,7 @@ export default function SDKPage() {
                         <Code2 className="w-5 h-5 text-blue-400" />
                         <div>
                             <p className="font-medium">Webhooks</p>
-                            <p className="text-sm text-gray-500">Event-driven integrations</p>
+                            <p className="text-sm text-gray-300">Event-driven integrations</p>
                         </div>
                     </a>
                     <a
@@ -278,7 +278,7 @@ export default function SDKPage() {
                         <Download className="w-5 h-5 text-green-400" />
                         <div>
                             <p className="font-medium">GitHub</p>
-                            <p className="text-sm text-gray-500">Source code & examples</p>
+                            <p className="text-sm text-gray-300">Source code & examples</p>
                         </div>
                     </a>
                 </div>

@@ -40,7 +40,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 };
 
 const STATUS_CONFIG = {
-    pending: { icon: Clock, color: 'text-gray-500', bg: 'bg-gray-100 dark:bg-gray-800' },
+    pending: { icon: Clock, color: 'text-gray-300', bg: 'bg-gray-100 dark:bg-gray-800' },
     scheduled: { icon: Calendar, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30' },
     publishing: { icon: RefreshCw, color: 'text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30', animate: true },
     published: { icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30' },
@@ -128,7 +128,7 @@ export function PublishingQueueCard({
                                 {post.title}
                             </h3>
                             {post.content_preview && (
-                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                                <p className="text-sm text-gray-300 mt-1 line-clamp-2">
                                     {post.content_preview}
                                 </p>
                             )}
@@ -138,7 +138,7 @@ export function PublishingQueueCard({
                         <div className="relative">
                             <button
                                 onClick={() => setShowMenu(!showMenu)}
-                                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
+                                className="p-1 text-gray-200 hover:text-gray-200 dark:hover:text-gray-300 rounded"
                             >
                                 <MoreVertical className="h-5 w-5" />
                             </button>
@@ -203,7 +203,7 @@ export function PublishingQueueCard({
                             {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                         </span>
 
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-300">
                             {isUpcoming ? (
                                 <span className="flex items-center gap-1">
                                     <Clock className="h-3.5 w-3.5" />
@@ -214,7 +214,7 @@ export function PublishingQueueCard({
                             )}
                         </span>
 
-                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs text-gray-600 dark:text-gray-400 capitalize">
+                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs text-gray-200 dark:text-gray-200 capitalize">
                             {post.platform}
                         </span>
                     </div>
@@ -253,7 +253,7 @@ export function PublishingQueue({
             {/* Upcoming */}
             {upcoming.length > 0 && (
                 <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-3">
+                    <h3 className="text-sm font-medium text-gray-300 mb-3">
                         Upcoming ({upcoming.length})
                     </h3>
                     <div className="space-y-3">
@@ -309,7 +309,7 @@ export function PublishingQueue({
             )}
 
             {posts.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
+                <div className="text-center py-12 text-gray-300">
                     <Calendar className="h-12 w-12 mx-auto mb-3 opacity-30" />
                     <p>No scheduled posts</p>
                 </div>

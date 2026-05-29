@@ -116,7 +116,7 @@ export function VersionHistory({
             case 'rule': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
             case 'config': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
             case 'snapshot': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
-            default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400';
+            default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200';
         }
     };
 
@@ -133,7 +133,7 @@ export function VersionHistory({
     if (loading) {
         return (
             <div className="p-8 flex justify-center">
-                <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+                <RefreshCw className="w-6 h-6 animate-spin text-gray-200" />
             </div>
         );
     }
@@ -149,7 +149,7 @@ export function VersionHistory({
                         </div>
                         <div>
                             <h3 className="font-semibold text-gray-900 dark:text-white">Version History</h3>
-                            <p className="text-sm text-gray-500">{versions.length} versions tracked</p>
+                            <p className="text-sm text-gray-300">{versions.length} versions tracked</p>
                         </div>
                     </div>
 
@@ -172,7 +172,7 @@ export function VersionHistory({
                             onClick={() => setFilter(type)}
                             className={`px-3 py-1.5 text-sm rounded-full whitespace-nowrap transition-colors ${filter === type
                                 ? 'bg-indigo-600 text-white'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-200 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                                 }`}
                         >
                             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -194,9 +194,9 @@ export function VersionHistory({
                                     className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                                 >
                                     {expandedVersions.has(version.version_id) ? (
-                                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                                        <ChevronDown className="w-4 h-4 text-gray-300" />
                                     ) : (
-                                        <ChevronRight className="w-4 h-4 text-gray-500" />
+                                        <ChevronRight className="w-4 h-4 text-gray-300" />
                                     )}
                                 </button>
 
@@ -210,8 +210,8 @@ export function VersionHistory({
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <GitCommit className="w-4 h-4 text-gray-400" />
-                                        <span className="font-mono text-sm text-gray-600 dark:text-gray-400">
+                                        <GitCommit className="w-4 h-4 text-gray-200" />
+                                        <span className="font-mono text-sm text-gray-200 dark:text-gray-200">
                                             {version.hash}
                                         </span>
                                         <span className={`px-2 py-0.5 text-xs rounded-full ${getEntityTypeColor(version.entity_type)}`}>
@@ -220,7 +220,7 @@ export function VersionHistory({
                                         <span className="font-medium text-gray-900 dark:text-white">
                                             {version.entity_name}
                                         </span>
-                                        <span className="text-sm text-gray-500">v{version.version_number}</span>
+                                        <span className="text-sm text-gray-300">v{version.version_number}</span>
                                         {version.is_current && (
                                             <span className="px-2 py-0.5 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
                                                 Current
@@ -228,13 +228,13 @@ export function VersionHistory({
                                         )}
                                     </div>
                                     {version.commit_message && (
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
+                                        <p className="text-sm text-gray-200 dark:text-gray-200 mt-1 truncate">
                                             {version.commit_message}
                                         </p>
                                     )}
                                 </div>
 
-                                <div className="flex items-center gap-4 text-sm text-gray-500">
+                                <div className="flex items-center gap-4 text-sm text-gray-300">
                                     <span className="flex items-center gap-1">
                                         <Clock className="w-4 h-4" />
                                         {formatTime(version.created_at)}
@@ -245,7 +245,7 @@ export function VersionHistory({
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => toggleExpanded(version.version_id)}
-                                        className="p-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
+                                        className="p-2 text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
                                         title="View changes"
                                     >
                                         <Eye className="w-4 h-4" />
@@ -274,14 +274,14 @@ export function VersionHistory({
                                                 key={i}
                                                 className="flex items-center gap-4 p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700"
                                             >
-                                                <span className="font-mono text-sm text-gray-600 dark:text-gray-400 min-w-32">
+                                                <span className="font-mono text-sm text-gray-200 dark:text-gray-200 min-w-32">
                                                     {change.field}
                                                 </span>
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-red-600 dark:text-red-400 line-through">
                                                         {renderDiffValue(change.old_value)}
                                                     </span>
-                                                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                                                    <ChevronRight className="w-4 h-4 text-gray-200" />
                                                     <span className="text-green-600 dark:text-green-400">
                                                         {renderDiffValue(change.new_value)}
                                                     </span>
@@ -296,7 +296,7 @@ export function VersionHistory({
             </div>
 
             {versions.length === 0 && (
-                <div className="p-8 text-center text-gray-500">
+                <div className="p-8 text-center text-gray-300">
                     No version history available
                 </div>
             )}

@@ -50,7 +50,7 @@ export default function CoCreationPage() {
     const [projectDesc, setProjectDesc] = useState("");
     const [inviteUserId, setInviteUserId] = useState("");
 
-    const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+    const headers = { Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("token") : ""}` };
 
     const fetchProjects = useCallback(async () => {
         try {
@@ -176,7 +176,7 @@ export default function CoCreationPage() {
                             <Plus className="w-4 h-4" />
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500">{projects.length} projects</p>
+                    <p className="text-xs text-gray-300">{projects.length} projects</p>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     {projects.map((p) => (
@@ -192,16 +192,16 @@ export default function CoCreationPage() {
                                     onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}
                                     className="p-1 hover:bg-gray-700 rounded opacity-0 group-hover:opacity-100"
                                 >
-                                    <Trash2 className="w-3 h-3 text-gray-500" />
+                                    <Trash2 className="w-3 h-3 text-gray-300" />
                                 </button>
                             </div>
                             {p.description && (
-                                <p className="text-xs text-gray-500 mt-0.5 truncate">{p.description}</p>
+                                <p className="text-xs text-gray-300 mt-0.5 truncate">{p.description}</p>
                             )}
                         </button>
                     ))}
                     {projects.length === 0 && (
-                        <div className="p-8 text-center text-gray-600 text-sm">
+                        <div className="p-8 text-center text-gray-200 text-sm">
                             <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-30" />
                             No projects yet
                         </div>
@@ -217,7 +217,7 @@ export default function CoCreationPage() {
                         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
                             <div>
                                 <h3 className="font-bold">{selectedProject.name}</h3>
-                                <p className="text-xs text-gray-500">{selectedProject.description}</p>
+                                <p className="text-xs text-gray-300">{selectedProject.description}</p>
                             </div>
                             <button
                                 onClick={() => setShowInvite(true)}
@@ -237,14 +237,14 @@ export default function CoCreationPage() {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm font-medium">{m.sender_id.slice(0, 8)}</span>
-                                            <span className="text-xs text-gray-600">{new Date(m.created_at).toLocaleTimeString()}</span>
+                                            <span className="text-xs text-gray-200">{new Date(m.created_at).toLocaleTimeString()}</span>
                                         </div>
                                         <p className="text-sm text-gray-300 mt-0.5">{m.content}</p>
                                     </div>
                                 </div>
                             ))}
                             {messages.length === 0 && (
-                                <div className="text-center py-16 text-gray-600">
+                                <div className="text-center py-16 text-gray-200">
                                     <MessageCircle className="w-10 h-10 mx-auto mb-2 opacity-30" />
                                     <p className="text-sm">No messages yet. Start the conversation!</p>
                                 </div>
@@ -265,7 +265,7 @@ export default function CoCreationPage() {
                                 <button
                                     onClick={handleSendMessage}
                                     disabled={!newMessage}
-                                    className="px-4 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50"
+                                    className="px-4 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
@@ -273,7 +273,7 @@ export default function CoCreationPage() {
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-600">
+                    <div className="flex-1 flex items-center justify-center text-gray-200">
                         <div className="text-center">
                             <Users className="w-16 h-16 mx-auto mb-4 opacity-20" />
                             <p className="text-lg font-medium">Select a project</p>
@@ -306,7 +306,7 @@ export default function CoCreationPage() {
                         </div>
                         <div className="flex gap-3 mt-6">
                             <button onClick={() => setShowCreate(false)} className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg">Cancel</button>
-                            <button onClick={handleCreateProject} disabled={!projectName} className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50">Create</button>
+                            <button onClick={handleCreateProject} disabled={!projectName} className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80">Create</button>
                         </div>
                     </div>
                 </div>
@@ -326,7 +326,7 @@ export default function CoCreationPage() {
                         />
                         <div className="flex gap-3 mt-6">
                             <button onClick={() => setShowInvite(false)} className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg">Cancel</button>
-                            <button onClick={handleInvite} disabled={!inviteUserId} className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50">Invite</button>
+                            <button onClick={handleInvite} disabled={!inviteUserId} className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80">Invite</button>
                         </div>
                     </div>
                 </div>

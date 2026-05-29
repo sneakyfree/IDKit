@@ -28,7 +28,7 @@ from app.schemas.blockers import (
 from app.services.scenario_builder import ScenarioBuilder
 from app.services.simulator import Simulator
 
-router = APIRouter(prefix="/scenarios", tags=["scenarios"])
+router = APIRouter(tags=["scenarios"])
 
 
 # ============== Request/Response Schemas ==============

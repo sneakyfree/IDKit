@@ -134,7 +134,7 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                         Agent Memory
                     </h2>
                 </div>
-                <div className="text-center py-8 text-gray-500">Loading memories...</div>
+                <div className="text-center py-8 text-gray-300">Loading memories...</div>
             </div>
         );
     }
@@ -171,14 +171,14 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                         Agent Memory
                     </h2>
-                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm rounded-full">
+                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-200 dark:text-gray-200 text-sm rounded-full">
                         {summary?.total_memories || 0} memories
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={fetchMemorySummary}
-                        className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                        className="p-2 text-gray-300 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                         title="Refresh"
                     >
                         <RefreshCw className="h-4 w-4" />
@@ -186,7 +186,7 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                     <button
                         onClick={() => clearMemories()}
                         disabled={clearing || !summary?.total_memories}
-                        className="px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg disabled:opacity-80"
                     >
                         <Trash2 className="h-4 w-4 inline mr-1" />
                         Clear All
@@ -196,7 +196,7 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
 
             {/* No memories state */}
             {!summary?.total_memories && (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-12 text-gray-300 dark:text-gray-200">
                     <Brain className="h-12 w-12 mx-auto mb-3 opacity-30" />
                     <p>No agent memories yet</p>
                     <p className="text-sm mt-1">Memories will be stored as you interact with agents</p>
@@ -220,7 +220,7 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                                 <span className="font-medium text-gray-900 dark:text-white">
                                     {AGENT_LABELS[agent] || agent}
                                 </span>
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-gray-300">
                                     {memories.length} memories
                                 </span>
                             </div>
@@ -231,15 +231,15 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                                         clearMemories(agent);
                                     }}
                                     disabled={clearingAgent === agent}
-                                    className="p-1.5 text-gray-400 hover:text-red-500 rounded"
+                                    className="p-1.5 text-gray-200 hover:text-red-500 rounded"
                                     title={`Clear ${AGENT_LABELS[agent]} memories`}
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                                 {expandedAgents.has(agent) ? (
-                                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                                    <ChevronDown className="h-5 w-5 text-gray-200" />
                                 ) : (
-                                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                                    <ChevronRight className="h-5 w-5 text-gray-200" />
                                 )}
                             </div>
                         </button>
@@ -252,18 +252,18 @@ export function AgentMemoryPanel({ className = '' }: AgentMemoryPanelProps) {
                                         <p className="text-gray-700 dark:text-gray-300 mb-2">
                                             {memory.summary}
                                         </p>
-                                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                                        <div className="flex items-center gap-4 text-sm text-gray-300">
                                             <span className="flex items-center gap-1">
                                                 <Clock className="h-3.5 w-3.5" />
                                                 {new Date(memory.created_at).toLocaleDateString()}
                                             </span>
                                             <span className={`px-2 py-0.5 rounded text-xs ${memory.memory_type === 'long_term'
                                                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                                                    : 'bg-gray-100 text-gray-200 dark:bg-gray-800 dark:text-gray-200'
                                                 }`}>
                                                 {memory.memory_type.replace('_', ' ')}
                                             </span>
-                                            <span className="text-gray-400">
+                                            <span className="text-gray-200">
                                                 {Math.round(memory.importance * 100)}% importance
                                             </span>
                                         </div>

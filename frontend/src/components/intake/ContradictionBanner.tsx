@@ -78,7 +78,7 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
                                         <span className="font-medium text-gray-900">
                                             {c.field_label}
                                         </span>
-                                        <div className="text-sm text-gray-600 mt-1">
+                                        <div className="text-sm text-gray-200 mt-1">
                                             <span>You said: </span>
                                             <span className="font-medium">{formatValue(c.user_reported)}</span>
                                             <span className="mx-2">→</span>
@@ -99,7 +99,7 @@ export function ContradictionBanner({ contradictions, onResolve }: Contradiction
                         ))}
 
                         {contradictions.length > 3 && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-gray-200">
                                 + {contradictions.length - 3} more...
                             </p>
                         )}

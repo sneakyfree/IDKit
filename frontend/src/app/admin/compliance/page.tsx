@@ -99,7 +99,7 @@ export default function ComplianceReportingPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Compliance Reporting</h1>
-                        <p className="text-gray-400">Regulatory reports and compliance status</p>
+                        <p className="text-gray-200">Regulatory reports and compliance status</p>
                     </div>
                 </div>
 
@@ -108,22 +108,22 @@ export default function ComplianceReportingPage() {
                     <div className="bg-green-600/10 border border-green-500/20 rounded-xl p-4">
                         <CheckCircle className="w-6 h-6 text-green-400 mb-2" />
                         <p className="text-2xl font-bold">{stats.compliant}</p>
-                        <p className="text-sm text-gray-400">Compliant</p>
+                        <p className="text-sm text-gray-200">Compliant</p>
                     </div>
                     <div className="bg-yellow-600/10 border border-yellow-500/20 rounded-xl p-4">
                         <AlertCircle className="w-6 h-6 text-yellow-400 mb-2" />
                         <p className="text-2xl font-bold">{stats.warnings}</p>
-                        <p className="text-sm text-gray-400">Warnings</p>
+                        <p className="text-sm text-gray-200">Warnings</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
-                        <Clock className="w-6 h-6 text-gray-400 mb-2" />
+                        <Clock className="w-6 h-6 text-gray-200 mb-2" />
                         <p className="text-2xl font-bold">{stats.pending}</p>
-                        <p className="text-sm text-gray-400">Pending</p>
+                        <p className="text-sm text-gray-200">Pending</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
                         <Shield className="w-6 h-6 text-purple-400 mb-2" />
                         <p className="text-2xl font-bold">{stats.passedChecks}/{stats.totalChecks}</p>
-                        <p className="text-sm text-gray-400">Checks Passed</p>
+                        <p className="text-sm text-gray-200">Checks Passed</p>
                     </div>
                 </div>
 
@@ -217,7 +217,7 @@ function ReportCard({
         compliant: { color: "text-green-400 bg-green-400/10", icon: CheckCircle },
         warning: { color: "text-yellow-400 bg-yellow-400/10", icon: AlertCircle },
         "non-compliant": { color: "text-red-400 bg-red-400/10", icon: AlertCircle },
-        pending: { color: "text-gray-400 bg-gray-400/10", icon: Clock },
+        pending: { color: "text-gray-200 bg-gray-400/10", icon: Clock },
     };
 
     const { color, icon: StatusIcon } = statusConfig[report.status];
@@ -227,7 +227,7 @@ function ReportCard({
             <div className="flex items-start justify-between mb-3">
                 <div>
                     <h3 className="font-semibold">{report.name}</h3>
-                    <p className="text-sm text-gray-500 uppercase">{report.type}</p>
+                    <p className="text-sm text-gray-300 uppercase">{report.type}</p>
                 </div>
                 <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${color}`}>
                     <StatusIcon className="w-3 h-3" />
@@ -235,7 +235,7 @@ function ReportCard({
                 </span>
             </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div className="flex items-center justify-between text-sm text-gray-300 mb-4">
                 {report.lastGenerated && (
                     <span>Last: {new Date(report.lastGenerated).toLocaleDateString()}</span>
                 )}
@@ -248,7 +248,7 @@ function ReportCard({
                 <button
                     onClick={onGenerate}
                     disabled={generating}
-                    className="flex-1 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-80 flex items-center justify-center gap-2"
                 >
                     {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                     {generating ? "Generating..." : "Generate"}
@@ -269,26 +269,26 @@ function ReportDetailModal({ report, onClose }: { report: ComplianceReport; onCl
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-gray-900 rounded-2xl max-w-md w-full p-6">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">{report.name}</h2>
+                    <h2 className="text-xl font-bold text-white">{report.name}</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                 </div>
 
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-gray-800 p-3 rounded-lg">
-                            <p className="text-sm text-gray-500">Status</p>
+                            <p className="text-sm text-gray-300">Status</p>
                             <p className="font-medium capitalize">{report.status}</p>
                         </div>
                         <div className="bg-gray-800 p-3 rounded-lg">
-                            <p className="text-sm text-gray-500">Type</p>
+                            <p className="text-sm text-gray-300">Type</p>
                             <p className="font-medium uppercase">{report.type}</p>
                         </div>
                         <div className="bg-gray-800 p-3 rounded-lg">
-                            <p className="text-sm text-gray-500">Findings</p>
+                            <p className="text-sm text-gray-300">Findings</p>
                             <p className="font-medium">{report.findings}</p>
                         </div>
                         <div className="bg-gray-800 p-3 rounded-lg">
-                            <p className="text-sm text-gray-500">Critical</p>
+                            <p className="text-sm text-gray-300">Critical</p>
                             <p className={`font-medium ${report.criticalFindings > 0 ? "text-red-400" : "text-green-400"}`}>
                                 {report.criticalFindings}
                             </p>

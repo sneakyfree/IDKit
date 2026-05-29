@@ -49,7 +49,7 @@ export default function SearchPage() {
                 <button
                     onClick={handleSearch}
                     disabled={loading}
-                    className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+                    className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-80"
                 >
                     {loading ? "..." : "Search"}
                 </button>

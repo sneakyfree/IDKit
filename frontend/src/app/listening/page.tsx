@@ -125,7 +125,7 @@ export default function SocialListeningPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Social Listening</h1>
-                        <p className="text-gray-400">Monitor brand mentions and track conversations</p>
+                        <p className="text-gray-200">Monitor brand mentions and track conversations</p>
                     </div>
                     <button
                         onClick={() => setShowCreateModal(true)}
@@ -140,7 +140,7 @@ export default function SocialListeningPage() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     <StatCard label="Total Mentions" value={stats.totalMentions} icon={<MessageCircle />} />
                     <StatCard label="Positive" value={stats.positive} color="text-green-400" icon={<TrendingUp />} />
-                    <StatCard label="Neutral" value={stats.neutral} color="text-gray-400" icon={<MessageCircle />} />
+                    <StatCard label="Neutral" value={stats.neutral} color="text-gray-200" icon={<MessageCircle />} />
                     <StatCard label="Negative" value={stats.negative} color="text-red-400" icon={<AlertCircle />} />
                     <StatCard label="Total Reach" value={`${(stats.totalReach / 1000).toFixed(0)}K`} icon={<Users />} />
                 </div>
@@ -170,7 +170,7 @@ export default function SocialListeningPage() {
                                         <h3 className="font-medium">{query.name}</h3>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); toggleQueryStatus(query.id); }}
-                                            className={`p-1 rounded ${query.status === "active" ? "text-green-400" : "text-gray-500"}`}
+                                            className={`p-1 rounded ${query.status === "active" ? "text-green-400" : "text-gray-300"}`}
                                         >
                                             {query.status === "active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                                         </button>
@@ -180,7 +180,7 @@ export default function SocialListeningPage() {
                                             <span key={kw} className="text-xs bg-gray-800 px-2 py-0.5 rounded">{kw}</span>
                                         ))}
                                         {query.keywords.length > 3 && (
-                                            <span className="text-xs text-gray-500">+{query.keywords.length - 3}</span>
+                                            <span className="text-xs text-gray-300">+{query.keywords.length - 3}</span>
                                         )}
                                     </div>
                                 </div>
@@ -205,8 +205,8 @@ export default function SocialListeningPage() {
 
                             {filteredMentions.length === 0 ? (
                                 <div className="bg-gray-900 rounded-xl p-8 text-center">
-                                    <Radio className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                                    <p className="text-gray-500">No mentions found</p>
+                                    <Radio className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                                    <p className="text-gray-300">No mentions found</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
@@ -237,7 +237,7 @@ export default function SocialListeningPage() {
 function StatCard({ label, value, color = "text-white", icon }: { label: string; value: string | number; color?: string; icon: React.ReactNode }) {
     return (
         <div className="bg-gray-900 rounded-xl p-4">
-            <div className="flex items-center gap-2 text-gray-500 mb-1">
+            <div className="flex items-center gap-2 text-gray-300 mb-1">
                 {icon}
                 <span className="text-sm">{label}</span>
             </div>
@@ -250,7 +250,7 @@ function MentionCard({ mention }: { mention: Mention }) {
     const platform = PLATFORMS.find(p => p.id === mention.platform);
     const sentimentConfig = {
         positive: { color: "text-green-400 bg-green-400/10", icon: TrendingUp },
-        neutral: { color: "text-gray-400 bg-gray-400/10", icon: MessageCircle },
+        neutral: { color: "text-gray-200 bg-gray-400/10", icon: MessageCircle },
         negative: { color: "text-red-400 bg-red-400/10", icon: AlertCircle },
     };
     const sentiment = sentimentConfig[mention.sentiment];
@@ -264,7 +264,7 @@ function MentionCard({ mention }: { mention: Mention }) {
                     </div>
                     <div>
                         <p className="font-medium">@{mention.author.username}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-300">
                             {mention.author.followers.toLocaleString()} followers • {platform?.label}
                         </p>
                     </div>
@@ -278,7 +278,7 @@ function MentionCard({ mention }: { mention: Mention }) {
             <p className="text-gray-300 mb-3">{mention.content}</p>
 
             <div className="flex items-center justify-between">
-                <div className="flex gap-4 text-sm text-gray-500">
+                <div className="flex gap-4 text-sm text-gray-300">
                     <span>❤️ {mention.engagement.likes}</span>
                     <span>💬 {mention.engagement.comments}</span>
                     <span>🔄 {mention.engagement.shares}</span>
@@ -334,7 +334,7 @@ function CreateQueryModal({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="query-name" className="block text-sm text-gray-400 mb-1">Query Name *</label>
+                        <label htmlFor="query-name" className="block text-sm text-gray-200 mb-1">Query Name *</label>
                         <input
                             id="query-name"
                             value={name}
@@ -346,7 +346,7 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label htmlFor="keywords-input" className="block text-sm text-gray-400 mb-1">Keywords (comma-separated) *</label>
+                        <label htmlFor="keywords-input" className="block text-sm text-gray-200 mb-1">Keywords (comma-separated) *</label>
                         <textarea
                             id="keywords-input"
                             value={keywords}
@@ -359,7 +359,7 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label htmlFor="exclude-keywords" className="block text-sm text-gray-400 mb-1">Exclude Keywords</label>
+                        <label htmlFor="exclude-keywords" className="block text-sm text-gray-200 mb-1">Exclude Keywords</label>
                         <input
                             id="exclude-keywords"
                             value={excludeKeywords}
@@ -370,7 +370,7 @@ function CreateQueryModal({
                     </div>
 
                     <div>
-                        <label id="platforms-label" className="block text-sm text-gray-400 mb-2">Platforms</label>
+                        <label id="platforms-label" className="block text-sm text-gray-200 mb-2">Platforms</label>
                         <div className="flex flex-wrap gap-2">
                             {PLATFORMS.map((p) => (
                                 <button
@@ -395,7 +395,7 @@ function CreateQueryModal({
                         <button
                             type="submit"
                             disabled={!name || !keywords || selectedPlatforms.length === 0}
-                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                         >
                             Create
                         </button>

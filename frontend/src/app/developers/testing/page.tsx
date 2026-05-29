@@ -122,7 +122,7 @@ export default function IntegrationTestingPage() {
             case "passed": return <CheckCircle className="w-5 h-5 text-green-400" />;
             case "failed": return <XCircle className="w-5 h-5 text-red-400" />;
             case "running": return <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />;
-            default: return <Clock className="w-5 h-5 text-gray-500" />;
+            default: return <Clock className="w-5 h-5 text-gray-300" />;
         }
     };
 
@@ -135,7 +135,7 @@ export default function IntegrationTestingPage() {
                         <TestTubes className="w-8 h-8 text-purple-400" />
                         <div>
                             <h1 className="text-2xl font-bold">Integration Tests</h1>
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-gray-200 text-sm">
                                 {stats.passed} passed · {stats.failed} failed · {stats.total - stats.passed - stats.failed} remaining
                             </p>
                         </div>
@@ -144,14 +144,14 @@ export default function IntegrationTestingPage() {
                         <button
                             onClick={resetAll}
                             disabled={running}
-                            className="flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 text-sm disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 text-sm disabled:opacity-80"
                         >
                             <RefreshCcw className="w-4 h-4" /> Reset
                         </button>
                         <button
                             onClick={runAllTests}
                             disabled={running}
-                            className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 text-sm disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 text-sm disabled:opacity-80"
                         >
                             {running ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                             Run All
@@ -180,19 +180,19 @@ export default function IntegrationTestingPage() {
                                     {statusIcon(test.status)}
                                     <div>
                                         <h3 className="font-medium text-sm">{test.name}</h3>
-                                        <p className="text-xs text-gray-500">{test.description}</p>
+                                        <p className="text-xs text-gray-300">{test.description}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-xs text-gray-600 px-2 py-0.5 bg-gray-800 rounded">{test.category}</span>
+                                    <span className="text-xs text-gray-200 px-2 py-0.5 bg-gray-800 rounded">{test.category}</span>
                                     {test.duration && (
-                                        <span className="text-xs text-gray-500">{test.duration}ms</span>
+                                        <span className="text-xs text-gray-300">{test.duration}ms</span>
                                     )}
                                     {test.status !== "running" && (
                                         <button
                                             onClick={() => runSingle(test.id)}
                                             disabled={running}
-                                            className="p-1.5 hover:bg-gray-800 rounded text-gray-500 hover:text-white disabled:opacity-50"
+                                            className="p-1.5 hover:bg-gray-800 rounded text-gray-300 hover:text-white disabled:opacity-80"
                                         >
                                             <Play className="w-3.5 h-3.5" />
                                         </button>

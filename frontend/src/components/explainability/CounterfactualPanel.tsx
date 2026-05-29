@@ -109,7 +109,7 @@ export function CounterfactualPanel({
     const getChangeIcon = (change: number) => {
         if (change > 0) return <TrendingUp className="h-4 w-4 text-green-500" />;
         if (change < 0) return <TrendingDown className="h-4 w-4 text-red-500" />;
-        return <Minus className="h-4 w-4 text-gray-400" />;
+        return <Minus className="h-4 w-4 text-gray-200" />;
     };
 
     const formatValue = (value: number, isPercentage: boolean = false): string => {
@@ -132,7 +132,7 @@ export function CounterfactualPanel({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleReset}
-                        className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                        className="p-2 text-gray-300 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                         title="Reset to current values"
                     >
                         <RefreshCw className="h-4 w-4" />
@@ -192,7 +192,7 @@ export function CounterfactualPanel({
                                 )}
 
                                 {input.type === 'select' && input.options && (
-                                    <select
+                                    <select aria-label="Filter or select option"
                                         value={values[input.key] as string}
                                         onChange={(e) => handleValueChange(input.key, e.target.value)}
                                         className="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
@@ -204,7 +204,7 @@ export function CounterfactualPanel({
                                 )}
 
                                 {input.type === 'slider' && (
-                                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                    <div className="flex justify-between text-xs text-gray-300 mt-1">
                                         <span>{input.min}{input.unit || ''}</span>
                                         <span>{input.max}{input.unit || ''}</span>
                                     </div>
@@ -236,7 +236,7 @@ export function CounterfactualPanel({
                                         {getChangeIcon(projection.change_pct)}
                                         <span className={`text-sm font-medium ${projection.change_pct > 0 ? 'text-green-600' :
                                                 projection.change_pct < 0 ? 'text-red-600' :
-                                                    'text-gray-500'
+                                                    'text-gray-300'
                                             }`}>
                                             {projection.change_pct > 0 ? '+' : ''}{projection.change_pct.toFixed(1)}%
                                         </span>
@@ -258,7 +258,7 @@ export function CounterfactualPanel({
                                 </div>
 
                                 <div className="flex items-center justify-between mt-2 text-sm">
-                                    <span className="text-gray-500">
+                                    <span className="text-gray-300">
                                         Current: {formatValue(projection.current)}
                                     </span>
                                     <span className="text-indigo-600 dark:text-indigo-400 font-medium">
@@ -266,7 +266,7 @@ export function CounterfactualPanel({
                                     </span>
                                 </div>
 
-                                <div className="mt-2 text-xs text-gray-500">
+                                <div className="mt-2 text-xs text-gray-300">
                                     {Math.round(projection.confidence * 100)}% confidence
                                 </div>
                             </div>
@@ -307,7 +307,7 @@ export function CounterfactualPanel({
                             <button
                                 onClick={handleSave}
                                 disabled={!scenarioName.trim()}
-                                className="flex-1 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50"
+                                className="flex-1 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-80"
                             >
                                 Save
                             </button>

@@ -84,19 +84,19 @@ export default function SharedAnalytics({ collaborationId }: SharedAnalyticsProp
                 <div className="bg-gray-800 rounded-xl p-4 text-center">
                     <Eye className="w-5 h-5 text-blue-400 mx-auto mb-1" />
                     <p className="text-lg font-bold">{(totalImpressions / 1e6).toFixed(1)}M</p>
-                    <p className="text-xs text-gray-500">Combined Reach</p>
+                    <p className="text-xs text-gray-300">Combined Reach</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl p-4 text-center">
                     <TrendingUp className="w-5 h-5 text-green-400 mx-auto mb-1" />
                     <p className="text-lg font-bold">
                         {(metrics.reduce((s, m) => s + m.engagement_rate, 0) / metrics.length).toFixed(1)}%
                     </p>
-                    <p className="text-xs text-gray-500">Avg Engagement</p>
+                    <p className="text-xs text-gray-300">Avg Engagement</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl p-4 text-center">
                     <DollarSign className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
                     <p className="text-lg font-bold">${totalRevenue.toLocaleString()}</p>
-                    <p className="text-xs text-gray-500">Total Revenue</p>
+                    <p className="text-xs text-gray-300">Total Revenue</p>
                 </div>
             </div>
 
@@ -111,7 +111,7 @@ export default function SharedAnalytics({ collaborationId }: SharedAnalyticsProp
                                 </div>
                                 <span className="font-medium text-sm">{m.name}</span>
                             </div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-300">
                                 <Users className="w-3 h-3 inline mr-1" />
                                 {(m.followers / 1000).toFixed(0)}K followers
                             </span>
@@ -119,18 +119,18 @@ export default function SharedAnalytics({ collaborationId }: SharedAnalyticsProp
 
                         <div className="grid grid-cols-3 gap-3">
                             <div>
-                                <p className="text-xs text-gray-500 mb-0.5">Engagement</p>
+                                <p className="text-xs text-gray-300 mb-0.5">Engagement</p>
                                 <p className="font-medium text-sm">
                                     {m.engagement_rate}%
                                     <ArrowUpRight className="w-3 h-3 text-green-400 inline ml-1" />
                                 </p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 mb-0.5">Impressions</p>
+                                <p className="text-xs text-gray-300 mb-0.5">Impressions</p>
                                 <p className="font-medium text-sm">{(m.impressions / 1e6).toFixed(1)}M</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 mb-0.5">Revenue Share</p>
+                                <p className="text-xs text-gray-300 mb-0.5">Revenue Share</p>
                                 <p className="font-medium text-sm text-green-400">${m.revenue_share.toLocaleString()}</p>
                             </div>
                         </div>
@@ -143,7 +143,7 @@ export default function SharedAnalytics({ collaborationId }: SharedAnalyticsProp
                                     style={{ width: `${(m.revenue_share / totalRevenue) * 100}%` }}
                                 />
                             </div>
-                            <p className="text-[10px] text-gray-600 mt-1">
+                            <p className="text-[10px] text-gray-200 mt-1">
                                 {((m.revenue_share / totalRevenue) * 100).toFixed(0)}% of total revenue
                             </p>
                         </div>

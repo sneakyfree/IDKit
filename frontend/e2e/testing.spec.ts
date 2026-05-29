@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("A/B Testing Page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/testing");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should display the A/B testing page", async ({ page }) => {
@@ -60,6 +61,7 @@ test.describe("A/B Testing Page", () => {
 test.describe("Create Test Modal", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/testing");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should open create test modal", async ({ page }) => {
@@ -134,6 +136,7 @@ test.describe("Create Test Modal", () => {
 test.describe("Test Card Interactions", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/testing");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should expand test details", async ({ page }) => {

@@ -63,7 +63,7 @@ export default function InboxPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Inbox</h1>
+          <h1 className="text-xl font-bold text-white">Inbox</h1>
           {unreadCount > 0 && (
             <button className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
               Mark all read
@@ -79,7 +79,7 @@ export default function InboxPage() {
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-medium transition-colors relative ${activeTab === tab
                 ? "text-white border-b-2 border-purple-500"
-                : "text-gray-500"
+                : "text-gray-300"
                 }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -141,14 +141,14 @@ export default function InboxPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm">
                     <span className="font-semibold">{notification.user.name}</span>{" "}
-                    <span className="text-gray-400">{notification.content}</span>
+                    <span className="text-gray-200">{notification.content}</span>
                   </p>
                   {notification.post && (
-                    <p className="text-sm text-gray-500 truncate mt-0.5">
+                    <p className="text-sm text-gray-300 truncate mt-0.5">
                       {notification.post}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                  <p className="text-xs text-gray-300 mt-1">{notification.time}</p>
                 </div>
 
                 {/* Unread indicator */}
@@ -179,9 +179,9 @@ export default function InboxPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-sm">{message.user.name}</span>
-                  <span className="text-xs text-gray-500">{message.time}</span>
+                  <span className="text-xs text-gray-300">{message.time}</span>
                 </div>
-                <p className="text-sm text-gray-400 truncate mt-0.5">
+                <p className="text-sm text-gray-200 truncate mt-0.5">
                   {message.lastMessage}
                 </p>
               </div>
@@ -201,10 +201,10 @@ export default function InboxPage() {
       {mockNotifications.length === 0 && activeTab !== "messages" && (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4">
-            <BellIcon className="w-8 h-8 text-gray-600" />
+            <BellIcon className="w-8 h-8 text-gray-200" />
           </div>
-          <h3 className="font-medium text-gray-400">No notifications yet</h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <h3 className="font-medium text-gray-200">No notifications yet</h3>
+          <p className="text-sm text-gray-300 mt-1">
             When you get notifications, they&apos;ll show up here
           </p>
         </div>

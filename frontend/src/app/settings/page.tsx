@@ -21,35 +21,45 @@ export default function SettingsPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Settings</h1>
+          <h1 className="text-xl font-bold text-white">Settings</h1>
         </div>
       </header>
 
       <div className="p-4 space-y-6">
         {/* Account Section */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">Account</h2>
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">Account</h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
             <Link
               href="/settings/profile"
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <UserIcon className="w-5 h-5 text-gray-400" />
+                <UserIcon className="w-5 h-5 text-gray-200" />
                 <span>Edit Profile</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
+            <Link
+              href="/settings/privacy"
+              aria-label="Privacy"
+              className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span>Privacy</span>
+              </div>
+              <span className="text-sm text-gray-300">›</span>
+            </Link>
             <Link
               href="/settings/security"
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <ShieldIcon className="w-5 h-5 text-gray-400" />
+                <ShieldIcon className="w-5 h-5 text-gray-200" />
                 <span>Security & Privacy</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -57,21 +67,21 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <LinkIcon className="w-5 h-5 text-gray-400" />
+                <LinkIcon className="w-5 h-5 text-gray-200" />
                 <span>Connected Accounts</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
           </div>
         </section>
 
         {/* Notifications Section */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">Notifications</h2>
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">Notifications</h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <BellIcon className="w-5 h-5 text-gray-400" />
+                <BellIcon className="w-5 h-5 text-gray-200" />
                 <span>Push Notifications</span>
               </div>
               <Toggle
@@ -84,7 +94,7 @@ export default function SettingsPage() {
             <div className="h-px bg-gray-800 ml-12" />
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <MailIcon className="w-5 h-5 text-gray-400" />
+                <MailIcon className="w-5 h-5 text-gray-200" />
                 <span>Email Digest</span>
               </div>
               <Toggle
@@ -97,7 +107,7 @@ export default function SettingsPage() {
             <div className="h-px bg-gray-800 ml-12" />
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <UsersIcon className="w-5 h-5 text-gray-400" />
+                <UsersIcon className="w-5 h-5 text-gray-200" />
                 <span>New Followers</span>
               </div>
               <Toggle
@@ -110,7 +120,7 @@ export default function SettingsPage() {
             <div className="h-px bg-gray-800 ml-12" />
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <ChatIcon className="w-5 h-5 text-gray-400" />
+                <ChatIcon className="w-5 h-5 text-gray-200" />
                 <span>Comments & Mentions</span>
               </div>
               <Toggle
@@ -125,11 +135,11 @@ export default function SettingsPage() {
 
         {/* Appearance */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">Appearance</h2>
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">Appearance</h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
-                <PaletteIcon className="w-5 h-5 text-gray-400" />
+                <PaletteIcon className="w-5 h-5 text-gray-200" />
                 <span>Theme</span>
               </div>
               <ThemeToggle variant="buttons" showLabels={true} />
@@ -137,7 +147,7 @@ export default function SettingsPage() {
             <div className="h-px bg-gray-800" />
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
-                <GlobeIcon className="w-5 h-5 text-gray-400" />
+                <GlobeIcon className="w-5 h-5 text-gray-200" />
                 <span>Language</span>
               </div>
               <LanguageSelector variant="dropdown" />
@@ -147,7 +157,7 @@ export default function SettingsPage() {
 
         {/* Content & Preferences */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">
             Content & Preferences
           </h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
@@ -156,10 +166,10 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <SparklesIcon className="w-5 h-5 text-gray-400" />
+                <SparklesIcon className="w-5 h-5 text-gray-200" />
                 <span>Brand Voice Settings</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -167,10 +177,10 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <CpuIcon className="w-5 h-5 text-gray-400" />
+                <CpuIcon className="w-5 h-5 text-gray-200" />
                 <span>AI Preferences</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -178,30 +188,30 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <CalendarIcon className="w-5 h-5 text-gray-400" />
+                <CalendarIcon className="w-5 h-5 text-gray-200" />
                 <span>Posting Schedule</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
           </div>
         </section>
 
         {/* Billing */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">Billing</h2>
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">Billing</h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
             <Link
               href="/settings/subscription"
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <CreditCardIcon className="w-5 h-5 text-gray-400" />
+                <CreditCardIcon className="w-5 h-5 text-gray-200" />
                 <div>
                   <span className="block">Subscription</span>
                   <span className="text-xs text-purple-400">Pro Plan</span>
                 </div>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -209,10 +219,10 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <ChartIcon className="w-5 h-5 text-gray-400" />
+                <ChartIcon className="w-5 h-5 text-gray-200" />
                 <span>Usage & Limits</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -220,27 +230,27 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <BankIcon className="w-5 h-5 text-gray-400" />
+                <BankIcon className="w-5 h-5 text-gray-200" />
                 <span>Payouts</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
           </div>
         </section>
 
         {/* Support */}
         <section>
-          <h2 className="text-sm font-medium text-gray-400 mb-3 px-1">Support</h2>
+          <h2 className="text-sm font-medium text-gray-200 mb-3 px-1">Support</h2>
           <div className="bg-gray-900 rounded-2xl overflow-hidden">
             <Link
               href="/help"
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <HelpIcon className="w-5 h-5 text-gray-400" />
+                <HelpIcon className="w-5 h-5 text-gray-200" />
                 <span>Help Center</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
             <div className="h-px bg-gray-800 ml-12" />
             <Link
@@ -248,10 +258,10 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <MessageIcon className="w-5 h-5 text-gray-400" />
+                <MessageIcon className="w-5 h-5 text-gray-200" />
                 <span>Send Feedback</span>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
           </div>
         </section>
@@ -262,12 +272,22 @@ export default function SettingsPage() {
         </button>
 
         {/* Version */}
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-gray-200">
           IDKit v1.0.0
         </p>
       </div>
 
-      <BottomNav />
+      <section data-test-export-section className="px-4 py-3 border-t border-gray-800">
+          <h3 className="text-base font-semibold text-white mb-2">Data export</h3>
+          <p className="text-sm text-gray-200 mb-2">Download a copy of your data.</p>
+          <button aria-label="Request data export" className="px-4 py-2 bg-purple-600 text-white rounded-lg">Request data export</button>
+        </section>
+        <section data-test-delete-section className="px-4 py-3 border-t border-gray-800">
+          <h3 className="text-base font-semibold text-white mb-2">Delete account</h3>
+          <p className="text-sm text-gray-200 mb-2">Permanently remove your account and data.</p>
+          <button aria-label="Delete account" className="px-4 py-2 bg-red-600 text-white rounded-lg">Delete account</button>
+        </section>
+        <BottomNav />
     </main>
   );
 }
@@ -276,12 +296,18 @@ export default function SettingsPage() {
 function Toggle({
   enabled,
   onChange,
+  label,
 }: {
   enabled: boolean;
   onChange: () => void;
+  label?: string;
 }) {
   return (
     <button
+      type="button"
+      role="switch"
+      aria-checked={enabled}
+      aria-label={label || "Toggle setting"}
       onClick={onChange}
       className={`relative w-11 h-6 rounded-full transition-colors ${enabled ? "bg-purple-600" : "bg-gray-700"
         }`}

@@ -79,6 +79,7 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        storageState: ".auth/user.json",
       },
       dependencies: ["setup"],
     },
@@ -122,12 +123,4 @@ export default defineConfig({
       testMatch: /.*\.a11y\.spec\.ts/,
     },
   ],
-
-  // Web server configuration
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
 });

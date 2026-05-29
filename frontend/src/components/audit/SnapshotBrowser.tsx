@@ -86,7 +86,7 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 Audit Snapshots
                             </h2>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-300">
                                 Immutable state captures for reproducibility
                             </p>
                         </div>
@@ -99,7 +99,7 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                 {/* Filters */}
                 <div className="flex gap-3">
                     <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-200" />
                         <input
                             type="text"
                             placeholder="Search snapshots..."
@@ -108,7 +108,7 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                             className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg"
                         />
                     </div>
-                    <select
+                    <select aria-label="Filter or select option"
                         value={typeFilter || ''}
                         onChange={(e) => setTypeFilter(e.target.value || null)}
                         className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg"
@@ -124,9 +124,9 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
             {/* Snapshot List */}
             <div className="divide-y dark:divide-gray-800">
                 {loading ? (
-                    <div className="p-8 text-center text-gray-500">Loading snapshots...</div>
+                    <div className="p-8 text-center text-gray-300">Loading snapshots...</div>
                 ) : filteredSnapshots.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">No snapshots found</div>
+                    <div className="p-8 text-center text-gray-300">No snapshots found</div>
                 ) : (
                     filteredSnapshots.map((snapshot) => (
                         <div
@@ -140,14 +140,14 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <ChevronRight
-                                        className={`h-5 w-5 text-gray-400 transition-transform ${selectedSnapshot?.id === snapshot.id ? 'rotate-90' : ''
+                                        className={`h-5 w-5 text-gray-200 transition-transform ${selectedSnapshot?.id === snapshot.id ? 'rotate-90' : ''
                                             }`}
                                     />
                                     <div>
                                         <div className="font-medium text-gray-900 dark:text-white">
                                             {snapshot.description}
                                         </div>
-                                        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                                        <div className="flex items-center gap-4 text-sm text-gray-300 mt-1">
                                             <span className="flex items-center gap-1">
                                                 <Clock className="h-3.5 w-3.5" />
                                                 {new Date(snapshot.created_at).toLocaleString()}
@@ -167,7 +167,7 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                                         e.stopPropagation();
                                         downloadSnapshot(snapshot.id);
                                     }}
-                                    className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg"
+                                    className="p-2 text-gray-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg"
                                     title="Download snapshot"
                                 >
                                     <Download className="h-4 w-4" />
@@ -181,13 +181,13 @@ export function SnapshotBrowser({ className = '' }: SnapshotBrowserProps) {
                                         Snapshot Details
                                     </h4>
                                     <dl className="grid grid-cols-2 gap-2 text-sm">
-                                        <dt className="text-gray-500">ID:</dt>
+                                        <dt className="text-gray-300">ID:</dt>
                                         <dd className="text-gray-900 dark:text-white font-mono">{snapshot.id}</dd>
-                                        <dt className="text-gray-500">Full Hash:</dt>
+                                        <dt className="text-gray-300">Full Hash:</dt>
                                         <dd className="text-gray-900 dark:text-white font-mono text-xs break-all">
                                             {snapshot.content_hash}
                                         </dd>
-                                        <dt className="text-gray-500">Size:</dt>
+                                        <dt className="text-gray-300">Size:</dt>
                                         <dd className="text-gray-900 dark:text-white">
                                             {(snapshot.size_bytes / 1024).toFixed(2)} KB
                                         </dd>

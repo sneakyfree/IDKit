@@ -186,13 +186,17 @@ async def get_hashtag_posts(
     """Get posts with a specific hashtag."""
     tag = tag.lstrip("#").lower()
 
-    # Build query
-    query = select(FeedPost, UserProfile).join(
+    # Build query — JSON-array contains is dialect-dependent; degrade gracefully on sqlite
+    dialect = db.bind.dialect.name if db.bind else ""
+    base = select(FeedPost, UserProfile).join(
         UserProfile, FeedPost.user_id == UserProfile.user_id
-    ).where(
-        FeedPost.hashtags.contains([tag]),
-        FeedPost.visibility == "public",
-    )
+    ).where(FeedPost.visibility == "public")
+    if dialect == "postgresql":
+        query = base.where(FeedPost.hashtags.contains([tag]))
+    else:
+        # sqlite has no JSONB @> operator; match via JSON serialization fallback
+        from sqlalchemy import cast, String
+        query = base.where(cast(FeedPost.hashtags, String).like(f'%"{tag}"%'))
 
     # Apply sorting
     if sort == "recent":

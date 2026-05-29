@@ -108,16 +108,16 @@ export default function AgentDashboard() {
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
                             AI Agent Dashboard
                         </h1>
-                        <p className="text-gray-400 mt-1">Monitor, control, and approve AI agent actions</p>
+                        <p className="text-gray-200 mt-1">Monitor, control, and approve AI agent actions</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="px-4 py-2 bg-purple-500/20 rounded-lg border border-purple-500/30">
                             <span className="text-purple-400 font-medium">{agents.filter(a => a.status === 'available').length}</span>
-                            <span className="text-gray-400 ml-2">Agents Available</span>
+                            <span className="text-gray-200 ml-2">Agents Available</span>
                         </div>
                         <div className="px-4 py-2 bg-yellow-500/20 rounded-lg border border-yellow-500/30">
                             <span className="text-yellow-400 font-medium">{pendingApprovals.filter(a => a.status === 'pending').length}</span>
-                            <span className="text-gray-400 ml-2">Pending Approvals</span>
+                            <span className="text-gray-200 ml-2">Pending Approvals</span>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ export default function AgentDashboard() {
                         Submit New Task
                     </h2>
                     <form onSubmit={handleSubmitTask} className="flex gap-4">
-                        <select
+                        <select aria-label="Filter or select option"
                             value={selectedAgent}
                             onChange={(e) => setSelectedAgent(e.target.value)}
                             className="bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -151,7 +151,7 @@ export default function AgentDashboard() {
                         <button
                             type="submit"
                             disabled={!taskInput.trim() || !selectedAgent}
-                            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg font-medium hover:opacity-90 disabled:opacity-80 disabled:cursor-not-allowed transition-opacity"
                         >
                             Submit Task
                         </button>
@@ -175,8 +175,8 @@ export default function AgentDashboard() {
                                         <h3 className="font-medium">{agent.name}</h3>
                                         <span className={`w-2 h-2 rounded-full ${getStatusColor(agent.status)}`} />
                                     </div>
-                                    <p className="text-sm text-gray-400 mb-3">{agent.description}</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                    <p className="text-sm text-gray-200 mb-3">{agent.description}</p>
+                                    <div className="flex items-center gap-4 text-xs text-gray-300">
                                         <span>{agent.tasksCompleted} tasks</span>
                                         <span>~{agent.avgResponseTime}s avg</span>
                                     </div>
@@ -195,8 +195,8 @@ export default function AgentDashboard() {
                         </h2>
                         <div className="space-y-4">
                             {pendingApprovals.filter(a => a.status === 'pending').length === 0 ? (
-                                <div className="text-center py-8 text-gray-500">
-                                    <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="text-center py-8 text-gray-300">
+                                    <svg className="w-12 h-12 mx-auto mb-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <p>All caught up! No pending approvals.</p>
@@ -211,10 +211,10 @@ export default function AgentDashboard() {
                                                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityBadge(approval.priority)}`}>
                                                         {approval.priority.toUpperCase()}
                                                     </span>
-                                                    <span className="text-xs text-gray-500">{approval.createdAt}</span>
+                                                    <span className="text-xs text-gray-300">{approval.createdAt}</span>
                                                 </div>
                                                 <p className="text-gray-300">{approval.description}</p>
-                                                <span className="mt-2 inline-block text-xs text-gray-500 bg-gray-700/50 px-2 py-1 rounded">
+                                                <span className="mt-2 inline-block text-xs text-gray-300 bg-gray-700/50 px-2 py-1 rounded">
                                                     {approval.taskType.replace('_', ' ')}
                                                 </span>
                                             </div>
@@ -241,11 +241,11 @@ export default function AgentDashboard() {
                         {/* History Section */}
                         {pendingApprovals.filter(a => a.status !== 'pending').length > 0 && (
                             <div className="mt-6 pt-6 border-t border-gray-700">
-                                <h3 className="text-lg font-medium mb-3 text-gray-400">Recent History</h3>
+                                <h3 className="text-lg font-medium mb-3 text-gray-200">Recent History</h3>
                                 <div className="space-y-2">
                                     {pendingApprovals.filter(a => a.status !== 'pending').map(item => (
                                         <div key={item.id} className="flex items-center justify-between py-2 px-3 bg-gray-700/20 rounded-lg text-sm">
-                                            <span className="text-gray-400">{item.description.substring(0, 50)}...</span>
+                                            <span className="text-gray-200">{item.description.substring(0, 50)}...</span>
                                             <span className={item.status === 'approved' ? 'text-green-400' : 'text-red-400'}>
                                                 {item.status === 'approved' ? '✓ Approved' : '✗ Rejected'}
                                             </span>

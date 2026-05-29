@@ -68,7 +68,7 @@ export default function FAQPage() {
                       <span className="font-medium">{faq.q}</span>
                       <span className={`transition-transform ${open[key] ? 'rotate-180' : ''}`}>▼</span>
                     </button>
-                    {open[key] && <div className="px-4 pb-4 text-gray-600 whitespace-pre-line">{faq.a}</div>}
+                    {open[key] && <div className="px-4 pb-4 text-gray-200 whitespace-pre-line">{faq.a}</div>}
                   </div>
                 );
               })}

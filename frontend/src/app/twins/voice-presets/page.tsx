@@ -172,7 +172,7 @@ export default function VoicePresetsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Voice Presets</h1>
-                        <p className="text-gray-400">Choose or customize your AI Twin&apos;s voice</p>
+                        <p className="text-gray-200">Choose or customize your AI Twin&apos;s voice</p>
                     </div>
                     <button
                         onClick={() => setShowCreateModal(true)}
@@ -202,8 +202,8 @@ export default function VoicePresetsPage() {
                     <div className="md:col-span-2 space-y-4">
                         {filteredPresets.length === 0 ? (
                             <div className="bg-gray-900 rounded-xl p-8 text-center">
-                                <Mic className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                                <p className="text-gray-500">No presets in this category</p>
+                                <Mic className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                                <p className="text-gray-300">No presets in this category</p>
                             </div>
                         ) : (
                             filteredPresets.map((preset) => (
@@ -220,7 +220,7 @@ export default function VoicePresetsPage() {
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${preset.category === "professional" ? "bg-blue-600/20 text-blue-400" :
                                                 preset.category === "casual" ? "bg-green-600/20 text-green-400" :
                                                     preset.category === "character" ? "bg-purple-600/20 text-purple-400" :
-                                                        "bg-gray-600/20 text-gray-400"
+                                                        "bg-gray-600/20 text-gray-200"
                                                 }`}>
                                                 <Mic className="w-6 h-6" />
                                             </div>
@@ -231,13 +231,13 @@ export default function VoicePresetsPage() {
                                                         <span className="text-xs bg-purple-600 px-2 py-0.5 rounded">Default</span>
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-gray-400">{preset.description}</p>
+                                                <p className="text-sm text-gray-200">{preset.description}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleToggleFavorite(preset.id); }}
-                                                className={`p-2 rounded-lg ${preset.isFavorite ? "text-yellow-400" : "text-gray-500 hover:text-gray-300"}`}
+                                                className={`p-2 rounded-lg ${preset.isFavorite ? "text-yellow-400" : "text-gray-300 hover:text-gray-300"}`}
                                             >
                                                 <Star className={`w-5 h-5 ${preset.isFavorite ? "fill-current" : ""}`} />
                                             </button>
@@ -325,7 +325,7 @@ export default function VoicePresetsPage() {
                                     <button
                                         onClick={handleApplyPreset}
                                         disabled={generating}
-                                        className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                                        className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80 flex items-center justify-center gap-2"
                                     >
                                         {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                         Apply
@@ -334,8 +334,8 @@ export default function VoicePresetsPage() {
                             </>
                         ) : (
                             <div className="text-center py-8">
-                                <Wand2 className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                                <p className="text-gray-500">Select a preset to customize</p>
+                                <Wand2 className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                                <p className="text-gray-300">Select a preset to customize</p>
                             </div>
                         )}
                     </div>
@@ -375,7 +375,7 @@ function SliderControl({
     return (
         <div>
             <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">{label}</span>
+                <span className="text-gray-200">{label}</span>
                 <span>{value.toFixed(step < 1 ? 2 : 0)}{unit}</span>
             </div>
             <input
@@ -413,7 +413,7 @@ function CreatePresetModal({ onClose, onCreate }: { onClose: () => void; onCreat
                     <button
                         onClick={() => onCreate(name)}
                         disabled={!name}
-                        className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                        className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                     >
                         Create
                     </button>

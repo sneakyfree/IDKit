@@ -143,7 +143,7 @@ export function AuditLogViewer({
       case 'approval': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
       case 'rejection': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
       case 'data_change': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
-      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400';
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200';
     }
   };
 
@@ -178,21 +178,21 @@ export function AuditLogViewer({
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Audit Log</h3>
-              <p className="text-sm text-gray-500">Complete activity history</p>
+              <p className="text-sm text-gray-300">Complete activity history</p>
             </div>
           </div>
 
           <div className="flex gap-2">
             <button
               onClick={fetchLogs}
-              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              className="p-2 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
               title="Refresh"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleExport}
-              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              className="p-2 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
               title="Export CSV"
             >
               <Download className="w-4 h-4" />
@@ -203,7 +203,7 @@ export function AuditLogViewer({
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-200" />
             <input
               type="text"
               value={searchQuery}
@@ -213,7 +213,7 @@ export function AuditLogViewer({
             />
           </div>
 
-          <select
+          <select aria-label="Filter or select option"
             value={actionTypeFilter}
             onChange={(e) => setActionTypeFilter(e.target.value as ActionType | 'all')}
             className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm"
@@ -226,7 +226,7 @@ export function AuditLogViewer({
             <option value="data_change">Data Changes</option>
           </select>
 
-          <select
+          <select aria-label="Filter or select option"
             value={actorTypeFilter}
             onChange={(e) => setActorTypeFilter(e.target.value as 'all' | 'user' | 'agent' | 'system')}
             className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm"
@@ -237,7 +237,7 @@ export function AuditLogViewer({
             <option value="system">System</option>
           </select>
 
-          <select
+          <select aria-label="Filter or select option"
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as 'all' | '1h' | '24h' | '7d' | '30d')}
             className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm"
@@ -256,24 +256,24 @@ export function AuditLogViewer({
         <table className="w-full">
           <thead className="bg-gray-50 dark:bg-gray-900/50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actor</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Target</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"></th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Time</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Actor</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Action</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Target</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center">
-                  <RefreshCw className="w-6 h-6 animate-spin text-gray-400 mx-auto" />
+                  <RefreshCw className="w-6 h-6 animate-spin text-gray-200 mx-auto" />
                 </td>
               </tr>
             ) : logs.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-300">
                   No audit logs found
                 </td>
               </tr>
@@ -284,7 +284,7 @@ export function AuditLogViewer({
                   className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-gray-200 dark:text-gray-200">
                       {formatTimestamp(log.timestamp)}
                     </span>
                   </td>
@@ -309,7 +309,7 @@ export function AuditLogViewer({
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-gray-200 dark:text-gray-200">
                       {log.target_name || '-'}
                     </span>
                   </td>
@@ -319,7 +319,7 @@ export function AuditLogViewer({
                   <td className="px-4 py-3">
                     <button
                       onClick={() => onViewDetails?.(log)}
-                      className="p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                      className="p-1 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                       title="View details"
                     >
                       <Eye className="w-4 h-4" />
@@ -335,14 +335,14 @@ export function AuditLogViewer({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-80 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -354,7 +354,7 @@ export function AuditLogViewer({
                   onClick={() => setCurrentPage(page)}
                   className={`w-8 h-8 text-sm rounded-lg ${currentPage === page
                       ? 'bg-indigo-600 text-white'
-                      : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                 >
                   {page}
@@ -364,7 +364,7 @@ export function AuditLogViewer({
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-80 disabled:cursor-not-allowed"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

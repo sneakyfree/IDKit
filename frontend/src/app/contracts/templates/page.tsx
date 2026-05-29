@@ -93,7 +93,7 @@ export default function ContractTemplatesPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Contract Templates</h1>
-                        <p className="text-gray-400">Pre-built templates for common agreements</p>
+                        <p className="text-gray-200">Pre-built templates for common agreements</p>
                     </div>
                     <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-xl hover:bg-purple-700">
                         <Plus className="w-5 h-5" />
@@ -104,7 +104,7 @@ export default function ContractTemplatesPage() {
                 {/* Search and Filter */}
                 <div className="flex gap-4 mb-6">
                     <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
                         <input
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -134,9 +134,9 @@ export default function ContractTemplatesPage() {
                     </div>
                 ) : filteredTemplates.length === 0 ? (
                     <div className="bg-gray-900 rounded-xl p-12 text-center">
-                        <FileText className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <FileText className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No templates found</h3>
-                        <p className="text-gray-500">Try adjusting your search or category filter.</p>
+                        <p className="text-gray-300">Try adjusting your search or category filter.</p>
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 gap-4">
@@ -180,7 +180,7 @@ function TemplateCard({ template, onClick }: { template: ContractTemplate; onCli
                     </div>
                     <div>
                         <h3 className="font-semibold">{template.name}</h3>
-                        <p className="text-sm text-gray-500 capitalize">{template.category}</p>
+                        <p className="text-sm text-gray-300 capitalize">{template.category}</p>
                     </div>
                 </div>
                 {template.isCustom && (
@@ -190,14 +190,14 @@ function TemplateCard({ template, onClick }: { template: ContractTemplate; onCli
                 )}
             </div>
 
-            <p className="text-sm text-gray-400 mb-4">{template.description}</p>
+            <p className="text-sm text-gray-200 mb-4">{template.description}</p>
 
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-300">
                     <Star className="w-4 h-4 text-yellow-400" />
                     {template.popularity}% popular
                 </div>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-300">
                     {template.sections.length} sections
                 </span>
             </div>
@@ -220,8 +220,8 @@ function TemplateDetailModal({
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-xl font-bold">{template.name}</h2>
-                            <p className="text-gray-400 capitalize">{template.category}</p>
+                            <h2 className="text-xl font-bold text-white">{template.name}</h2>
+                            <p className="text-gray-200 capitalize">{template.category}</p>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                     </div>
@@ -245,7 +245,7 @@ function TemplateDetailModal({
                                             <span className="text-xs text-red-400">Required</span>
                                         )}
                                     </div>
-                                    <p className="text-sm text-gray-500">{section.content.substring(0, 100)}...</p>
+                                    <p className="text-sm text-gray-300">{section.content.substring(0, 100)}...</p>
                                     {section.variables.length > 0 && (
                                         <div className="flex flex-wrap gap-1 mt-2">
                                             {section.variables.map((v) => (

@@ -167,7 +167,7 @@ export default function BackupsPage() {
                         <Database className="w-8 h-8 text-purple-400" />
                         <div>
                             <h1 className="text-2xl font-bold">Backup Management</h1>
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-gray-200 text-sm">
                                 {backups.length} backups stored
                             </p>
                         </div>
@@ -192,7 +192,7 @@ export default function BackupsPage() {
                 <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-gray-800 text-gray-400 text-sm">
+                            <tr className="border-b border-gray-800 text-gray-200 text-sm">
                                 <th className="text-left p-4">Status</th>
                                 <th className="text-left p-4">Name</th>
                                 <th className="text-left p-4">Type</th>
@@ -204,7 +204,7 @@ export default function BackupsPage() {
                         <tbody>
                             {backups.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="text-center py-12 text-gray-500">
+                                    <td colSpan={6} className="text-center py-12 text-gray-300">
                                         <HardDrive className="w-12 h-12 mx-auto mb-3 opacity-30" />
                                         <p>
                                             No backups yet. Create your first backup to get started.
@@ -224,10 +224,10 @@ export default function BackupsPage() {
                                                 {b.backup_type}
                                             </span>
                                         </td>
-                                        <td className="p-4 text-gray-400">
+                                        <td className="p-4 text-gray-200">
                                             {formatBytes(b.size_bytes)}
                                         </td>
-                                        <td className="p-4 text-gray-400 text-sm">
+                                        <td className="p-4 text-gray-200 text-sm">
                                             {formatDate(b.created_at)}
                                         </td>
                                         <td className="p-4 text-right">
@@ -264,7 +264,7 @@ export default function BackupsPage() {
                             <h2 className="text-xl font-bold mb-4">Create Backup</h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">
+                                    <label className="block text-sm text-gray-200 mb-1">
                                         Backup Name (optional)
                                     </label>
                                     <input
@@ -276,10 +276,10 @@ export default function BackupsPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">
+                                    <label className="block text-sm text-gray-200 mb-1">
                                         Backup Type
                                     </label>
-                                    <select
+                                    <select aria-label="Filter or select option"
                                         value={backupType}
                                         onChange={(e) => setBackupType(e.target.value)}
                                         className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
@@ -311,7 +311,7 @@ export default function BackupsPage() {
                                 <button
                                     onClick={handleCreate}
                                     disabled={creating}
-                                    className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80 flex items-center justify-center gap-2"
                                 >
                                     {creating ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -339,7 +339,7 @@ export default function BackupsPage() {
                                 You are about to restore from:{" "}
                                 <strong>{restoreTarget.name}</strong>
                             </p>
-                            <p className="text-sm text-gray-500 mb-6">
+                            <p className="text-sm text-gray-300 mb-6">
                                 This will restore the database to the state captured at{" "}
                                 {formatDate(restoreTarget.created_at)}. This action targets the{" "}
                                 <strong>staging</strong> environment.

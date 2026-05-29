@@ -89,10 +89,10 @@ export default function AnalyticsExportPage() {
             {/* Header */}
             <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
                 <div className="flex items-center gap-3 px-4 py-3">
-                    <Link href="/analytics" className="text-gray-400 hover:text-white">
+                    <Link href="/analytics" className="text-gray-200 hover:text-white" aria-label="Back">
                         <BackIcon className="w-6 h-6" />
                     </Link>
-                    <h1 className="text-xl font-bold">Export Analytics</h1>
+                    <h1 className="text-xl font-bold text-white">Export Analytics</h1>
                 </div>
             </header>
 
@@ -110,7 +110,7 @@ export default function AnalyticsExportPage() {
                         >
                             <CSVIcon className="w-8 h-8 mx-auto mb-2 text-green-400" />
                             <p className="font-medium">CSV</p>
-                            <p className="text-xs text-gray-500">Spreadsheet format</p>
+                            <p className="text-xs text-gray-300">Spreadsheet format</p>
                         </button>
                         <button
                             onClick={() => setFormat("json")}
@@ -121,7 +121,7 @@ export default function AnalyticsExportPage() {
                         >
                             <JSONIcon className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
                             <p className="font-medium">JSON</p>
-                            <p className="text-xs text-gray-500">Developer format</p>
+                            <p className="text-xs text-gray-300">Developer format</p>
                         </button>
                     </div>
                 </section>
@@ -152,7 +152,7 @@ export default function AnalyticsExportPage() {
                         <label className="flex items-center justify-between">
                             <div>
                                 <p className="font-medium">Overview Metrics</p>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-300">
                                     Total impressions, engagement, followers
                                 </p>
                             </div>
@@ -163,7 +163,7 @@ export default function AnalyticsExportPage() {
                         <label className="flex items-center justify-between">
                             <div>
                                 <p className="font-medium">Platform Breakdown</p>
-                                <p className="text-sm text-gray-500">Per-platform statistics</p>
+                                <p className="text-sm text-gray-300">Per-platform statistics</p>
                             </div>
                             <div className="w-10 h-6 bg-purple-600 rounded-full flex items-center justify-end px-1">
                                 <div className="w-4 h-4 bg-white rounded-full" />
@@ -175,7 +175,7 @@ export default function AnalyticsExportPage() {
                         >
                             <div>
                                 <p className="font-medium">Daily Time Series</p>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-300">
                                     Day-by-day engagement data
                                 </p>
                             </div>
@@ -192,7 +192,7 @@ export default function AnalyticsExportPage() {
                 {/* Preview */}
                 <section className="bg-gray-900 rounded-2xl p-5">
                     <h2 className="text-lg font-semibold mb-4">Export Preview</h2>
-                    <div className="bg-gray-800 rounded-xl p-4 text-sm text-gray-400 font-mono">
+                    <div className="bg-gray-800 rounded-xl p-4 text-sm text-gray-200 font-mono">
                         <p>📄 analytics_{getDateRange().start.toISOString().split("T")[0]}.{format}</p>
                         <p className="mt-2 text-xs">
                             Includes: Overview metrics, Platform breakdown
@@ -217,7 +217,7 @@ export default function AnalyticsExportPage() {
                 <button
                     onClick={handleExport}
                     disabled={isExporting}
-                    className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-80 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2"
                 >
                     {isExporting ? (
                         <>

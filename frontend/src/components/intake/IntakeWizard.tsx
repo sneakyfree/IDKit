@@ -211,7 +211,7 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
                     <h2 className="text-xl font-semibold text-gray-900">Unable to load onboarding</h2>
-                    <p className="text-gray-600 mt-2">{error || 'Please try again later'}</p>
+                    <p className="text-gray-200 mt-2">{error || 'Please try again later'}</p>
                 </div>
             </div>
         );
@@ -226,16 +226,16 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
                         {flow.title}
                     </h1>
                     {flow.description && (
-                        <p className="text-gray-600 mt-2">{flow.description}</p>
+                        <p className="text-gray-200 mt-2">{flow.description}</p>
                     )}
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-300 mt-1">
                         ~{flow.estimated_minutes} minutes
                     </p>
                 </div>
 
                 {/* Progress Bar */}
                 <div className="mb-8">
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <div className="flex justify-between text-sm text-gray-200 mb-2">
                         <span>Step {currentSectionIndex + 1} of {flow.sections.length}</span>
                         <span>{Math.round(progress)}% complete</span>
                     </div>
@@ -263,7 +263,7 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
                             {currentSection.title}
                         </h2>
                         {currentSection.description && (
-                            <p className="text-gray-600 mt-1">{currentSection.description}</p>
+                            <p className="text-gray-200 mt-1">{currentSection.description}</p>
                         )}
                     </div>
 
@@ -293,7 +293,7 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
                             onClick={handleBack}
                             disabled={isFirstSection}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${isFirstSection
-                                    ? 'text-gray-400 cursor-not-allowed'
+                                    ? 'text-gray-200 cursor-not-allowed'
                                     : 'text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
@@ -303,7 +303,7 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
                         <button
                             onClick={handleNext}
                             disabled={isSubmitting}
-                            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-80 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <span className="flex items-center">

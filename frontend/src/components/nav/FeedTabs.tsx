@@ -13,7 +13,7 @@ export function FeedTabs() {
           onClick={() => setActiveTab("following")}
           className={cn(
             "text-base font-semibold transition-opacity",
-            activeTab === "following" ? "opacity-100" : "opacity-50"
+            activeTab === "following" ? "opacity-100" : "opacity-80"
           )}
         >
           Following
@@ -23,7 +23,7 @@ export function FeedTabs() {
           onClick={() => setActiveTab("for-you")}
           className={cn(
             "text-base font-semibold transition-opacity",
-            activeTab === "for-you" ? "opacity-100" : "opacity-50"
+            activeTab === "for-you" ? "opacity-100" : "opacity-80"
           )}
         >
           For You

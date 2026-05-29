@@ -108,20 +108,20 @@ export default function ProfilePage() {
           {/* Stats */}
           <div className="flex-1 flex justify-around">
             <div className="text-center">
-              <div className="text-xl font-bold">{mockUser.postCount}</div>
-              <div className="text-gray-400 text-xs">Posts</div>
+              <div className="text-xl font-bold text-white">{mockUser.postCount}</div>
+              <div className="text-gray-200 text-xs">Posts</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold">
+              <div className="text-xl font-bold text-white">
                 {formatNumber(mockUser.followerCount)}
               </div>
-              <div className="text-gray-400 text-xs">Followers</div>
+              <div className="text-gray-200 text-xs">Followers</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold">
+              <div className="text-xl font-bold text-white">
                 {formatNumber(mockUser.followingCount)}
               </div>
-              <div className="text-gray-400 text-xs">Following</div>
+              <div className="text-gray-200 text-xs">Following</div>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
           onClick={() => setActiveTab("posts")}
           className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "posts"
             ? "text-white border-b-2 border-white"
-            : "text-gray-500"
+            : "text-gray-300"
             }`}
         >
           <GridIcon className="w-5 h-5 mx-auto" />
@@ -199,7 +199,7 @@ export default function ProfilePage() {
           onClick={() => setActiveTab("likes")}
           className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "likes"
             ? "text-white border-b-2 border-white"
-            : "text-gray-500"
+            : "text-gray-300"
             }`}
         >
           <HeartIcon className="w-5 h-5 mx-auto" />
@@ -208,7 +208,7 @@ export default function ProfilePage() {
           onClick={() => setActiveTab("saved")}
           className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === "saved"
             ? "text-white border-b-2 border-white"
-            : "text-gray-500"
+            : "text-gray-300"
             }`}
         >
           <BookmarkIcon className="w-5 h-5 mx-auto" />

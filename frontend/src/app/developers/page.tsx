@@ -88,7 +88,7 @@ export default function DeveloperPortalPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Developer Portal</h1>
-                        <p className="text-gray-400">API keys, documentation, and SDKs</p>
+                        <p className="text-gray-200">API keys, documentation, and SDKs</p>
                     </div>
                     <a
                         href="/docs"
@@ -148,7 +148,7 @@ export default function DeveloperPortalPage() {
                                         <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
                                         <div className="text-sm">
                                             <p className="font-medium text-yellow-400">Keep your API keys secure</p>
-                                            <p className="text-gray-400">Never share API keys in public repositories or client-side code.</p>
+                                            <p className="text-gray-200">Never share API keys in public repositories or client-side code.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@ export default function DeveloperPortalPage() {
                         {activeTab === "docs" && (
                             <div className="bg-gray-900 rounded-xl overflow-hidden">
                                 <div className="p-4 bg-gray-800 border-b border-gray-700">
-                                    <p className="text-sm text-gray-400">Base URL: <code className="text-purple-400">https://api.idkit.io/v1</code></p>
+                                    <p className="text-sm text-gray-200">Base URL: <code className="text-purple-400">https://api.idkit.io/v1</code></p>
                                 </div>
                                 <div className="divide-y divide-gray-800">
                                     {API_ENDPOINTS.map((endpoint, i) => (
@@ -176,8 +176,8 @@ export default function DeveloperPortalPage() {
                                                 <code className="text-sm">{endpoint.path}</code>
                                             </div>
                                             <div className="flex items-center gap-4">
-                                                <span className="text-sm text-gray-500">{endpoint.description}</span>
-                                                {endpoint.auth && <Key className="w-4 h-4 text-gray-600" />}
+                                                <span className="text-sm text-gray-300">{endpoint.description}</span>
+                                                {endpoint.auth && <Key className="w-4 h-4 text-gray-200" />}
                                             </div>
                                         </div>
                                     ))}
@@ -195,7 +195,7 @@ export default function DeveloperPortalPage() {
                                                 <span className="text-2xl">{sdk.icon}</span>
                                                 <div>
                                                     <h3 className="font-medium">{sdk.name}</h3>
-                                                    <p className="text-sm text-gray-500">v{sdk.version}</p>
+                                                    <p className="text-sm text-gray-300">v{sdk.version}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -248,7 +248,7 @@ function ApiKeyCard({ apiKey, onRevoke }: { apiKey: ApiKey; onRevoke: () => void
                     <div>
                         <h3 className="font-medium">{apiKey.name}</h3>
                         <div className="flex items-center gap-2">
-                            <code className="text-sm text-gray-500">{showKey ? "pk_live_abc123xyz789" : apiKey.prefix}</code>
+                            <code className="text-sm text-gray-300">{showKey ? "pk_live_abc123xyz789" : apiKey.prefix}</code>
                             <button onClick={() => setShowKey(!showKey)} className="p-1 hover:bg-gray-800 rounded">
                                 {showKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                             </button>
@@ -272,7 +272,7 @@ function ApiKeyCard({ apiKey, onRevoke }: { apiKey: ApiKey; onRevoke: () => void
                 ))}
             </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center justify-between text-sm text-gray-300">
                 <span>Created {new Date(apiKey.createdAt).toLocaleDateString()}</span>
                 {apiKey.status === "active" && (
                     <button onClick={onRevoke} className="text-red-400 hover:text-red-300 flex items-center gap-1">
@@ -313,7 +313,7 @@ function CreateKeyModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                 <h2 className="text-xl font-bold mb-6">Create API Key</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="api-key-name" className="block text-sm text-gray-400 mb-1">Key Name *</label>
+                        <label htmlFor="api-key-name" className="block text-sm text-gray-200 mb-1">Key Name *</label>
                         <input
                             id="api-key-name"
                             value={name}
@@ -325,7 +325,7 @@ function CreateKeyModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                     </div>
 
                     <div>
-                        <label id="scopes-label" className="block text-sm text-gray-400 mb-2">Scopes</label>
+                        <label id="scopes-label" className="block text-sm text-gray-200 mb-2">Scopes</label>
                         <div className="flex flex-wrap gap-2">
                             {availableScopes.map((scope) => (
                                 <button
@@ -345,7 +345,7 @@ function CreateKeyModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
                         <button type="button" onClick={onClose} className="flex-1 py-3 bg-gray-800 rounded-xl hover:bg-gray-700">
                             Cancel
                         </button>
-                        <button type="submit" disabled={!name} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50">
+                        <button type="submit" disabled={!name} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80">
                             Create Key
                         </button>
                     </div>

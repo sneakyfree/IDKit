@@ -1,14 +1,7 @@
 import { IntakeWizard } from '@/components/intake';
 
 export default function OnboardingPage() {
-    return (
-        <IntakeWizard
-            flowId="creator_onboarding_v1"
-            onComplete={() => {
-                // Redirect handled by IntakeWizard
-            }}
-        />
-    );
+    return <IntakeWizard flowId="creator_onboarding_v1" />;
 }
 
 export const metadata = {

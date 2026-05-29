@@ -48,7 +48,7 @@ const SOURCE_COLORS = {
     user_input: 'text-green-500 bg-green-100 dark:bg-green-900/30',
     calculation: 'text-purple-500 bg-purple-100 dark:bg-purple-900/30',
     research: 'text-orange-500 bg-orange-100 dark:bg-orange-900/30',
-    external: 'text-gray-500 bg-gray-100 dark:bg-gray-800',
+    external: 'text-gray-300 bg-gray-100 dark:bg-gray-800',
 };
 
 export function EvidenceCard({
@@ -116,7 +116,7 @@ export function EvidenceCard({
                         <div className="font-medium text-gray-900 dark:text-white">
                             {evidence.source_name}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
                             <span className="sr-only">Source type: </span>
                             {SOURCE_LABELS[evidence.source_type]}
                             <span aria-hidden="true">•</span>
@@ -139,7 +139,7 @@ export function EvidenceCard({
                     </div>
 
                     <ChevronDown
-                        className={`h-5 w-5 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                        className={`h-5 w-5 text-gray-200 transition-transform ${expanded ? 'rotate-180' : ''}`}
                         aria-hidden="true"
                     />
                 </div>
@@ -151,7 +151,7 @@ export function EvidenceCard({
                     {/* Description */}
                     {evidence.description && (
                         <div className="mt-3">
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">
+                            <h4 className="text-xs font-medium text-gray-300 uppercase mb-1">
                                 Description
                             </h4>
                             <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -162,7 +162,7 @@ export function EvidenceCard({
 
                     {/* Data */}
                     <div className="mt-3">
-                        <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">
+                        <h4 className="text-xs font-medium text-gray-300 uppercase mb-1">
                             Evidence Data
                         </h4>
                         <pre
@@ -188,7 +188,7 @@ export function EvidenceCard({
                     )}
 
                     {/* Metadata */}
-                    <div className="mt-3 pt-3 border-t dark:border-gray-800 flex flex-wrap gap-4 text-xs text-gray-500">
+                    <div className="mt-3 pt-3 border-t dark:border-gray-800 flex flex-wrap gap-4 text-xs text-gray-300">
                         <span>
                             <span className="font-medium">ID:</span> {evidence.id}
                         </span>
@@ -234,17 +234,17 @@ export function EvidenceList({
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {title}
-                    <span className="ml-2 text-sm font-normal text-gray-500">
+                    <span className="ml-2 text-sm font-normal text-gray-300">
                         ({filteredEvidence.length} items)
                     </span>
                 </h3>
 
                 {showConfidenceFilter && (
                     <div className="flex items-center gap-2">
-                        <label htmlFor="confidence-filter" className="text-sm text-gray-500">
+                        <label htmlFor="confidence-filter" className="text-sm text-gray-300">
                             Min confidence:
                         </label>
-                        <select
+                        <select aria-label="Filter or select option"
                             id="confidence-filter"
                             value={minConfidence}
                             onChange={(e) => setMinConfidence(Number(e.target.value))}
@@ -270,7 +270,7 @@ export function EvidenceList({
                 ))}
 
                 {filteredEvidence.length === 0 && (
-                    <p className="text-center py-8 text-gray-500">
+                    <p className="text-center py-8 text-gray-300">
                         No evidence items match the current filter.
                     </p>
                 )}

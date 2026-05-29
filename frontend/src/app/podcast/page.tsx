@@ -60,7 +60,7 @@ export default function PodcastPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Podcast Lab</h1>
+          <h1 className="text-xl font-bold text-white">Podcast Lab</h1>
           <button
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
@@ -107,10 +107,10 @@ export default function PodcastPage() {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <h2 className="font-bold text-lg">{podcast.title}</h2>
-                <p className="text-sm text-gray-400 mt-1 line-clamp-2">
+                <p className="text-sm text-gray-200 mt-1 line-clamp-2">
                   {podcast.description}
                 </p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                <div className="flex items-center gap-4 mt-2 text-xs text-gray-300">
                   <span>{podcast.episodeCount} episodes</span>
                   <span>{formatNumber(podcast.subscriberCount)} subscribers</span>
                 </div>
@@ -121,15 +121,15 @@ export default function PodcastPage() {
             <div className="grid grid-cols-3 gap-3 mt-4">
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <div className="text-lg font-bold">{formatNumber(podcast.totalPlays)}</div>
-                <div className="text-xs text-gray-400">Total Plays</div>
+                <div className="text-xs text-gray-200">Total Plays</div>
               </div>
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <div className="text-lg font-bold">{podcast.episodeCount}</div>
-                <div className="text-xs text-gray-400">Episodes</div>
+                <div className="text-xs text-gray-200">Episodes</div>
               </div>
               <div className="bg-gray-800 rounded-xl p-3 text-center">
                 <div className="text-lg font-bold">{formatNumber(podcast.subscriberCount)}</div>
-                <div className="text-xs text-gray-400">Subscribers</div>
+                <div className="text-xs text-gray-200">Subscribers</div>
               </div>
             </div>
 
@@ -162,7 +162,7 @@ export default function PodcastPage() {
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold">Episodes</h2>
-          <span className="text-sm text-gray-500">{mockEpisodes.length} total</span>
+          <span className="text-sm text-gray-300">{mockEpisodes.length} total</span>
         </div>
 
         <div className="space-y-3">
@@ -175,7 +175,7 @@ export default function PodcastPage() {
               <div className="flex gap-3">
                 {/* Thumbnail */}
                 <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center flex-shrink-0">
-                  <MicIcon className="w-6 h-6 text-gray-500" />
+                  <MicIcon className="w-6 h-6 text-gray-300" />
                 </div>
 
                 {/* Info */}
@@ -188,10 +188,10 @@ export default function PodcastPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                  <p className="text-xs text-gray-200 mt-1 line-clamp-2">
                     {episode.description}
                   </p>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 mt-2 text-xs text-gray-300">
                     {episode.duration > 0 && (
                       <span>{formatDuration(episode.duration)}</span>
                     )}
@@ -286,7 +286,7 @@ export default function PodcastPage() {
               <div className="text-center">
                 <Link
                   href="/podcast/episodes/new"
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                  className="text-sm text-gray-200 hover:text-white transition-colors"
                 >
                   Or create manually →
                 </Link>

@@ -44,7 +44,7 @@ export default function TwinsPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">AI Twin Lab</h1>
+          <h1 className="text-xl font-bold text-white">AI Twin Lab</h1>
           <Link
             href="/twins/create"
             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
@@ -61,7 +61,7 @@ export default function TwinsPage() {
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === tab
                   ? "text-white border-b-2 border-purple-500"
-                  : "text-gray-500"
+                  : "text-gray-300"
                 }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -101,14 +101,14 @@ export default function TwinsPage() {
                   {/* Avatar */}
                   <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 p-0.5 flex-shrink-0">
                     <div className="w-full h-full rounded-xl bg-gray-800 flex items-center justify-center">
-                      <UserIcon className="w-8 h-8 text-gray-500" />
+                      <UserIcon className="w-8 h-8 text-gray-300" />
                     </div>
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold">{twin.name}</h3>
-                    <p className="text-sm text-gray-400 mt-0.5">{twin.description}</p>
+                    <p className="text-sm text-gray-200 mt-0.5">{twin.description}</p>
 
                     {/* Status */}
                     <div className="flex items-center gap-3 mt-2">
@@ -116,28 +116,28 @@ export default function TwinsPage() {
                         {twin.voiceCloned ? (
                           <CheckCircleIcon className="w-4 h-4 text-green-500" />
                         ) : (
-                          <CircleIcon className="w-4 h-4 text-gray-500" />
+                          <CircleIcon className="w-4 h-4 text-gray-300" />
                         )}
-                        <span className="text-xs text-gray-400">Voice</span>
+                        <span className="text-xs text-gray-200">Voice</span>
                       </div>
                       <div className="flex items-center gap-1">
                         {twin.avatarTrained ? (
                           <CheckCircleIcon className="w-4 h-4 text-green-500" />
                         ) : (
-                          <CircleIcon className="w-4 h-4 text-gray-500" />
+                          <CircleIcon className="w-4 h-4 text-gray-300" />
                         )}
-                        <span className="text-xs text-gray-400">Avatar</span>
+                        <span className="text-xs text-gray-200">Avatar</span>
                       </div>
                     </div>
 
                     {/* Stats */}
-                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-300">
                       <span>{twin.videosGenerated} videos generated</span>
                       <span>Last used {twin.lastUsed}</span>
                     </div>
                   </div>
 
-                  <ChevronRightIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <ChevronRightIcon className="w-5 h-5 text-gray-300 flex-shrink-0" />
                 </div>
               </Link>
             ))}
@@ -149,10 +149,10 @@ export default function TwinsPage() {
             className="block bg-gray-900 rounded-2xl p-6 border-2 border-dashed border-gray-700 hover:border-purple-500 hover:bg-gray-800 transition-all text-center"
           >
             <div className="w-14 h-14 mx-auto rounded-full bg-gray-800 flex items-center justify-center mb-3">
-              <PlusIcon className="w-7 h-7 text-gray-500" />
+              <PlusIcon className="w-7 h-7 text-gray-300" />
             </div>
             <h3 className="font-semibold">Create New AI Twin</h3>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-gray-200 mt-1">
               Clone your voice and appearance
             </p>
           </Link>
@@ -171,7 +171,7 @@ export default function TwinsPage() {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-medium text-sm">Professional Voice</h4>
-                  <p className="text-xs text-gray-400">English (US) • Female</p>
+                  <p className="text-xs text-gray-200">English (US) • Female</p>
                 </div>
                 <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
                   <PlayIcon className="w-5 h-5" />
@@ -183,7 +183,7 @@ export default function TwinsPage() {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-medium text-sm">Casual Voice</h4>
-                  <p className="text-xs text-gray-400">English (US) • Female</p>
+                  <p className="text-xs text-gray-200">English (US) • Female</p>
                 </div>
                 <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
                   <PlayIcon className="w-5 h-5" />
@@ -203,14 +203,14 @@ export default function TwinsPage() {
             <h3 className="font-semibold mb-3">Voice Settings</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-400">Default Voice</label>
-                <select className="mt-1 w-full bg-gray-800 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <label className="text-sm text-gray-200">Default Voice</label>
+                <select aria-label="Filter or select option" className="mt-1 w-full bg-gray-800 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
                   <option>Professional Voice</option>
                   <option>Casual Voice</option>
                 </select>
               </div>
               <div>
-                <label className="text-sm text-gray-400">Speaking Speed</label>
+                <label className="text-sm text-gray-200">Speaking Speed</label>
                 <input
                   type="range"
                   min="0.5"
@@ -219,7 +219,7 @@ export default function TwinsPage() {
                   defaultValue="1"
                   className="mt-2 w-full"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-gray-300 mt-1">
                   <span>0.5x</span>
                   <span>1x</span>
                   <span>2x</span>
@@ -238,16 +238,16 @@ export default function TwinsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="aspect-square rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 p-0.5">
                 <div className="w-full h-full rounded-xl bg-gray-800 flex flex-col items-center justify-center">
-                  <UserIcon className="w-12 h-12 text-gray-500" />
-                  <span className="text-xs text-gray-400 mt-2">Professional</span>
+                  <UserIcon className="w-12 h-12 text-gray-300" />
+                  <span className="text-xs text-gray-200 mt-2">Professional</span>
                 </div>
               </div>
               <Link
                 href="/twins/avatar/new"
                 className="aspect-square rounded-xl border-2 border-dashed border-gray-700 flex flex-col items-center justify-center hover:border-purple-500 hover:bg-gray-800 transition-all"
               >
-                <PlusIcon className="w-8 h-8 text-gray-500" />
-                <span className="text-xs text-gray-400 mt-2">Train New</span>
+                <PlusIcon className="w-8 h-8 text-gray-300" />
+                <span className="text-xs text-gray-200 mt-2">Train New</span>
               </Link>
             </div>
           </div>

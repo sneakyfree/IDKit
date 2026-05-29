@@ -22,7 +22,7 @@ export default function AuthPage() {
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 bg-clip-text text-transparent">
           IDKit
         </h1>
-        <p className="text-gray-400 text-center mt-2 text-sm">
+        <p className="text-gray-200 text-center mt-2 text-sm">
           Influencer Development Kit
         </p>
       </div>
@@ -32,7 +32,7 @@ export default function AuthPage() {
         <h2 className="text-2xl font-semibold text-white mb-3">
           Your AI-Powered Marketing Team
         </h2>
-        <p className="text-gray-400 text-sm leading-relaxed">
+        <p className="text-gray-200 text-sm leading-relaxed">
           Create content, build your brand, and grow your audience with the power of AI.
         </p>
       </div>
@@ -43,7 +43,7 @@ export default function AuthPage() {
         <button
           onClick={() => handleSocialLogin("google")}
           disabled={isLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3.5 px-6 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3.5 px-6 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-80"
         >
           {isLoading === "google" ? (
             <LoadingSpinner />
@@ -57,7 +57,7 @@ export default function AuthPage() {
         <button
           onClick={() => handleSocialLogin("apple")}
           disabled={isLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3.5 px-6 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3.5 px-6 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-80"
         >
           {isLoading === "apple" ? (
             <LoadingSpinner />
@@ -70,7 +70,7 @@ export default function AuthPage() {
         {/* Divider */}
         <div className="flex items-center gap-4 py-4">
           <div className="flex-1 h-px bg-gray-800" />
-          <span className="text-gray-500 text-sm">or</span>
+          <span className="text-gray-300 text-sm">or</span>
           <div className="flex-1 h-px bg-gray-800" />
         </div>
 
@@ -78,7 +78,7 @@ export default function AuthPage() {
         <button
           onClick={() => handleSocialLogin("tiktok")}
           disabled={isLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white font-medium py-3.5 px-6 rounded-full border border-gray-700 hover:bg-gray-800 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white font-medium py-3.5 px-6 rounded-full border border-gray-700 hover:bg-gray-800 transition-colors disabled:opacity-80"
         >
           {isLoading === "tiktok" ? (
             <LoadingSpinner />
@@ -92,7 +92,7 @@ export default function AuthPage() {
         <button
           onClick={() => handleSocialLogin("instagram")}
           disabled={isLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-medium py-3.5 px-6 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-medium py-3.5 px-6 rounded-full hover:opacity-90 transition-opacity disabled:opacity-80"
         >
           {isLoading === "instagram" ? (
             <LoadingSpinner />
@@ -106,7 +106,7 @@ export default function AuthPage() {
         <button
           onClick={() => handleSocialLogin("youtube")}
           disabled={isLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-red-600 text-white font-medium py-3.5 px-6 rounded-full hover:bg-red-700 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-3 bg-red-600 text-white font-medium py-3.5 px-6 rounded-full hover:bg-red-700 transition-colors disabled:opacity-80"
         >
           {isLoading === "youtube" ? (
             <LoadingSpinner />
@@ -118,13 +118,13 @@ export default function AuthPage() {
       </div>
 
       {/* Terms */}
-      <p className="text-gray-500 text-xs text-center mt-8 max-w-sm leading-relaxed">
+      <p className="text-gray-300 text-xs text-center mt-8 max-w-sm leading-relaxed">
         By continuing, you agree to our{" "}
-        <a href="/terms" className="text-gray-400 underline hover:text-white">
+        <a href="/terms" className="text-gray-200 underline hover:text-white">
           Terms of Service
         </a>{" "}
         and{" "}
-        <a href="/privacy" className="text-gray-400 underline hover:text-white">
+        <a href="/privacy" className="text-gray-200 underline hover:text-white">
           Privacy Policy
         </a>
       </p>

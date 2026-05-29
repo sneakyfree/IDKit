@@ -189,20 +189,20 @@ export default function BulkGenerationPage() {
             {/* Header */}
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-2xl font-bold mb-2">Bulk Content Generation</h1>
-                <p className="text-gray-400 mb-8">Generate 10-100 pieces of content from a template and CSV data</p>
+                <p className="text-gray-200 mb-8">Generate 10-100 pieces of content from a template and CSV data</p>
 
                 {/* Step Indicator */}
-                <div className="flex items-center gap-2 mb-8" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={4}>
+                <div className="flex items-center gap-2 mb-8" role="progressbar" aria-label="Progress" aria-valuenow={step} aria-valuemin={1} aria-valuemax={4}>
                     {[1, 2, 3, 4].map((s) => (
                         <div key={s} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= s ? "bg-purple-600 text-white" : "bg-gray-800 text-gray-500"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= s ? "bg-purple-600 text-white" : "bg-gray-800 text-gray-300"
                                 }`}>
                                 {step > s ? <CheckCircle className="w-4 h-4" /> : s}
                             </div>
                             {s < 4 && <div className={`w-12 h-1 mx-2 ${step > s ? "bg-purple-600" : "bg-gray-800"}`} />}
                         </div>
                     ))}
-                    <span className="ml-4 text-sm text-gray-400">
+                    <span className="ml-4 text-sm text-gray-200">
                         {step === 1 && "Select Template"}
                         {step === 2 && "Upload Data"}
                         {step === 3 && "Preview"}
@@ -235,8 +235,8 @@ export default function BulkGenerationPage() {
                             </div>
                         ) : templates.length === 0 ? (
                             <div className="bg-gray-900 rounded-xl p-8 text-center">
-                                <FileText className="w-12 h-12 mx-auto text-gray-600 mb-4" />
-                                <p className="text-gray-400 mb-4">No templates available</p>
+                                <FileText className="w-12 h-12 mx-auto text-gray-200 mb-4" />
+                                <p className="text-gray-200 mb-4">No templates available</p>
                                 <a href="/content/templates/new" className="text-purple-400 hover:text-purple-300">
                                     Create your first template →
                                 </a>
@@ -250,7 +250,7 @@ export default function BulkGenerationPage() {
                                         className="bg-gray-900 hover:bg-gray-800 rounded-xl p-5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     >
                                         <h3 className="font-semibold mb-1">{template.name}</h3>
-                                        <p className="text-sm text-gray-400 mb-2">{template.description}</p>
+                                        <p className="text-sm text-gray-200 mb-2">{template.description}</p>
                                         <div className="flex flex-wrap gap-2">
                                             {template.variables.map((v) => (
                                                 <span key={v} className="text-xs bg-gray-800 px-2 py-1 rounded">{v}</span>
@@ -267,7 +267,7 @@ export default function BulkGenerationPage() {
                 {step === 2 && (
                     <section aria-labelledby="upload-heading">
                         <h2 id="upload-heading" className="text-lg font-semibold mb-4">Upload Your Data</h2>
-                        <p className="text-sm text-gray-400 mb-4">
+                        <p className="text-sm text-gray-200 mb-4">
                             Upload a CSV with columns: {selectedTemplate?.variables.join(", ")}
                         </p>
 
@@ -281,13 +281,13 @@ export default function BulkGenerationPage() {
                                 aria-describedby="file-requirements"
                             />
                             <label htmlFor="csv-upload" className="cursor-pointer block">
-                                <Upload className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+                                <Upload className="w-12 h-12 mx-auto text-gray-300 mb-4" />
                                 {csvFile ? (
                                     <p className="text-green-400">{csvFile.name} ({csvData.length - 1} rows)</p>
                                 ) : (
                                     <>
                                         <p className="text-gray-300 mb-2">Drag and drop or click to upload</p>
-                                        <p id="file-requirements" className="text-sm text-gray-500">CSV files only, max 10MB</p>
+                                        <p id="file-requirements" className="text-sm text-gray-300">CSV files only, max 10MB</p>
                                     </>
                                 )}
                             </label>
@@ -301,7 +301,7 @@ export default function BulkGenerationPage() {
                                         <thead>
                                             <tr className="border-b border-gray-800">
                                                 {csvData[0]?.map((header, i) => (
-                                                    <th key={i} className="px-4 py-2 text-left text-gray-400">{header}</th>
+                                                    <th key={i} className="px-4 py-2 text-left text-gray-200">{header}</th>
                                                 ))}
                                             </tr>
                                         </thead>
@@ -329,7 +329,7 @@ export default function BulkGenerationPage() {
                             <button
                                 onClick={handleGeneratePreviews}
                                 disabled={csvData.length < 2 || loading}
-                                className="flex-1 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                                className="flex-1 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
                                 Generate Previews
@@ -342,7 +342,7 @@ export default function BulkGenerationPage() {
                 {step === 3 && (
                     <section aria-labelledby="preview-heading">
                         <h2 id="preview-heading" className="text-lg font-semibold mb-4">Preview Generated Content</h2>
-                        <p className="text-sm text-gray-400 mb-4">
+                        <p className="text-sm text-gray-200 mb-4">
                             Review these samples before generating all {csvData.length - 1} items
                         </p>
 
@@ -367,7 +367,7 @@ export default function BulkGenerationPage() {
                             <button
                                 onClick={handleStartGeneration}
                                 disabled={loading}
-                                className="flex-1 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                                className="flex-1 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80 transition-colors"
                             >
                                 Generate All ({csvData.length - 1} items)
                             </button>
@@ -415,11 +415,11 @@ export default function BulkGenerationPage() {
                                             </span>
                                         </div>
                                     </div>
-                                    <p className="text-gray-400 mt-4">
+                                    <p className="text-gray-200 mt-4">
                                         {job.completed} / {job.total} items
                                     </p>
                                     {job.status === "processing" && (
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-gray-300">
                                             Estimated time: {Math.ceil((job.total - job.completed) / 5)} minutes
                                         </p>
                                     )}
@@ -468,7 +468,7 @@ export default function BulkGenerationPage() {
                                         <h3 className="text-sm font-medium text-red-400 mb-2">
                                             {job.errors.length} items failed
                                         </h3>
-                                        <ul className="space-y-1 text-sm text-gray-400">
+                                        <ul className="space-y-1 text-sm text-gray-200">
                                             {job.errors.slice(0, 5).map((err, i) => (
                                                 <li key={i}>Row {err.row}: {err.message}</li>
                                             ))}

@@ -10,32 +10,33 @@ test.describe("Settings Pages", () => {
     test.describe("Guardrails Settings", () => {
         test.beforeEach(async ({ page }) => {
             await page.goto("/settings/agents/guardrails");
+        await page.waitForLoadState("networkidle").catch(() => {});
         });
 
         test("should display guardrails settings page", async ({ page }) => {
             // Check page header
-            await expect(page.getByText("Guardrail Settings")).toBeVisible();
+            await expect(page.getByText("Guardrail Settings").first()).toBeVisible();
 
             // Check risk tolerance section
-            await expect(page.getByText("Risk Tolerance")).toBeVisible();
+            await expect(page.getByText("Risk Tolerance").first()).toBeVisible();
 
             // Check action permissions section
-            await expect(page.getByText("Action Permissions")).toBeVisible();
+            await expect(page.getByText("Action Permissions").first()).toBeVisible();
 
             // Check agent autonomy section
-            await expect(page.getByText("Agent Autonomy")).toBeVisible();
+            await expect(page.getByText("Agent Autonomy").first()).toBeVisible();
         });
 
         test("should have selectable risk tolerance levels", async ({ page }) => {
             // Check all three risk levels
-            await expect(page.getByText("conservative", { exact: false })).toBeVisible();
-            await expect(page.getByText("medium", { exact: false })).toBeVisible();
-            await expect(page.getByText("aggressive", { exact: false })).toBeVisible();
+            await expect(page.getByText("conservative", { exact: false }).first()).toBeVisible();
+            await expect(page.getByText("medium", { exact: false }).first()).toBeVisible();
+            await expect(page.getByText("aggressive", { exact: false }).first()).toBeVisible();
         });
 
         test("should have save and reset buttons", async ({ page }) => {
-            await expect(page.getByRole("button", { name: /save/i })).toBeVisible();
-            await expect(page.getByRole("button", { name: /reset/i })).toBeVisible();
+            await expect(page.getByRole("button", { name: /save/i }).first()).toBeVisible();
+            await expect(page.getByRole("button", { name: /reset/i }).first()).toBeVisible();
         });
     });
 });
@@ -43,33 +44,36 @@ test.describe("Settings Pages", () => {
 test.describe("Agent Dashboard", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/agents");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display agent dashboard", async ({ page }) => {
         // Check for agents section
-        await expect(page.getByText(/agent/i)).toBeVisible();
+        await expect(page.getByText(/agent/i).first()).toBeVisible();
     });
 });
 
 test.describe("Twin Lab", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/twins");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display twin lab interface", async ({ page }) => {
         // Check for twin lab header or content
-        await expect(page.getByText(/twin/i)).toBeVisible();
+        await expect(page.getByText(/twin/i).first()).toBeVisible();
     });
 });
 
 test.describe("ROI Calculator", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/roi");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display ROI calculator", async ({ page }) => {
         // Check page loaded
-        await expect(page.getByText(/roi/i)).toBeVisible();
+        await expect(page.getByText(/roi/i).first()).toBeVisible();
     });
 
     test("should have input fields", async ({ page }) => {
@@ -82,17 +86,18 @@ test.describe("ROI Calculator", () => {
 test.describe("Payouts Settings", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/settings/payouts");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display payouts page", async ({ page }) => {
         // Check page title
-        await expect(page.getByText("Payouts")).toBeVisible();
+        await expect(page.getByText("Payouts").first()).toBeVisible();
     });
 
     test("should have onboarding or account section", async ({ page }) => {
         // Check for either onboarding CTA or account status
-        const hasOnboarding = await page.getByText(/set up payouts/i).isVisible().catch(() => false);
-        const hasAccount = await page.getByText(/payout account/i).isVisible().catch(() => false);
+        const hasOnboarding = await page.getByText(/set up payouts/i).first().isVisible().catch(() => false);
+        const hasAccount = await page.getByText(/payout account/i).first().isVisible().catch(() => false);
 
         expect(hasOnboarding || hasAccount).toBeTruthy();
     });
@@ -101,14 +106,14 @@ test.describe("Payouts Settings", () => {
 test.describe("Settings Navigation", () => {
     test("should navigate to settings page", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Check settings page loaded
-        await expect(page.getByText(/settings/i)).toBeVisible();
+        await expect(page.getByText(/settings/i).first()).toBeVisible();
     });
 
     test("should have navigation links", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Check for common settings links
         const links = page.locator("a");
         await expect(links.first()).toBeVisible();
@@ -118,7 +123,7 @@ test.describe("Settings Navigation", () => {
 test.describe("Accessibility", () => {
     test("should have skip link when focused", async ({ page }) => {
         await page.goto("/");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Tab to reveal skip link
         await page.keyboard.press("Tab");
 
@@ -131,7 +136,7 @@ test.describe("Accessibility", () => {
 
     test("should have proper page structure", async ({ page }) => {
         await page.goto("/");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Check for main content area
         const main = page.locator("main");
         await expect(main).toBeVisible();
@@ -141,7 +146,7 @@ test.describe("Accessibility", () => {
 test.describe("Theme Toggle", () => {
     test("should have theme toggle", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for theme-related elements
         const themeToggle = page.locator('[aria-label*="theme"], [data-testid*="theme"], button:has-text("Dark"), button:has-text("Light")');
         if (await themeToggle.count() > 0) {
@@ -153,7 +158,7 @@ test.describe("Theme Toggle", () => {
 test.describe("Language Selector", () => {
     test("should display language selector", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Look for language selector
         const langSelector = page.locator('select:has(option[value="en"]), [aria-label*="language"], button:has-text("English")');
         if (await langSelector.count() > 0) {

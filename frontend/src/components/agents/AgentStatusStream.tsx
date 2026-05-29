@@ -221,7 +221,7 @@ export function AgentStatusStream({
         return (
             <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-200 dark:text-gray-200">
                     {crewStatus ? `${crewStatus.agents.filter(a => a.status === 'working').length} agents working` : 'Connecting...'}
                 </span>
                 {crewStatus && crewStatus.pending_approvals > 0 && (
@@ -243,7 +243,7 @@ export function AgentStatusStream({
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">Agent Crew Status</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
                             <span className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`} />
                             {connected ? 'Live' : 'Reconnecting...'}
                         </div>
@@ -251,7 +251,7 @@ export function AgentStatusStream({
                 </div>
                 <button
                     onClick={() => setIsPaused(!isPaused)}
-                    className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                    className="p-2 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                     aria-label={isPaused ? 'Resume updates' : 'Pause updates'}
                 >
                     {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
@@ -265,25 +265,25 @@ export function AgentStatusStream({
                         <div className="text-2xl font-bold text-gray-900 dark:text-white">
                             {crewStatus.agents.length}
                         </div>
-                        <div className="text-xs text-gray-500">Agents</div>
+                        <div className="text-xs text-gray-300">Agents</div>
                     </div>
                     <div className="p-3 bg-white dark:bg-gray-800 text-center">
                         <div className="text-2xl font-bold text-green-600">
                             {crewStatus.active_tasks}
                         </div>
-                        <div className="text-xs text-gray-500">Active</div>
+                        <div className="text-xs text-gray-300">Active</div>
                     </div>
                     <div className="p-3 bg-white dark:bg-gray-800 text-center">
                         <div className="text-2xl font-bold text-yellow-600">
                             {crewStatus.pending_approvals}
                         </div>
-                        <div className="text-xs text-gray-500">Pending</div>
+                        <div className="text-xs text-gray-300">Pending</div>
                     </div>
                     <div className="p-3 bg-white dark:bg-gray-800 text-center">
                         <div className="text-2xl font-bold text-indigo-600">
                             {crewStatus.tasks_completed_today}
                         </div>
-                        <div className="text-xs text-gray-500">Today</div>
+                        <div className="text-xs text-gray-300">Today</div>
                     </div>
                 </div>
             )}
@@ -305,7 +305,7 @@ export function AgentStatusStream({
                             <div className="font-medium text-sm text-gray-900 dark:text-white truncate">
                                 {agent.agent_name}
                             </div>
-                            <div className="text-xs text-gray-500 truncate">
+                            <div className="text-xs text-gray-300 truncate">
                                 {agent.current_task || 'Idle'}
                             </div>
                             {agent.status === 'working' && (
@@ -367,7 +367,7 @@ export function AgentStatusStream({
                     </h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                         {activityLog.length === 0 ? (
-                            <div className="text-sm text-gray-500 text-center py-4">
+                            <div className="text-sm text-gray-300 text-center py-4">
                                 No recent activity
                             </div>
                         ) : (
@@ -381,7 +381,7 @@ export function AgentStatusStream({
                                     ) : task.progress !== undefined && task.progress > 0 ? (
                                         <Loader2 className="w-4 h-4 text-blue-500 animate-spin mt-0.5" />
                                     ) : (
-                                        <Clock className="w-4 h-4 text-gray-400 mt-0.5" />
+                                        <Clock className="w-4 h-4 text-gray-200 mt-0.5" />
                                     )}
                                     <div className="flex-1 min-w-0">
                                         <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -396,7 +396,7 @@ export function AgentStatusStream({
                                             </div>
                                         )}
                                         {task.result_summary && (
-                                            <div className="text-xs text-gray-500 mt-1 truncate">
+                                            <div className="text-xs text-gray-300 mt-1 truncate">
                                                 {task.result_summary}
                                             </div>
                                         )}

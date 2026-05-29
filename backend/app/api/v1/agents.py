@@ -16,7 +16,7 @@ from app.agents import AgentType
 from app.models.user import User
 from app.services.agent_service import AgentService
 
-router = APIRouter(prefix="/agents", tags=["agents"])
+router = APIRouter(tags=["agents"])
 
 
 # ============== Request/Response Schemas ==============

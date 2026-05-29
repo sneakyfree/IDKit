@@ -24,7 +24,7 @@ from app.schemas.blockers import (
 )
 from app.services.blockers_engine import BlockersEngine
 
-router = APIRouter(prefix="/blockers", tags=["blockers"])
+router = APIRouter(tags=["blockers"])
 
 
 # ============== Request/Response Schemas ==============

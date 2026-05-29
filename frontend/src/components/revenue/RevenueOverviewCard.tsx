@@ -172,7 +172,7 @@ export function RevenueInsights({
                             <h4 className="font-medium text-gray-900 dark:text-white">
                                 {insight.title}
                             </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            <p className="text-sm text-gray-200 dark:text-gray-200 mt-1">
                                 {insight.description}
                             </p>
                             {insight.potential_value && (

@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Approvals Page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/approvals");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should display the approvals page", async ({ page }) => {
@@ -51,6 +52,7 @@ test.describe("Approvals Page", () => {
 test.describe("Approval Card Interactions", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/approvals");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should show review modal when clicking review button", async ({ page }) => {
@@ -126,6 +128,7 @@ test.describe("Approval Card Interactions", () => {
 test.describe("Tab Navigation", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/approvals");
+  await page.waitForLoadState("networkidle").catch(() => {});
   });
 
   test("should switch between tabs", async ({ page }) => {

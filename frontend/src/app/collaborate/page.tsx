@@ -90,7 +90,7 @@ export default function CoCreationPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Content Co-Creation</h1>
-                        <p className="text-gray-400">Collaborate with other creators on shared projects</p>
+                        <p className="text-gray-200">Collaborate with other creators on shared projects</p>
                     </div>
                     <button
                         onClick={() => setShowCreate(true)}
@@ -105,15 +105,15 @@ export default function CoCreationPage() {
                 <div className="grid grid-cols-3 gap-4 mb-8">
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold text-blue-400">{stats.active}</p>
-                        <p className="text-sm text-gray-500">Active Projects</p>
+                        <p className="text-sm text-gray-300">Active Projects</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold text-yellow-400">{stats.planning}</p>
-                        <p className="text-sm text-gray-500">In Planning</p>
+                        <p className="text-sm text-gray-300">In Planning</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold text-green-400">{stats.completed}</p>
-                        <p className="text-sm text-gray-500">Published</p>
+                        <p className="text-sm text-gray-300">Published</p>
                     </div>
                 </div>
 
@@ -123,9 +123,9 @@ export default function CoCreationPage() {
                     </div>
                 ) : collaborations.length === 0 ? (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <Users className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <Users className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No collaborations yet</h3>
-                        <p className="text-gray-500 mb-6">Start collaborating with other creators.</p>
+                        <p className="text-gray-300 mb-6">Start collaborating with other creators.</p>
                         <button
                             onClick={() => setShowCreate(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -198,7 +198,7 @@ function CollabCard({ collab, onClick }: { collab: Collaboration; onClick: () =>
                     </div>
                     <div>
                         <h3 className="font-semibold">{collab.title}</h3>
-                        <p className="text-sm text-gray-500 capitalize">{collab.type}</p>
+                        <p className="text-sm text-gray-300 capitalize">{collab.type}</p>
                     </div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[collab.status]}`}>
@@ -224,7 +224,7 @@ function CollabCard({ collab, onClick }: { collab: Collaboration; onClick: () =>
                     )}
                 </div>
                 {collab.deadline && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-300">
                         Due {new Date(collab.deadline).toLocaleDateString()}
                     </span>
                 )}
@@ -259,7 +259,7 @@ function CollabDetailModal({ collab, onClose }: { collab: Collaboration; onClose
                 {/* Header */}
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold">{collab.title}</h2>
+                        <h2 className="text-xl font-bold text-white">{collab.title}</h2>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                     </div>
                     {/* Tabs */}
@@ -293,7 +293,7 @@ function CollabDetailModal({ collab, onClose }: { collab: Collaboration; onClose
                                                 </div>
                                                 <div>
                                                     <p className="font-medium">{c.name}</p>
-                                                    <p className="text-sm text-gray-500 capitalize">{c.role}</p>
+                                                    <p className="text-sm text-gray-300 capitalize">{c.role}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -313,8 +313,8 @@ function CollabDetailModal({ collab, onClose }: { collab: Collaboration; onClose
                         <div className="space-y-4">
                             {collab.assets.length === 0 ? (
                                 <div className="text-center py-8">
-                                    <FileText className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                                    <p className="text-gray-500">No assets uploaded yet</p>
+                                    <FileText className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                                    <p className="text-gray-300">No assets uploaded yet</p>
                                 </div>
                             ) : (
                                 collab.assets.map((asset) => (
@@ -323,7 +323,7 @@ function CollabDetailModal({ collab, onClose }: { collab: Collaboration; onClose
                                             <FileText className="w-5 h-5 text-purple-400" />
                                             <div>
                                                 <p className="font-medium">{asset.name}</p>
-                                                <p className="text-sm text-gray-500">by {asset.uploadedBy}</p>
+                                                <p className="text-sm text-gray-300">by {asset.uploadedBy}</p>
                                             </div>
                                         </div>
                                         <span className={`text-xs px-2 py-1 rounded-full ${asset.status === "approved" ? "text-green-400 bg-green-400/10" : "text-yellow-400 bg-yellow-400/10"
@@ -347,7 +347,7 @@ function CollabDetailModal({ collab, onClose }: { collab: Collaboration; onClose
                                     <div key={msg.id} className={`flex ${msg.userId === "1" ? "justify-end" : "justify-start"}`}>
                                         <div className={`max-w-[70%] p-3 rounded-lg ${msg.userId === "1" ? "bg-purple-600" : "bg-gray-800"
                                             }`}>
-                                            {msg.userId !== "1" && <p className="text-xs text-gray-400 mb-1">{msg.userName}</p>}
+                                            {msg.userId !== "1" && <p className="text-xs text-gray-200 mb-1">{msg.userName}</p>}
                                             <p>{msg.content}</p>
                                         </div>
                                     </div>
@@ -398,7 +398,7 @@ function CreateCollabModal({ onClose, onCreate }: { onClose: () => void; onCreat
                 <h2 className="text-xl font-bold mb-6">New Collaboration</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Project Title *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Project Title *</label>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -407,8 +407,8 @@ function CreateCollabModal({ onClose, onCreate }: { onClose: () => void; onCreat
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Type</label>
-                        <select
+                        <label className="block text-sm text-gray-200 mb-1">Type</label>
+                        <select aria-label="Filter or select option"
                             value={type}
                             onChange={(e) => setType(e.target.value as Collaboration["type"])}
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -420,7 +420,7 @@ function CreateCollabModal({ onClose, onCreate }: { onClose: () => void; onCreat
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Deadline</label>
+                        <label className="block text-sm text-gray-200 mb-1">Deadline</label>
                         <input
                             type="date"
                             value={deadline}
@@ -432,7 +432,7 @@ function CreateCollabModal({ onClose, onCreate }: { onClose: () => void; onCreat
                         <button type="button" onClick={onClose} className="flex-1 py-3 bg-gray-800 rounded-xl hover:bg-gray-700">
                             Cancel
                         </button>
-                        <button type="submit" disabled={!title} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50">
+                        <button type="submit" disabled={!title} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80">
                             Create
                         </button>
                     </div>

@@ -12,7 +12,7 @@ from app.api.v1.deps import get_current_user
 from app.models.user import User
 
 
-router = APIRouter(prefix="/compliance", tags=["Compliance"])
+router = APIRouter(tags=["Compliance"])
 
 
 class FTCCheckRequest(BaseModel):

@@ -87,12 +87,12 @@ export function BlockerCard({
                                     {blocker.severity}
                                 </span>
                             </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            <p className="text-sm text-gray-200 dark:text-gray-200 mt-1">
                                 {blocker.description}
                             </p>
                         </div>
                     </div>
-                    <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`h-5 w-5 text-gray-200 transition-transform ${expanded ? 'rotate-180' : ''}`} />
                 </div>
 
                 {/* Progress Bar */}
@@ -103,7 +103,7 @@ export function BlockerCard({
                             style={{ width: `${progress}%` }}
                         />
                     </div>
-                    <span className="text-sm text-gray-500 whitespace-nowrap">
+                    <span className="text-sm text-gray-300 whitespace-nowrap">
                         {completedActions}/{blocker.actions.length} actions
                     </span>
                 </div>
@@ -142,10 +142,10 @@ export function BlockerCard({
                                     {action.completed ? (
                                         <CheckCircle2 className="h-5 w-5 text-green-500" />
                                     ) : (
-                                        <Circle className="h-5 w-5 text-gray-400" />
+                                        <Circle className="h-5 w-5 text-gray-200" />
                                     )}
                                 </button>
-                                <span className={`flex-1 text-sm ${action.completed ? 'line-through text-gray-500' : 'text-gray-700 dark:text-gray-300'}`}>
+                                <span className={`flex-1 text-sm ${action.completed ? 'line-through text-gray-300' : 'text-gray-700 dark:text-gray-300'}`}>
                                     {action.title}
                                 </span>
                                 <span className={`px-2 py-0.5 rounded text-xs ${EFFORT_COLORS[action.effort]}`}>
@@ -200,7 +200,7 @@ export function BlockersList({
             {/* Summary */}
             <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                    <AlertOctagon className="h-5 w-5 text-gray-500" />
+                    <AlertOctagon className="h-5 w-5 text-gray-300" />
                     <span className="font-medium text-gray-900 dark:text-white">
                         {blockers.length} Blockers
                     </span>

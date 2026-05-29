@@ -13,7 +13,7 @@ test.describe("Accessibility - Home Page", () => {
     page,
   }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
     // Filter out minor issues for initial compliance
@@ -26,7 +26,7 @@ test.describe("Accessibility - Home Page", () => {
 
   test("should have proper heading hierarchy", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Check that h1 exists and comes before h2, h3, etc.
     const headings = await page.locator("h1, h2, h3, h4, h5, h6").all();
 
@@ -51,7 +51,7 @@ test.describe("Accessibility - Home Page", () => {
 
   test("should have accessible images", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const images = page.locator("img");
     const imageCount = await images.count();
 
@@ -68,7 +68,7 @@ test.describe("Accessibility - Home Page", () => {
 
   test("should have proper link text", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const links = page.locator("a");
     const linkCount = await links.count();
 
@@ -88,7 +88,7 @@ test.describe("Accessibility - Home Page", () => {
 test.describe("Accessibility - Schedule Page", () => {
   test("should not have critical accessibility issues", async ({ page }) => {
     await page.goto("/schedule");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude("[data-testid='third-party-widget']") // Exclude any third-party widgets
       .analyze();
@@ -102,7 +102,7 @@ test.describe("Accessibility - Schedule Page", () => {
 
   test("should have keyboard navigable calendar", async ({ page }) => {
     await page.goto("/schedule");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Focus on the calendar area
     await page.keyboard.press("Tab");
 
@@ -120,7 +120,7 @@ test.describe("Accessibility - Schedule Page", () => {
 test.describe("Accessibility - Settings Page", () => {
   test("should not have critical accessibility issues", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
     const criticalViolations = accessibilityScanResults.violations.filter(
@@ -132,7 +132,7 @@ test.describe("Accessibility - Settings Page", () => {
 
   test("should have accessible form controls", async ({ page }) => {
     await page.goto("/settings/privacy");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Check all inputs have associated labels
     const inputs = page.locator(
       'input:not([type="hidden"]), select, textarea'
@@ -167,7 +167,7 @@ test.describe("Accessibility - Settings Page", () => {
 test.describe("Accessibility - Testing Page", () => {
   test("should not have critical accessibility issues", async ({ page }) => {
     await page.goto("/testing");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
     const criticalViolations = accessibilityScanResults.violations.filter(
@@ -181,7 +181,7 @@ test.describe("Accessibility - Testing Page", () => {
 test.describe("Accessibility - Approvals Page", () => {
   test("should not have critical accessibility issues", async ({ page }) => {
     await page.goto("/approvals");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
     const criticalViolations = accessibilityScanResults.violations.filter(
@@ -195,7 +195,7 @@ test.describe("Accessibility - Approvals Page", () => {
 test.describe("Accessibility - Keyboard Navigation", () => {
   test("should be able to navigate entirely by keyboard", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Tab through the page
     for (let i = 0; i < 10; i++) {
       await page.keyboard.press("Tab");
@@ -214,7 +214,7 @@ test.describe("Accessibility - Keyboard Navigation", () => {
 
   test("should have visible focus indicators", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     // Tab to first focusable element
     await page.keyboard.press("Tab");
 
@@ -247,7 +247,7 @@ test.describe("Accessibility - Keyboard Navigation", () => {
 test.describe("Accessibility - Color Contrast", () => {
   test("should have sufficient color contrast", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(["wcag2aa"]) // Check against WCAG 2.0 AA standards
       .analyze();
@@ -273,7 +273,7 @@ test.describe("Accessibility - Color Contrast", () => {
 test.describe("Accessibility - ARIA", () => {
   test("should have valid ARIA attributes", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(["cat.aria"]) // Check ARIA-related rules
       .analyze();
@@ -287,7 +287,7 @@ test.describe("Accessibility - ARIA", () => {
 
   test("should have proper button accessibility", async ({ page }) => {
     await page.goto("/");
-
+    await page.waitForLoadState("networkidle").catch(() => {});
     const buttons = page.locator("button");
     const buttonCount = await buttons.count();
 

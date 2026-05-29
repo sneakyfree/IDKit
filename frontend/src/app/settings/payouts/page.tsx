@@ -87,7 +87,7 @@ export default function PayoutsSettingsPage() {
             active: "bg-green-500/20 text-green-400",
             restricted: "bg-yellow-500/20 text-yellow-400",
         };
-        return colors[status] || "bg-gray-500/20 text-gray-400";
+        return colors[status] || "bg-gray-500/20 text-gray-200";
     };
 
     return (
@@ -95,10 +95,10 @@ export default function PayoutsSettingsPage() {
             {/* Header */}
             <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
                 <div className="flex items-center gap-3 px-4 py-3">
-                    <Link href="/settings" className="text-gray-400 hover:text-white">
+                    <Link href="/settings" className="text-gray-200 hover:text-white" aria-label="Back">
                         <BackIcon className="w-6 h-6" />
                     </Link>
-                    <h1 className="text-xl font-bold">Payouts</h1>
+                    <h1 className="text-xl font-bold text-white">Payouts</h1>
                 </div>
             </header>
 
@@ -132,8 +132,8 @@ export default function PayoutsSettingsPage() {
                                 <BankIcon className="w-7 h-7 text-purple-400" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold">Start Getting Paid</h2>
-                                <p className="text-gray-400 text-sm">
+                                <h2 className="text-xl font-bold text-white">Start Getting Paid</h2>
+                                <p className="text-gray-200 text-sm">
                                     Connect your bank account to receive payouts
                                 </p>
                             </div>
@@ -145,7 +145,7 @@ export default function PayoutsSettingsPage() {
                         <button
                             onClick={handleStartOnboarding}
                             disabled={isLoading}
-                            className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-xl font-medium transition-colors"
+                            className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-80 rounded-xl font-medium transition-colors"
                         >
                             {isLoading ? "Setting up..." : "Set Up Payouts"}
                         </button>
@@ -189,11 +189,11 @@ export default function PayoutsSettingsPage() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-gray-500 text-sm">Country</p>
+                                    <p className="text-gray-300 text-sm">Country</p>
                                     <p className="font-medium">{account.country}</p>
                                 </div>
                                 <div>
-                                    <p className="text-gray-500 text-sm">Currency</p>
+                                    <p className="text-gray-300 text-sm">Currency</p>
                                     <p className="font-medium uppercase">
                                         {account.default_currency}
                                     </p>
@@ -218,13 +218,13 @@ export default function PayoutsSettingsPage() {
 
                                 <div className="grid grid-cols-2 gap-4 mb-6">
                                     <div className="bg-gray-800 rounded-xl p-4">
-                                        <p className="text-gray-500 text-sm">Available</p>
+                                        <p className="text-gray-300 text-sm">Available</p>
                                         <p className="text-2xl font-bold text-green-400">
                                             {formatCurrency(balance.total_available_cents)}
                                         </p>
                                     </div>
                                     <div className="bg-gray-800 rounded-xl p-4">
-                                        <p className="text-gray-500 text-sm">Pending</p>
+                                        <p className="text-gray-300 text-sm">Pending</p>
                                         <p className="text-2xl font-bold text-yellow-400">
                                             {formatCurrency(balance.total_pending_cents)}
                                         </p>
@@ -234,12 +234,12 @@ export default function PayoutsSettingsPage() {
                                 {/* Payout Form */}
                                 {balance.total_available_cents > 0 && (
                                     <div className="border-t border-gray-800 pt-4">
-                                        <h3 className="text-sm font-medium text-gray-400 mb-3">
+                                        <h3 className="text-sm font-medium text-gray-200 mb-3">
                                             Request Payout
                                         </h3>
                                         <div className="flex gap-3">
                                             <div className="relative flex-1">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">
                                                     $
                                                 </span>
                                                 <input
@@ -260,12 +260,12 @@ export default function PayoutsSettingsPage() {
                                                     !payoutAmount ||
                                                     parseFloat(payoutAmount) < 10
                                                 }
-                                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors"
+                                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-80 disabled:cursor-not-allowed rounded-xl font-medium transition-colors"
                                             >
                                                 {isProcessing ? "Processing..." : "Withdraw"}
                                             </button>
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="text-xs text-gray-300 mt-2">
                                             Minimum payout: $10.00. Usually arrives in 2-3 business
                                             days.
                                         </p>
@@ -285,9 +285,9 @@ export default function PayoutsSettingsPage() {
                                     history.transfers.length === 0 ? (
                                     <div className="p-8 text-center">
                                         <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <HistoryIcon className="w-8 h-8 text-gray-600" />
+                                            <HistoryIcon className="w-8 h-8 text-gray-200" />
                                         </div>
-                                        <p className="text-gray-500">No transactions yet</p>
+                                        <p className="text-gray-300">No transactions yet</p>
                                     </div>
                                 ) : (
                                     <div className="divide-y divide-gray-800">
@@ -303,7 +303,7 @@ export default function PayoutsSettingsPage() {
                                                     </div>
                                                     <div>
                                                         <p className="font-medium">Payout to Bank</p>
-                                                        <p className="text-sm text-gray-500">
+                                                        <p className="text-sm text-gray-300">
                                                             {formatDate(payout.created_at)}
                                                         </p>
                                                     </div>
@@ -335,7 +335,7 @@ export default function PayoutsSettingsPage() {
                                                         <p className="font-medium">
                                                             {transfer.source_type || "Earnings"}
                                                         </p>
-                                                        <p className="text-sm text-gray-500">
+                                                        <p className="text-sm text-gray-300">
                                                             {formatDate(transfer.created_at)}
                                                         </p>
                                                     </div>

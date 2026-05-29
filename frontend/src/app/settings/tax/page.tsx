@@ -105,7 +105,7 @@ export default function TaxDocumentsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Tax Documents</h1>
-                        <p className="text-gray-400">Download tax forms and earnings summaries</p>
+                        <p className="text-gray-200">Download tax forms and earnings summaries</p>
                     </div>
                     <button
                         onClick={() => setShowTaxInfo(true)}
@@ -133,10 +133,10 @@ export default function TaxDocumentsPage() {
                 <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-2xl p-6 mb-6 border border-purple-500/20">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-400">Total Earnings ({selectedYear})</p>
+                            <p className="text-gray-200">Total Earnings ({selectedYear})</p>
                             <p className="text-3xl font-bold">${totalEarnings.toLocaleString()}</p>
                         </div>
-                        <DollarSign className="w-12 h-12 text-purple-400 opacity-50" />
+                        <DollarSign className="w-12 h-12 text-purple-400 opacity-80" />
                     </div>
                 </div>
 
@@ -152,9 +152,9 @@ export default function TaxDocumentsPage() {
                     <div className="space-y-4">
                         {filteredDocs.length === 0 ? (
                             <div className="bg-gray-900 rounded-xl p-8 text-center">
-                                <FileText className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                                <p className="text-gray-500">No tax documents for {selectedYear}</p>
-                                <p className="text-sm text-gray-600 mt-2">
+                                <FileText className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                                <p className="text-gray-300">No tax documents for {selectedYear}</p>
+                                <p className="text-sm text-gray-200 mt-2">
                                     Tax documents are generated after year-end processing
                                 </p>
                             </div>
@@ -170,7 +170,7 @@ export default function TaxDocumentsPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold">{getDocumentTypeLabel(doc.type)}</h3>
-                                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                                            <div className="flex items-center gap-4 text-sm text-gray-300">
                                                 <span>Tax Year {doc.year}</span>
                                                 {doc.amount && (
                                                     <span className="text-green-400">
@@ -205,7 +205,7 @@ export default function TaxDocumentsPage() {
                         <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                         <div className="text-sm">
                             <p className="font-medium text-yellow-400">Important Tax Information</p>
-                            <p className="text-gray-400 mt-1">
+                            <p className="text-gray-200 mt-1">
                                 Tax documents are typically available by January 31st for the previous tax year.
                                 Consult a tax professional for advice on your specific situation.
                             </p>
@@ -230,7 +230,7 @@ function StatusBadge({ status }: { status: TaxDocument["status"] }) {
     const config = {
         available: { icon: CheckCircle, text: "Available", color: "text-green-400 bg-green-400/10" },
         processing: { icon: Loader2, text: "Processing", color: "text-yellow-400 bg-yellow-400/10" },
-        pending: { icon: Clock, text: "Pending", color: "text-gray-400 bg-gray-400/10" },
+        pending: { icon: Clock, text: "Pending", color: "text-gray-200 bg-gray-400/10" },
     };
 
     const { icon: Icon, text, color } = config[status];
@@ -265,25 +265,25 @@ function TaxInfoModal({
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-gray-900 rounded-2xl max-w-md w-full p-6">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Tax Information</h2>
+                    <h2 className="text-xl font-bold text-white">Tax Information</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                 </div>
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Tax ID Type</label>
+                        <label className="block text-sm text-gray-200 mb-1">Tax ID Type</label>
                         <p className="text-lg">{formData.taxIdType}</p>
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Tax ID</label>
+                        <label className="block text-sm text-gray-200 mb-1">Tax ID</label>
                         <p className="text-lg">{formData.taxId}</p>
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Business Type</label>
+                        <label className="block text-sm text-gray-200 mb-1">Business Type</label>
                         <p className="text-lg capitalize">{formData.businessType}</p>
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Address</label>
+                        <label className="block text-sm text-gray-200 mb-1">Address</label>
                         <div className="text-gray-300">
                             <p>{formData.address.street}</p>
                             <p>{formData.address.city}, {formData.address.state} {formData.address.zip}</p>

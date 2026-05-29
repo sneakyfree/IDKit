@@ -113,7 +113,7 @@ export default function VoicePresetPicker({ twinId, onSelect }: VoicePresetPicke
                     <Mic className="w-6 h-6 text-purple-400" />
                     <div>
                         <h3 className="font-bold">Voice Presets</h3>
-                        <p className="text-xs text-gray-500">{presets.length} presets · {CATEGORIES.length - 1} categories</p>
+                        <p className="text-xs text-gray-300">{presets.length} presets · {CATEGORIES.length - 1} categories</p>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@ export default function VoicePresetPicker({ twinId, onSelect }: VoicePresetPicke
                             onClick={() => setSelectedCategory(c)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${selectedCategory === c
                                     ? "bg-purple-600 text-white"
-                                    : "bg-gray-800 text-gray-400 hover:text-white"
+                                    : "bg-gray-800 text-gray-200 hover:text-white"
                                 }`}
                         >
                             {c}
@@ -154,14 +154,14 @@ export default function VoicePresetPicker({ twinId, onSelect }: VoicePresetPicke
                                 {playingId === preset.id ? (
                                     <Volume2 className="w-4 h-4 text-purple-400 animate-pulse" />
                                 ) : (
-                                    <Play className="w-3.5 h-3.5 text-gray-500" />
+                                    <Play className="w-3.5 h-3.5 text-gray-300" />
                                 )}
                             </button>
                         </div>
-                        <p className="text-xs text-gray-500">{preset.description}</p>
+                        <p className="text-xs text-gray-300">{preset.description}</p>
                         <div className="flex gap-1 mt-2">
                             {preset.tags.map((t) => (
-                                <span key={t} className="text-[10px] px-1.5 py-0.5 bg-gray-700/50 rounded text-gray-400">
+                                <span key={t} className="text-[10px] px-1.5 py-0.5 bg-gray-700/50 rounded text-gray-200">
                                     {t}
                                 </span>
                             ))}
@@ -190,7 +190,7 @@ export default function VoicePresetPicker({ twinId, onSelect }: VoicePresetPicke
                 <button
                     onClick={handleApply}
                     disabled={!selectedPreset || applying}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50 text-sm font-medium"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80 text-sm font-medium"
                 >
                     {applying ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

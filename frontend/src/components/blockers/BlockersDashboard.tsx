@@ -142,7 +142,7 @@ export default function BlockersDashboard() {
 
             {/* Filter */}
             <div style={{ marginBottom: '24px' }}>
-                <select
+                <select aria-label="Filter or select option"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     style={{ padding: '10px 16px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '14px' }}

@@ -9,6 +9,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Privacy Settings Page", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/settings/privacy");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should display privacy settings page", async ({ page }) => {
@@ -27,8 +28,8 @@ test.describe("Privacy Settings Page", () => {
 
     test("should display visibility settings", async ({ page }) => {
         // Check visibility options
-        await expect(page.getByText(/profile visibility/i)).toBeVisible();
-        await expect(page.getByText(/activity visibility/i)).toBeVisible();
+        await expect(page.getByText(/profile visibility/i).first()).toBeVisible();
+        await expect(page.getByText(/activity visibility/i).first()).toBeVisible();
     });
 
     test("should have toggle switches", async ({ page }) => {
@@ -43,6 +44,7 @@ test.describe("Privacy Settings Page", () => {
 test.describe("Privacy Settings - Visibility Controls", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/settings/privacy");
+    await page.waitForLoadState("networkidle").catch(() => {});
     });
 
     test("should toggle profile visibility", async ({ page }) => {
@@ -72,13 +74,14 @@ test.describe("Privacy Settings - Visibility Controls", () => {
 test.describe("Privacy Settings - Data Tab", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/settings/privacy");
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Navigate to data tab
-        await page.getByRole("button", { name: /data/i }).click();
+        await page.getByRole("button", { name: /data/i }).first().click();
     });
 
     test("should display data export section", async ({ page }) => {
         // Check for export functionality
-        await expect(page.getByText(/download your data|export/i)).toBeVisible();
+        await expect(page.getByText(/download your data|export/i).first()).toBeVisible();
     });
 
     test("should have data export button", async ({ page }) => {
@@ -89,7 +92,7 @@ test.describe("Privacy Settings - Data Tab", () => {
 
     test("should display delete account section", async ({ page }) => {
         // Check for delete account section (GDPR right to erasure)
-        await expect(page.getByText(/delete.*account/i)).toBeVisible();
+        await expect(page.getByText(/delete.*account/i).first()).toBeVisible();
     });
 
     test("should have delete account button", async ({ page }) => {
@@ -102,19 +105,21 @@ test.describe("Privacy Settings - Data Tab", () => {
 test.describe("Privacy Settings - Delete Confirmation", () => {
     test("should show confirmation modal on delete click", async ({ page }) => {
         await page.goto("/settings/privacy");
-        await page.getByRole("button", { name: /data/i }).click();
+        await page.waitForLoadState("networkidle").catch(() => {});
+        await page.getByRole("button", { name: /data/i }).first().click();
 
         // Click delete account button
-        await page.getByRole("button", { name: /delete.*account/i }).click();
+        await page.getByRole("button", { name: /delete.*account/i }).first().click();
 
         // Confirmation modal should appear
-        await expect(page.getByText(/permanently delete|confirm|type/i)).toBeVisible();
+        await expect(page.getByText(/permanently delete|confirm|type/i).first()).toBeVisible();
     });
 
     test("should require confirmation text to delete", async ({ page }) => {
         await page.goto("/settings/privacy");
-        await page.getByRole("button", { name: /data/i }).click();
-        await page.getByRole("button", { name: /delete.*account/i }).click();
+        await page.waitForLoadState("networkidle").catch(() => {});
+        await page.getByRole("button", { name: /data/i }).first().click();
+        await page.getByRole("button", { name: /delete.*account/i }).first().click();
 
         // Try to click delete without typing confirmation
         const confirmButton = page.getByRole("button", { name: /delete forever|confirm delete/i });
@@ -125,11 +130,12 @@ test.describe("Privacy Settings - Delete Confirmation", () => {
 
     test("should close modal on cancel", async ({ page }) => {
         await page.goto("/settings/privacy");
-        await page.getByRole("button", { name: /data/i }).click();
-        await page.getByRole("button", { name: /delete.*account/i }).click();
+        await page.waitForLoadState("networkidle").catch(() => {});
+        await page.getByRole("button", { name: /data/i }).first().click();
+        await page.getByRole("button", { name: /delete.*account/i }).first().click();
 
         // Click cancel
-        await page.getByRole("button", { name: /cancel/i }).click();
+        await page.getByRole("button", { name: /cancel/i }).first().click();
 
         // Modal should close
         await expect(page.getByText(/type.*delete/i)).not.toBeVisible();
@@ -139,14 +145,14 @@ test.describe("Privacy Settings - Delete Confirmation", () => {
 test.describe("Privacy Settings - Consents Tab", () => {
     test("should display consent history", async ({ page }) => {
         await page.goto("/settings/privacy");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Navigate to consents tab
         const consentsTab = page.getByRole("button", { name: /consent/i });
         if (await consentsTab.isVisible()) {
             await consentsTab.click();
 
             // Should show consent items
-            await expect(page.getByText(/terms of service|privacy policy/i)).toBeVisible();
+            await expect(page.getByText(/terms of service|privacy policy/i).first()).toBeVisible();
         }
     });
 });
@@ -154,7 +160,7 @@ test.describe("Privacy Settings - Consents Tab", () => {
 test.describe("Privacy Settings - Navigation", () => {
     test("should navigate back to settings", async ({ page }) => {
         await page.goto("/settings/privacy");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Click back link
         await page.locator('a[href="/settings"]').first().click();
 
@@ -164,9 +170,9 @@ test.describe("Privacy Settings - Navigation", () => {
 
     test("should be accessible from settings page", async ({ page }) => {
         await page.goto("/settings");
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Find privacy link
-        const privacyLink = page.getByRole("link", { name: /privacy/i });
+        const privacyLink = page.getByRole("link", { name: /privacy/i }).first();
         await expect(privacyLink).toBeVisible();
 
         await privacyLink.click();

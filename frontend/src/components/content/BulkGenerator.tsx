@@ -169,7 +169,7 @@ export default function BulkGenerator() {
                         <Layers className="w-6 h-6 text-purple-400" />
                         <div>
                             <h2 className="font-bold text-lg">Bulk Generator</h2>
-                            <p className="text-xs text-gray-500">{stats.completed}/{stats.total} completed</p>
+                            <p className="text-xs text-gray-300">{stats.completed}/{stats.total} completed</p>
                         </div>
                     </div>
                     <div className="flex gap-2">
@@ -207,7 +207,7 @@ export default function BulkGenerator() {
                         placeholder="Enter content prompt..."
                         className="flex-1 p-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:border-purple-500 outline-none"
                     />
-                    <select
+                    <select aria-label="Filter or select option"
                         value={newPlatform}
                         onChange={(e) => setNewPlatform(e.target.value)}
                         className="px-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
@@ -219,7 +219,7 @@ export default function BulkGenerator() {
                     <button
                         onClick={addItem}
                         disabled={!newPrompt.trim()}
-                        className="px-3 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50"
+                        className="px-3 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80"
                     >
                         <Plus className="w-5 h-5" />
                     </button>
@@ -238,14 +238,14 @@ export default function BulkGenerator() {
                         ) : item.status === "generating" ? (
                             <Loader2 className="w-5 h-5 text-blue-400 animate-spin flex-shrink-0" />
                         ) : (
-                            <AlertCircle className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                            <AlertCircle className="w-5 h-5 text-gray-300 flex-shrink-0" />
                         )}
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                             <p className="text-sm truncate">{item.prompt}</p>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-gray-500 capitalize">{item.platform}</span>
+                                <span className="text-xs text-gray-300 capitalize">{item.platform}</span>
                                 {item.error && <span className="text-xs text-red-400">{item.error}</span>}
                             </div>
                             {item.status === "generating" && (
@@ -261,7 +261,7 @@ export default function BulkGenerator() {
                         {/* Remove */}
                         <button
                             onClick={() => removeItem(item.id)}
-                            className="p-1.5 hover:bg-gray-800 rounded text-gray-600 hover:text-gray-400"
+                            className="p-1.5 hover:bg-gray-800 rounded text-gray-200 hover:text-gray-200"
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
@@ -269,7 +269,7 @@ export default function BulkGenerator() {
                 ))}
 
                 {queue.length === 0 && (
-                    <div className="p-8 text-center text-gray-600 text-sm">
+                    <div className="p-8 text-center text-gray-200 text-sm">
                         <Layers className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         Add prompts or import a CSV to start bulk generation
                     </div>
@@ -290,7 +290,7 @@ export default function BulkGenerator() {
                         <button
                             onClick={processQueue}
                             disabled={stats.pending === 0 && stats.failed === 0}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50"
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80"
                         >
                             <Play className="w-4 h-4" /> {stats.failed > 0 ? "Resume" : "Generate All"}
                         </button>

@@ -54,7 +54,7 @@ export function PerformanceDashboard() {
             case "poor":
                 return "bg-red-500/20 text-red-400 border-red-500/30";
             default:
-                return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+                return "bg-gray-500/20 text-gray-200 border-gray-500/30";
         }
     };
 
@@ -63,11 +63,11 @@ export function PerformanceDashboard() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-lg font-semibold">Performance</h2>
-                    <p className="text-sm text-gray-500">Core Web Vitals</p>
+                    <p className="text-sm text-gray-300">Core Web Vitals</p>
                 </div>
                 <div className="text-right">
                     <div className={`text-3xl font-bold ${getScoreColor()}`}>{score}</div>
-                    <p className="text-xs text-gray-500">Score</p>
+                    <p className="text-xs text-gray-300">Score</p>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ export function PerformanceDashboard() {
                     <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full" />
                 </div>
             ) : metrics.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-300">
                     <p>Collecting metrics...</p>
                     <p className="text-xs mt-1">Interact with the page to generate data</p>
                 </div>
@@ -105,7 +105,7 @@ export function PerformanceDashboard() {
             {process.env.NODE_ENV === "development" && (
                 <button
                     onClick={logMetrics}
-                    className="mt-4 w-full py-2 text-sm text-gray-500 hover:text-gray-300 transition-colors"
+                    className="mt-4 w-full py-2 text-sm text-gray-300 hover:text-gray-300 transition-colors"
                 >
                     Log to Console
                 </button>

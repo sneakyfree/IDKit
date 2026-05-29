@@ -145,7 +145,7 @@ export default function GuardrailSettingsPage() {
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                             Guardrail Settings
                         </h1>
-                        <p className="text-gray-500">
+                        <p className="text-gray-300">
                             Configure agent permissions and autonomy levels
                         </p>
                     </div>
@@ -153,7 +153,7 @@ export default function GuardrailSettingsPage() {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={resetToDefaults}
-                        className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center gap-2"
+                        className="px-4 py-2 text-gray-200 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center gap-2"
                     >
                         <RotateCcw className="h-4 w-4" />
                         Reset
@@ -161,7 +161,7 @@ export default function GuardrailSettingsPage() {
                     <button
                         onClick={saveConfig}
                         disabled={!hasChanges || saving}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-80 flex items-center gap-2"
                     >
                         <Save className="h-4 w-4" />
                         {saving ? 'Saving...' : 'Save Changes'}
@@ -195,7 +195,7 @@ export default function GuardrailSettingsPage() {
                                     {level}
                                 </span>
                             </div>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-300">
                                 {level === 'conservative' && 'Maximum oversight, all actions require approval'}
                                 {level === 'medium' && 'Balanced autonomy with approval for sensitive actions'}
                                 {level === 'aggressive' && 'Maximum autonomy, minimal approval required'}
@@ -219,10 +219,10 @@ export default function GuardrailSettingsPage() {
                                     <div className="font-medium text-gray-900 dark:text-white">
                                         {category.label}
                                     </div>
-                                    <div className="text-sm text-gray-500">{category.description}</div>
+                                    <div className="text-sm text-gray-300">{category.description}</div>
                                 </div>
                             </div>
-                            <select
+                            <select aria-label="Filter or select option"
                                 value={config.action_permissions[category.key] || 'gated'}
                                 onChange={(e) => updatePermission(category.key, e.target.value)}
                                 className="px-3 py-2 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-lg"
@@ -261,7 +261,7 @@ export default function GuardrailSettingsPage() {
                       px-3 py-1.5 text-sm rounded-lg transition-colors
                       ${(config.agent_autonomy[agent.key] || 'medium') === opt.value
                                                 ? 'bg-indigo-600 text-white'
-                                                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                                                : 'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-200'
                                             }
                     `}
                                     >

@@ -81,7 +81,7 @@ export function FeedScroll() {
 
   if (posts.length === 0) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center text-gray-400">
+      <div className="h-screen flex flex-col items-center justify-center text-gray-200">
         <p className="text-xl mb-2">No posts yet</p>
         <p className="text-sm">
           {activeTab === "following"

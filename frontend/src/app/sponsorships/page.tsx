@@ -93,7 +93,7 @@ export default function SponsorshipPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Sponsorship Management</h1>
-                        <p className="text-gray-400">Track sponsors, deals, and revenue</p>
+                        <p className="text-gray-200">Track sponsors, deals, and revenue</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -136,9 +136,9 @@ export default function SponsorshipPage() {
                 {/* Empty State */}
                 {!loading && filteredSponsors.length === 0 && (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <Building2 className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <Building2 className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No sponsors yet</h3>
-                        <p className="text-gray-500 mb-6">Start tracking your sponsorship relationships.</p>
+                        <p className="text-gray-300 mb-6">Start tracking your sponsorship relationships.</p>
                         <button
                             onClick={() => setShowAddModal(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -192,7 +192,7 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
                 <div className="text-purple-400">{icon}</div>
                 <div>
                     <p className="text-2xl font-bold">{value}</p>
-                    <p className="text-sm text-gray-500">{label}</p>
+                    <p className="text-sm text-gray-300">{label}</p>
                 </div>
             </div>
         </div>
@@ -204,7 +204,7 @@ function SponsorCard({ sponsor, onClick }: { sponsor: Sponsor; onClick: () => vo
         active: "text-green-400 bg-green-400/10",
         negotiating: "text-yellow-400 bg-yellow-400/10",
         completed: "text-blue-400 bg-blue-400/10",
-        paused: "text-gray-400 bg-gray-400/10",
+        paused: "text-gray-200 bg-gray-400/10",
     };
 
     const activeDeals = sponsor.deals.filter(d => d.status === "active").length;
@@ -217,11 +217,11 @@ function SponsorCard({ sponsor, onClick }: { sponsor: Sponsor; onClick: () => vo
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
-                        <Building2 className="w-6 h-6 text-gray-400" />
+                        <Building2 className="w-6 h-6 text-gray-200" />
                     </div>
                     <div>
                         <h3 className="font-semibold">{sponsor.name}</h3>
-                        <p className="text-sm text-gray-500">{sponsor.industry}</p>
+                        <p className="text-sm text-gray-300">{sponsor.industry}</p>
                     </div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[sponsor.status]}`}>
@@ -231,11 +231,11 @@ function SponsorCard({ sponsor, onClick }: { sponsor: Sponsor; onClick: () => vo
 
             <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                    <p className="text-gray-500">Total Value</p>
+                    <p className="text-gray-300">Total Value</p>
                     <p className="font-semibold">${sponsor.totalValue.toLocaleString()}</p>
                 </div>
                 <div>
-                    <p className="text-gray-500">Active Deals</p>
+                    <p className="text-gray-300">Active Deals</p>
                     <p className="font-semibold">{activeDeals}</p>
                 </div>
             </div>
@@ -251,11 +251,11 @@ function SponsorDetailModal({ sponsor, onClose }: { sponsor: Sponsor; onClose: (
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 bg-gray-800 rounded-xl flex items-center justify-center">
-                                <Building2 className="w-8 h-8 text-gray-400" />
+                                <Building2 className="w-8 h-8 text-gray-200" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold">{sponsor.name}</h2>
-                                <p className="text-gray-400">{sponsor.industry}</p>
+                                <h2 className="text-xl font-bold text-white">{sponsor.name}</h2>
+                                <p className="text-gray-200">{sponsor.industry}</p>
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
@@ -285,7 +285,7 @@ function SponsorDetailModal({ sponsor, onClose }: { sponsor: Sponsor; onClose: (
 
                         {sponsor.deals.length === 0 ? (
                             <div className="bg-gray-800 rounded-xl p-6 text-center">
-                                <p className="text-gray-500">No deals yet</p>
+                                <p className="text-gray-300">No deals yet</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -293,38 +293,38 @@ function SponsorDetailModal({ sponsor, onClose }: { sponsor: Sponsor; onClose: (
                                     <div key={deal.id} className="bg-gray-800 rounded-xl p-4">
                                         <div className="flex justify-between mb-2">
                                             <h4 className="font-medium">{deal.name}</h4>
-                                            <span className="text-sm text-gray-400 capitalize">{deal.type}</span>
+                                            <span className="text-sm text-gray-200 capitalize">{deal.type}</span>
                                         </div>
                                         <div className="grid grid-cols-3 gap-4 text-sm mb-4">
                                             <div>
-                                                <p className="text-gray-500">Value</p>
+                                                <p className="text-gray-300">Value</p>
                                                 <p>${deal.value.toLocaleString()}</p>
                                             </div>
                                             <div>
-                                                <p className="text-gray-500">Paid</p>
+                                                <p className="text-gray-300">Paid</p>
                                                 <p>${deal.paidAmount.toLocaleString()}</p>
                                             </div>
                                             <div>
-                                                <p className="text-gray-500">Status</p>
+                                                <p className="text-gray-300">Status</p>
                                                 <p className="capitalize">{deal.status}</p>
                                             </div>
                                         </div>
 
                                         {/* Deliverables */}
                                         <div className="border-t border-gray-700 pt-3">
-                                            <p className="text-sm text-gray-400 mb-2">Deliverables</p>
+                                            <p className="text-sm text-gray-200 mb-2">Deliverables</p>
                                             <div className="space-y-2">
                                                 {deal.deliverables.map((d) => (
                                                     <div key={d.id} className="flex items-center gap-2 text-sm">
                                                         {d.completed ? (
                                                             <CheckCircle className="w-4 h-4 text-green-400" />
                                                         ) : (
-                                                            <Clock className="w-4 h-4 text-gray-500" />
+                                                            <Clock className="w-4 h-4 text-gray-300" />
                                                         )}
-                                                        <span className={d.completed ? "text-gray-500 line-through" : ""}>
+                                                        <span className={d.completed ? "text-gray-300 line-through" : ""}>
                                                             {d.description}
                                                         </span>
-                                                        <span className="text-gray-600 text-xs ml-auto">
+                                                        <span className="text-gray-200 text-xs ml-auto">
                                                             {new Date(d.dueDate).toLocaleDateString()}
                                                         </span>
                                                     </div>
@@ -368,7 +368,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                 <h2 className="text-xl font-bold mb-4">Add Sponsor</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Company Name *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Company Name *</label>
                         <input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -377,7 +377,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Industry</label>
+                        <label className="block text-sm text-gray-200 mb-1">Industry</label>
                         <input
                             value={industry}
                             onChange={(e) => setIndustry(e.target.value)}
@@ -386,7 +386,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Contact Name</label>
+                        <label className="block text-sm text-gray-200 mb-1">Contact Name</label>
                         <input
                             value={contactName}
                             onChange={(e) => setContactName(e.target.value)}
@@ -394,7 +394,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Contact Email</label>
+                        <label className="block text-sm text-gray-200 mb-1">Contact Email</label>
                         <input
                             type="email"
                             value={contactEmail}
@@ -406,7 +406,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         <button type="button" onClick={onClose} className="flex-1 py-3 bg-gray-800 rounded-xl hover:bg-gray-700">
                             Cancel
                         </button>
-                        <button type="submit" disabled={!name} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50">
+                        <button type="submit" disabled={!name} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80">
                             Add Sponsor
                         </button>
                     </div>

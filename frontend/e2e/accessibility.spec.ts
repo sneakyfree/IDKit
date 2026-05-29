@@ -39,7 +39,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should have proper focus management', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Tab through interactive elements
         await page.keyboard.press('Tab');
         const firstFocused = await page.evaluate(() => document.activeElement?.tagName);
@@ -55,7 +55,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should support keyboard navigation in modals', async ({ page }) => {
         await page.goto('/settings');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Open a modal (if available)
         const modalTrigger = page.locator('[data-testid="modal-trigger"]').first();
         if (await modalTrigger.isVisible()) {
@@ -69,7 +69,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should have proper heading hierarchy', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         const headings = await page.evaluate(() => {
             const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
             return Array.from(h).map(el => ({
@@ -91,7 +91,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should have proper color contrast', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         const accessibilityScanResults = await new AxeBuilder({ page })
             .withTags(['cat.color'])
             .analyze();
@@ -110,7 +110,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should have proper ARIA labels on interactive elements', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // All buttons should have accessible names
         const buttons = await page.locator('button').all();
         for (const button of buttons) {
@@ -138,7 +138,7 @@ test.describe('Accessibility Compliance', () => {
 
     test('should handle screen reader announcements', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Check for live regions
         const liveRegions = await page.locator('[aria-live]').count();
         expect(liveRegions).toBeGreaterThan(0);
@@ -148,7 +148,7 @@ test.describe('Accessibility Compliance', () => {
 test.describe('Keyboard Navigation', () => {
     test('should navigate between menu items with arrow keys', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // Tab to navigation
         await page.keyboard.press('Tab');
         await page.keyboard.press('Tab');
@@ -165,7 +165,7 @@ test.describe('Keyboard Navigation', () => {
 
     test('skip link should be first focusable element', async ({ page }) => {
         await page.goto('/');
-
+        await page.waitForLoadState("networkidle").catch(() => {});
         // First tab should focus skip link (if present)
         await page.keyboard.press('Tab');
         const skipLink = await page.locator(':focus').getAttribute('class');

@@ -107,7 +107,7 @@ export default function CustomReportsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Custom Reports</h1>
-                        <p className="text-gray-400">Build and schedule custom analytics reports</p>
+                        <p className="text-gray-200">Build and schedule custom analytics reports</p>
                     </div>
                     <button
                         onClick={() => setShowBuilder(true)}
@@ -128,9 +128,9 @@ export default function CustomReportsPage() {
                 {/* Empty State */}
                 {!loading && reports.length === 0 && (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <BarChart3 className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <BarChart3 className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No custom reports yet</h3>
-                        <p className="text-gray-500 mb-6">Create your first custom analytics report.</p>
+                        <p className="text-gray-300 mb-6">Create your first custom analytics report.</p>
                         <button
                             onClick={() => setShowBuilder(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -152,7 +152,7 @@ export default function CustomReportsPage() {
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
                                         <h3 className="font-semibold">{report.name}</h3>
-                                        <p className="text-sm text-gray-500">{report.description}</p>
+                                        <p className="text-sm text-gray-300">{report.description}</p>
                                     </div>
                                     <span className="text-xs bg-gray-800 px-2 py-1 rounded capitalize">
                                         {report.format}
@@ -167,7 +167,7 @@ export default function CustomReportsPage() {
                                     ))}
                                 </div>
 
-                                <div className="flex items-center justify-between text-sm text-gray-500">
+                                <div className="flex items-center justify-between text-sm text-gray-300">
                                     <div className="flex items-center gap-4">
                                         <span className="flex items-center gap-1">
                                             <Calendar className="w-3 h-3" />
@@ -187,7 +187,7 @@ export default function CustomReportsPage() {
                                         <button
                                             onClick={() => handleGenerateReport(report.id)}
                                             disabled={generating === report.id}
-                                            className="p-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                                            className="p-2 bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-80"
                                         >
                                             {generating === report.id ? (
                                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -263,14 +263,14 @@ function ReportBuilder({
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 overflow-y-auto">
             <div className="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-6 border-b border-gray-800">
-                    <h2 className="text-xl font-bold">Create Custom Report</h2>
+                    <h2 className="text-xl font-bold text-white">Create Custom Report</h2>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {/* Basic Info */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Report Name *</label>
+                            <label className="block text-sm text-gray-200 mb-1">Report Name *</label>
                             <input
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -280,7 +280,7 @@ function ReportBuilder({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Description</label>
+                            <label className="block text-sm text-gray-200 mb-1">Description</label>
                             <input
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -292,7 +292,7 @@ function ReportBuilder({
 
                     {/* Metrics */}
                     <div>
-                        <label className="block text-sm text-gray-400 mb-2">Metrics *</label>
+                        <label className="block text-sm text-gray-200 mb-2">Metrics *</label>
                         <div className="grid grid-cols-2 gap-2">
                             {AVAILABLE_METRICS.map((metric) => (
                                 <button
@@ -313,7 +313,7 @@ function ReportBuilder({
 
                     {/* Dimensions */}
                     <div>
-                        <label className="block text-sm text-gray-400 mb-2">Group By</label>
+                        <label className="block text-sm text-gray-200 mb-2">Group By</label>
                         <div className="flex flex-wrap gap-2">
                             {AVAILABLE_DIMENSIONS.map((dim) => (
                                 <button
@@ -334,8 +334,8 @@ function ReportBuilder({
                     {/* Date Range & Format */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Date Range</label>
-                            <select
+                            <label className="block text-sm text-gray-200 mb-1">Date Range</label>
+                            <select aria-label="Filter or select option"
                                 value={dateRange}
                                 onChange={(e) => setDateRange(e.target.value as ReportTemplate["dateRange"])}
                                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
@@ -347,8 +347,8 @@ function ReportBuilder({
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Format</label>
-                            <select
+                            <label className="block text-sm text-gray-200 mb-1">Format</label>
+                            <select aria-label="Filter or select option"
                                 value={format}
                                 onChange={(e) => setFormat(e.target.value as ReportTemplate["format"])}
                                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
@@ -375,8 +375,8 @@ function ReportBuilder({
                         {enableSchedule && (
                             <div className="grid grid-cols-2 gap-4 pl-6">
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">Frequency</label>
-                                    <select
+                                    <label className="block text-sm text-gray-200 mb-1">Frequency</label>
+                                    <select aria-label="Filter or select option"
                                         value={frequency}
                                         onChange={(e) => setFrequency(e.target.value as "daily" | "weekly" | "monthly")}
                                         className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -387,7 +387,7 @@ function ReportBuilder({
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">Recipients</label>
+                                    <label className="block text-sm text-gray-200 mb-1">Recipients</label>
                                     <input
                                         value={recipients}
                                         onChange={(e) => setRecipients(e.target.value)}
@@ -411,7 +411,7 @@ function ReportBuilder({
                         <button
                             type="submit"
                             disabled={!name || selectedMetrics.length === 0}
-                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                         >
                             Create Report
                         </button>

@@ -206,7 +206,7 @@ export function ReasonCodes({
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">{title}</h3>
-                        <p className="text-sm text-gray-500">{filteredCodes.length} reason codes</p>
+                        <p className="text-sm text-gray-300">{filteredCodes.length} reason codes</p>
                     </div>
                 </div>
 
@@ -214,7 +214,7 @@ export function ReasonCodes({
                 <div className="flex gap-3">
                     {showSearch && (
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-200" />
                             <input
                                 type="text"
                                 value={searchQuery}
@@ -226,7 +226,7 @@ export function ReasonCodes({
                     )}
 
                     <div className="relative">
-                        <select
+                        <select aria-label="Filter or select option"
                             value={categoryFilter}
                             onChange={(e) => setCategoryFilter(e.target.value as ReasonCategory | 'all')}
                             className="appearance-none pl-8 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -236,7 +236,7 @@ export function ReasonCodes({
                                 <option key={cat} value={cat}>{getCategoryLabel(cat)}</option>
                             ))}
                         </select>
-                        <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-200" />
                     </div>
                 </div>
             </div>
@@ -246,7 +246,7 @@ export function ReasonCodes({
                 {Object.entries(groupedCodes).map(([category, codes]) => (
                     <div key={category}>
                         {groupByCategory && category !== 'all' && (
-                            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-2 text-sm font-medium text-gray-200 dark:text-gray-200">
                                 {getCategoryIcon(category as ReasonCategory)}
                                 {getCategoryLabel(category as ReasonCategory)}
                                 <span className="ml-auto text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
@@ -266,25 +266,25 @@ export function ReasonCodes({
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className="font-mono text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+                                            <span className="font-mono text-xs text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
                                                 {rc.code}
                                             </span>
                                             <span className="font-medium text-gray-900 dark:text-white">
                                                 {rc.title}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                        <p className="text-sm text-gray-200 dark:text-gray-200 line-clamp-2">
                                             {rc.description}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-1">
+                                        <p className="text-xs text-gray-300 mt-1">
                                             Impact: {rc.impact}
                                         </p>
                                     </div>
 
                                     {expandedCodes.has(rc.code) ? (
-                                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                                        <ChevronDown className="w-5 h-5 text-gray-200" />
                                     ) : (
-                                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                                        <ChevronRight className="w-5 h-5 text-gray-200" />
                                     )}
                                 </button>
 
@@ -300,8 +300,8 @@ export function ReasonCodes({
                                                     </h5>
                                                     <ul className="space-y-1">
                                                         {rc.evidence.map((item, i) => (
-                                                            <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
-                                                                <span className="text-gray-400 mt-1">•</span>
+                                                            <li key={i} className="text-sm text-gray-200 dark:text-gray-200 flex items-start gap-2">
+                                                                <span className="text-gray-200 mt-1">•</span>
                                                                 {item}
                                                             </li>
                                                         ))}
@@ -318,7 +318,7 @@ export function ReasonCodes({
                                                     </h5>
                                                     <ul className="space-y-1">
                                                         {rc.recommendations.map((item, i) => (
-                                                            <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
+                                                            <li key={i} className="text-sm text-gray-200 dark:text-gray-200 flex items-start gap-2">
                                                                 <span className="text-indigo-500 font-bold mt-0.5">{i + 1}.</span>
                                                                 {item}
                                                             </li>
@@ -336,7 +336,7 @@ export function ReasonCodes({
             </div>
 
             {filteredCodes.length === 0 && (
-                <div className="p-8 text-center text-gray-500">
+                <div className="p-8 text-center text-gray-300">
                     No reason codes match your criteria
                 </div>
             )}

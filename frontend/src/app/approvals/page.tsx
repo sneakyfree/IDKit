@@ -136,7 +136,7 @@ export default function ApprovalsPage() {
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold">Approvals</h1>
+            <h1 className="text-xl font-bold text-white">Approvals</h1>
             {pendingCount > 0 && (
               <span className="px-2 py-0.5 bg-purple-600 rounded-full text-xs font-medium">
                 {pendingCount}
@@ -145,6 +145,7 @@ export default function ApprovalsPage() {
           </div>
           <Link
             href="/approvals/settings"
+            aria-label="Approvals settings"
             className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
           >
             <SettingsIcon className="w-5 h-5" />
@@ -180,7 +181,7 @@ export default function ApprovalsPage() {
               onClick={() => setFilterType(type)}
               className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${filterType === type
                 ? "bg-purple-600 text-white"
-                : "bg-gray-800/50 text-gray-400 hover:bg-gray-700"
+                : "bg-gray-800/50 text-gray-200 hover:bg-gray-700"
                 }`}
             >
               {type === "all" ? "All Types" : type.charAt(0).toUpperCase() + type.slice(1)}
@@ -259,17 +260,17 @@ function ApprovalCard({
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="font-medium text-sm truncate">{content.title}</h3>
-              <p className="text-xs text-gray-400 mt-0.5">{content.author}</p>
+              <p className="text-xs text-gray-200 mt-0.5">{content.author}</p>
             </div>
             <StatusBadge status={item.status} />
           </div>
 
           {item.notes && (
-            <p className="text-xs text-gray-500 mt-2 line-clamp-2">{item.notes}</p>
+            <p className="text-xs text-gray-300 mt-2 line-clamp-2">{item.notes}</p>
           )}
 
           <div className="flex items-center justify-between mt-3">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-300">
               {item.status === "pending_review"
                 ? `Submitted ${formatRelativeTime(requestedDate)}`
                 : reviewedDate
@@ -299,7 +300,7 @@ function ApprovalCard({
       {/* Review Notes */}
       {item.review_notes && (
         <div className="mt-3 pt-3 border-t border-gray-800">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-200">
             <span className="font-medium">Review Notes:</span> {item.review_notes}
           </p>
         </div>
@@ -356,7 +357,7 @@ function ReviewModal({
             </div>
             <div>
               <h3 className="font-medium">{content.title}</h3>
-              <p className="text-sm text-gray-400 mt-1">{content.author}</p>
+              <p className="text-sm text-gray-200 mt-1">{content.author}</p>
               <span className={`inline-block mt-2 px-2 py-0.5 rounded-full text-xs ${getTypeColor(content.type)}`}>
                 {content.type}
               </span>
@@ -365,7 +366,7 @@ function ReviewModal({
 
           {item.notes && (
             <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-200">
                 <span className="font-medium">Submitter Notes:</span> {item.notes}
               </p>
             </div>
@@ -381,18 +382,18 @@ function ReviewModal({
                 className="flex items-center justify-between p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <EyeIcon className="w-5 h-5 text-gray-400" />
+                  <EyeIcon className="w-5 h-5 text-gray-200" />
                   <span className="text-sm font-medium">Preview Full Content</span>
                 </div>
-                <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+                <ChevronRightIcon className="w-5 h-5 text-gray-300" />
               </Link>
 
               <button className="w-full flex items-center justify-between p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-colors">
                 <div className="flex items-center gap-3">
-                  <HistoryIcon className="w-5 h-5 text-gray-400" />
+                  <HistoryIcon className="w-5 h-5 text-gray-200" />
                   <span className="text-sm font-medium">View Edit History</span>
                 </div>
-                <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+                <ChevronRightIcon className="w-5 h-5 text-gray-300" />
               </button>
             </div>
 
@@ -416,7 +417,7 @@ function ReviewModal({
           <>
             {/* Notes Input */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-400 mb-2">
+              <label className="block text-sm font-medium text-gray-200 mb-2">
                 {mode === "approve" ? "Approval Notes (Optional)" : "Reason for Rejection *"}
               </label>
               <textarea
@@ -479,10 +480,10 @@ function EmptyState({ tab }: { tab: TabType }) {
   return (
     <div className="text-center py-12">
       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-        <CheckCircleIcon className="w-8 h-8 text-gray-600" />
+        <CheckCircleIcon className="w-8 h-8 text-gray-200" />
       </div>
-      <h3 className="font-medium text-gray-400">{messages[tab].title}</h3>
-      <p className="text-sm text-gray-500 mt-1">{messages[tab].description}</p>
+      <h3 className="font-medium text-gray-200">{messages[tab].title}</h3>
+      <p className="text-sm text-gray-300 mt-1">{messages[tab].description}</p>
     </div>
   );
 }
@@ -492,7 +493,7 @@ function StatusBadge({ status }: { status: string }) {
     pending_review: "bg-yellow-500/20 text-yellow-400",
     approved: "bg-green-500/20 text-green-400",
     rejected: "bg-red-500/20 text-red-400",
-    draft: "bg-gray-500/20 text-gray-400",
+    draft: "bg-gray-500/20 text-gray-200",
   };
 
   const labels: Record<string, string> = {
@@ -512,11 +513,11 @@ function StatusBadge({ status }: { status: string }) {
 function ContentTypeIcon({ type }: { type: string }) {
   switch (type) {
     case "video":
-      return <VideoIcon className="w-6 h-6 text-gray-500" />;
+      return <VideoIcon className="w-6 h-6 text-gray-300" />;
     case "podcast":
-      return <MicIcon className="w-6 h-6 text-gray-500" />;
+      return <MicIcon className="w-6 h-6 text-gray-300" />;
     default:
-      return <EditIcon className="w-6 h-6 text-gray-500" />;
+      return <EditIcon className="w-6 h-6 text-gray-300" />;
   }
 }
 

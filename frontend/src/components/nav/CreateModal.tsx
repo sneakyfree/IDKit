@@ -100,7 +100,7 @@ export function CreateModal() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-medium text-sm">{option.label}</span>
-                <span className="text-xs text-gray-500 text-center mt-1">
+                <span className="text-xs text-gray-300 text-center mt-1">
                   {option.description}
                 </span>
               </Link>

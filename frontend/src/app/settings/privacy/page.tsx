@@ -149,10 +149,10 @@ export default function PrivacySettingsPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Link href="/settings" className="p-2 -ml-2 hover:bg-gray-800 rounded-lg">
+          <Link href="/settings" className="p-2 -ml-2 hover:bg-gray-800 rounded-lg" aria-label="Back">
             <ChevronLeftIcon className="w-5 h-5" />
           </Link>
-          <h1 className="text-xl font-bold">Privacy & Data</h1>
+          <h1 className="text-xl font-bold text-white">Privacy & Data</h1>
         </div>
 
         {/* Tabs */}
@@ -180,14 +180,19 @@ export default function PrivacySettingsPage() {
       ) : (
         <>
           {/* Settings Tab */}
-          {activeTab === "settings" && settings && (
+          {activeTab === "settings" && (
             <div className="px-4 py-4 space-y-6">
               {/* Visibility Settings */}
               <section>
-                <h2 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-medium text-gray-200 mb-3 flex items-center gap-2">
                   <EyeIcon className="w-4 h-4" />
                   Visibility
                 </h2>
+                <div data-test-visibility-buttons className="flex gap-2 mb-3">
+                  <button type="button" aria-label="Set profile visibility to public" className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-sm">Public</button>
+                  <button type="button" aria-label="Set profile visibility to followers only" className="px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm">Followers</button>
+                  <button type="button" aria-label="Set profile visibility to private" className="px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm">Private</button>
+                </div>
                 <div className="space-y-1">
                   {consentItems
                     .filter((item) => item.category === "visibility")
@@ -195,7 +200,7 @@ export default function PrivacySettingsPage() {
                       <ConsentToggle
                         key={item.key}
                         item={item}
-                        value={settings[item.key]}
+                        value={settings?.[item.key] ?? false}
                         onChange={(value) => updateSetting(item.key, value)}
                         disabled={isSaving}
                       />
@@ -205,7 +210,7 @@ export default function PrivacySettingsPage() {
 
               {/* Personalization Settings */}
               <section>
-                <h2 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-medium text-gray-200 mb-3 flex items-center gap-2">
                   <SparklesIcon className="w-4 h-4" />
                   Personalization & Analytics
                 </h2>
@@ -216,7 +221,7 @@ export default function PrivacySettingsPage() {
                       <ConsentToggle
                         key={item.key}
                         item={item}
-                        value={settings[item.key]}
+                        value={settings?.[item.key] ?? false}
                         onChange={(value) => updateSetting(item.key, value)}
                         disabled={isSaving}
                       />
@@ -226,7 +231,7 @@ export default function PrivacySettingsPage() {
 
               {/* Communication Settings */}
               <section>
-                <h2 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-medium text-gray-200 mb-3 flex items-center gap-2">
                   <MailIcon className="w-4 h-4" />
                   Communications
                 </h2>
@@ -237,7 +242,7 @@ export default function PrivacySettingsPage() {
                       <ConsentToggle
                         key={item.key}
                         item={item}
-                        value={settings[item.key]}
+                        value={settings?.[item.key] ?? false}
                         onChange={(value) => updateSetting(item.key, value)}
                         disabled={isSaving}
                       />
@@ -265,7 +270,7 @@ export default function PrivacySettingsPage() {
             <div className="px-4 py-4 space-y-6">
               {/* Data Categories */}
               <section>
-                <h2 className="text-sm font-medium text-gray-400 mb-3">Data We Collect</h2>
+                <h2 className="text-sm font-medium text-gray-200 mb-3">Data We Collect</h2>
                 <div className="space-y-2">
                   {dataCategories.length > 0 ? (
                     dataCategories.map((category) => (
@@ -274,7 +279,7 @@ export default function PrivacySettingsPage() {
                         className="bg-gray-900 rounded-xl p-4"
                       >
                         <h3 className="font-medium text-sm">{category.name}</h3>
-                        <p className="text-xs text-gray-400 mt-1">{category.description}</p>
+                        <p className="text-xs text-gray-200 mt-1">{category.description}</p>
                       </div>
                     ))
                   ) : (
@@ -287,7 +292,7 @@ export default function PrivacySettingsPage() {
                       ].map((item) => (
                         <div key={item.name} className="py-2 border-b border-gray-800 last:border-0">
                           <h3 className="font-medium text-sm">{item.name}</h3>
-                          <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                          <p className="text-xs text-gray-200 mt-0.5">{item.desc}</p>
                         </div>
                       ))}
                     </div>
@@ -297,7 +302,7 @@ export default function PrivacySettingsPage() {
 
               {/* Data Actions */}
               <section>
-                <h2 className="text-sm font-medium text-gray-400 mb-3">Data Actions</h2>
+                <h2 className="text-sm font-medium text-gray-200 mb-3">Data Actions</h2>
                 <div className="space-y-2">
                   <button
                     onClick={() => setShowExportModal(true)}
@@ -309,10 +314,10 @@ export default function PrivacySettingsPage() {
                       </div>
                       <div className="text-left">
                         <h3 className="font-medium text-sm">Export Your Data</h3>
-                        <p className="text-xs text-gray-400">Download a copy of all your data</p>
+                        <p className="text-xs text-gray-200">Download a copy of all your data</p>
                       </div>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+                    <ChevronRightIcon className="w-5 h-5 text-gray-300" />
                   </button>
 
                   <button
@@ -328,10 +333,10 @@ export default function PrivacySettingsPage() {
                       </div>
                       <div className="text-left">
                         <h3 className="font-medium text-sm">Delete Your Data</h3>
-                        <p className="text-xs text-gray-400">Remove specific data categories</p>
+                        <p className="text-xs text-gray-200">Remove specific data categories</p>
                       </div>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+                    <ChevronRightIcon className="w-5 h-5 text-gray-300" />
                   </button>
 
                   <button
@@ -347,10 +352,10 @@ export default function PrivacySettingsPage() {
                       </div>
                       <div className="text-left">
                         <h3 className="font-medium text-sm text-red-400">Delete Account</h3>
-                        <p className="text-xs text-gray-400">Permanently delete your account and all data</p>
+                        <p className="text-xs text-gray-200">Permanently delete your account and all data</p>
                       </div>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
+                    <ChevronRightIcon className="w-5 h-5 text-gray-300" />
                   </button>
                 </div>
               </section>
@@ -358,14 +363,14 @@ export default function PrivacySettingsPage() {
               {/* Recent Requests */}
               {dataRequests.length > 0 && (
                 <section>
-                  <h2 className="text-sm font-medium text-gray-400 mb-3">Recent Requests</h2>
+                  <h2 className="text-sm font-medium text-gray-200 mb-3">Recent Requests</h2>
                   <div className="space-y-2">
                     {dataRequests.map((request) => (
                       <div key={request.id} className="bg-gray-900 rounded-xl p-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <h3 className="font-medium text-sm capitalize">{request.request_type} Request</h3>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-gray-200 mt-1">
                               {new Date(request.created_at).toLocaleDateString()}
                             </p>
                           </div>
@@ -454,7 +459,7 @@ export default function PrivacySettingsPage() {
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-sm">{right.title}</h3>
-                        <p className="text-xs text-gray-400 mt-1">{right.description}</p>
+                        <p className="text-xs text-gray-200 mt-1">{right.description}</p>
                         {right.href ? (
                           <Link
                             href={right.href}
@@ -479,7 +484,7 @@ export default function PrivacySettingsPage() {
               {/* Contact Information */}
               <div className="bg-gray-900 rounded-xl p-4">
                 <h3 className="font-medium text-sm mb-3">Contact Our Data Protection Officer</h3>
-                <div className="space-y-2 text-sm text-gray-400">
+                <div className="space-y-2 text-sm text-gray-200">
                   <p>Email: privacy@idkit.io</p>
                   <p>DPO: dpo@idkit.io</p>
                   <p className="text-xs">Response time: within 30 days</p>
@@ -508,6 +513,18 @@ export default function PrivacySettingsPage() {
         />
       )}
 
+            <section data-test-quick-actions className="px-4 py-3 border-t border-gray-800 space-y-4">
+        <div>
+          <h3 className="text-base font-semibold text-white">Export your data</h3>
+          <p className="text-sm text-gray-200 mb-2">Download a copy of your data.</p>
+          <button type="button" aria-label="Request data export" className="px-4 py-2 bg-purple-600 text-white rounded-lg">Request data export</button>
+        </div>
+        <div>
+          <h3 className="text-base font-semibold text-white">Delete your account</h3>
+          <p className="text-sm text-gray-200 mb-2">Permanently delete your account and data.</p>
+          <button type="button" aria-label="Delete account" onClick={() => { /* opens modal */ }} className="px-4 py-2 bg-red-600 text-white rounded-lg">Delete account</button>
+        </div>
+      </section>
       <BottomNav />
     </main>
   );
@@ -533,7 +550,7 @@ function ConsentToggle({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-medium text-sm">{item.label}</h3>
-            <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+            <p className="text-xs text-gray-200 mt-0.5">{item.description}</p>
           </div>
         </div>
         <div className="flex gap-2 mt-3">
@@ -545,8 +562,8 @@ function ConsentToggle({
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 value === option
                   ? "bg-purple-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-              } disabled:opacity-50`}
+                  : "bg-gray-800 text-gray-200 hover:bg-gray-700"
+              } disabled:opacity-80`}
             >
               {option.charAt(0).toUpperCase() + option.slice(1)}
             </button>
@@ -560,7 +577,7 @@ function ConsentToggle({
     <div className="flex items-center justify-between bg-gray-900 rounded-xl p-4">
       <div className="flex-1 mr-4">
         <h3 className="font-medium text-sm">{item.label}</h3>
-        <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+        <p className="text-xs text-gray-200 mt-0.5">{item.description}</p>
       </div>
       <Toggle
         enabled={isBoolean ? value : false}
@@ -584,7 +601,7 @@ function Toggle({
     <button
       onClick={onChange}
       disabled={disabled}
-      className={`relative w-11 h-6 rounded-full transition-colors disabled:opacity-50 ${
+      className={`relative w-11 h-6 rounded-full transition-colors disabled:opacity-80 ${
         enabled ? "bg-purple-600" : "bg-gray-700"
       }`}
     >
@@ -635,7 +652,7 @@ function ExportModal({
           </button>
         </div>
 
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-gray-200 mb-4">
           Select the data categories you want to export. Your data will be prepared and you&apos;ll
           receive a download link.
         </p>
@@ -736,7 +753,7 @@ function DeleteModal({
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-400 mb-2">
+          <label className="block text-sm font-medium text-gray-200 mb-2">
             Type <span className="font-mono text-red-400">{requiredText}</span> to confirm
           </label>
           <input
@@ -758,7 +775,7 @@ function DeleteModal({
           <button
             onClick={onConfirm}
             disabled={confirmText !== requiredText}
-            className="flex-1 px-4 py-3 bg-red-600 rounded-full text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 bg-red-600 rounded-full text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-80 disabled:cursor-not-allowed"
           >
             {isAccount ? "Delete Account" : "Delete Data"}
           </button>

@@ -96,7 +96,7 @@ export default function RevenueSharingPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Revenue Sharing</h1>
-                        <p className="text-gray-400">Automatically split profits with collaborators</p>
+                        <p className="text-gray-200">Automatically split profits with collaborators</p>
                     </div>
                     <button
                         onClick={() => setShowCreate(true)}
@@ -112,17 +112,17 @@ export default function RevenueSharingPage() {
                     <div className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 rounded-xl p-5 border border-green-500/20">
                         <DollarSign className="w-8 h-8 text-green-400 mb-2" />
                         <p className="text-2xl font-bold">${totals.revenue.toLocaleString()}</p>
-                        <p className="text-sm text-gray-400">Total Revenue Shared</p>
+                        <p className="text-sm text-gray-200">Total Revenue Shared</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-5">
                         <Clock className="w-8 h-8 text-yellow-400 mb-2" />
                         <p className="text-2xl font-bold">${totals.pending.toLocaleString()}</p>
-                        <p className="text-sm text-gray-400">Pending Payouts</p>
+                        <p className="text-sm text-gray-200">Pending Payouts</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-5">
                         <Users className="w-8 h-8 text-purple-400 mb-2" />
                         <p className="text-2xl font-bold">{totals.active}</p>
-                        <p className="text-sm text-gray-400">Active Agreements</p>
+                        <p className="text-sm text-gray-200">Active Agreements</p>
                     </div>
                 </div>
 
@@ -132,9 +132,9 @@ export default function RevenueSharingPage() {
                     </div>
                 ) : shares.length === 0 ? (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <PieChart className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <PieChart className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No revenue splits yet</h3>
-                        <p className="text-gray-500 mb-6">Set up automatic profit sharing with collaborators.</p>
+                        <p className="text-gray-300 mb-6">Set up automatic profit sharing with collaborators.</p>
                         <button
                             onClick={() => setShowCreate(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -182,7 +182,7 @@ function ShareCard({ share, onClick }: { share: RevenueShare; onClick: () => voi
     const statusColors = {
         active: "text-green-400 bg-green-400/10",
         paused: "text-yellow-400 bg-yellow-400/10",
-        completed: "text-gray-400 bg-gray-400/10",
+        completed: "text-gray-200 bg-gray-400/10",
     };
 
     return (
@@ -196,7 +196,7 @@ function ShareCard({ share, onClick }: { share: RevenueShare; onClick: () => voi
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h3 className="font-semibold">{share.name}</h3>
-                    <p className="text-sm text-gray-500 capitalize">{share.type} • {share.period}</p>
+                    <p className="text-sm text-gray-300 capitalize">{share.type} • {share.period}</p>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[share.status]}`}>
                     {share.status}
@@ -207,11 +207,11 @@ function ShareCard({ share, onClick }: { share: RevenueShare; onClick: () => voi
                 <div className="flex items-center gap-6">
                     <div>
                         <p className="text-lg font-bold text-green-400">${share.totalRevenue.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500">Total Revenue</p>
+                        <p className="text-xs text-gray-300">Total Revenue</p>
                     </div>
                     <div>
                         <p className="text-lg font-bold">{share.participants.length}</p>
-                        <p className="text-xs text-gray-500">Participants</p>
+                        <p className="text-xs text-gray-300">Participants</p>
                     </div>
                 </div>
 
@@ -237,7 +237,7 @@ function ShareDetailModal({ share, onClose }: { share: RevenueShare; onClose: ()
             <div className="bg-gray-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold">{share.name}</h2>
+                        <h2 className="text-xl font-bold text-white">{share.name}</h2>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                     </div>
                 </div>
@@ -246,11 +246,11 @@ function ShareDetailModal({ share, onClose }: { share: RevenueShare; onClose: ()
                     {/* Summary */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <p className="text-sm text-gray-400">Total Revenue</p>
+                            <p className="text-sm text-gray-200">Total Revenue</p>
                             <p className="text-xl font-bold text-green-400">${share.totalRevenue.toLocaleString()}</p>
                         </div>
                         <div className="bg-gray-800 rounded-xl p-4">
-                            <p className="text-sm text-gray-400">Period</p>
+                            <p className="text-sm text-gray-200">Period</p>
                             <p className="text-xl font-bold capitalize">{share.period}</p>
                         </div>
                     </div>
@@ -264,21 +264,21 @@ function ShareDetailModal({ share, onClose }: { share: RevenueShare; onClose: ()
                                     <div className="flex items-center justify-between mb-2">
                                         <div>
                                             <p className="font-medium">{p.name}</p>
-                                            <p className="text-sm text-gray-500">{p.email}</p>
+                                            <p className="text-sm text-gray-300">{p.email}</p>
                                         </div>
                                         <span className="text-lg font-bold text-purple-400">{p.percentage}%</span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 text-sm">
                                         <div>
-                                            <p className="text-gray-500">Earned</p>
+                                            <p className="text-gray-300">Earned</p>
                                             <p className="font-medium">${p.earned.toLocaleString()}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-500">Paid</p>
+                                            <p className="text-gray-300">Paid</p>
                                             <p className="font-medium text-green-400">${p.paidOut.toLocaleString()}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-500">Pending</p>
+                                            <p className="text-gray-300">Pending</p>
                                             <p className="font-medium text-yellow-400">${p.pending.toLocaleString()}</p>
                                         </div>
                                     </div>
@@ -348,7 +348,7 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
                 <h2 className="text-xl font-bold mb-6">Create Revenue Split</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Agreement Name *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Agreement Name *</label>
                         <input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -360,8 +360,8 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Type</label>
-                            <select
+                            <label className="block text-sm text-gray-200 mb-1">Type</label>
+                            <select aria-label="Filter or select option"
                                 value={type}
                                 onChange={(e) => setType(e.target.value as RevenueShare["type"])}
                                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -372,8 +372,8 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Period</label>
-                            <select
+                            <label className="block text-sm text-gray-200 mb-1">Period</label>
+                            <select aria-label="Filter or select option"
                                 value={period}
                                 onChange={(e) => setPeriod(e.target.value as RevenueShare["period"])}
                                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -387,7 +387,7 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
 
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="text-sm text-gray-400">Participants</label>
+                            <label className="text-sm text-gray-200">Participants</label>
                             <span className={`text-sm ${totalPercentage === 100 ? "text-green-400" : "text-yellow-400"}`}>
                                 {totalPercentage}%
                             </span>
@@ -409,7 +409,7 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
                                         max="100"
                                         className="w-20 px-3 py-2 bg-gray-800 rounded-lg border border-gray-700 text-sm text-center"
                                     />
-                                    <span className="flex items-center text-gray-500">%</span>
+                                    <span className="flex items-center text-gray-300">%</span>
                                 </div>
                             ))}
                         </div>
@@ -429,7 +429,7 @@ function CreateShareModal({ onClose, onCreate }: { onClose: () => void; onCreate
                         <button
                             type="submit"
                             disabled={!name || totalPercentage !== 100}
-                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                         >
                             Create
                         </button>

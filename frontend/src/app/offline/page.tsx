@@ -17,11 +17,11 @@ export default function OfflinePage() {
         <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
             <div className="text-center max-w-md">
                 <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <WifiOff className="w-10 h-10 text-gray-500" />
+                    <WifiOff className="w-10 h-10 text-gray-300" />
                 </div>
 
                 <h1 className="text-2xl font-bold mb-2">You&apos;re Offline</h1>
-                <p className="text-gray-400 mb-8">
+                <p className="text-gray-200 mb-8">
                     It looks like you&apos;ve lost your internet connection. Some features may be unavailable until you&apos;re back online.
                 </p>
 
@@ -34,7 +34,7 @@ export default function OfflinePage() {
                         Try Again
                     </button>
 
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-300">
                         <p className="mb-2">While offline, you can still:</p>
                         <ul className="text-left space-y-1 pl-4">
                             <li>• View cached content</li>
@@ -44,7 +44,7 @@ export default function OfflinePage() {
                     </div>
                 </div>
 
-                <p className="text-xs text-gray-600 mt-8">
+                <p className="text-xs text-gray-200 mt-8">
                     Changes made offline will sync automatically when you reconnect.
                 </p>
             </div>

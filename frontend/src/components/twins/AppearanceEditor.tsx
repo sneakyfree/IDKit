@@ -139,11 +139,11 @@ export default function AppearanceEditor({ twinId }: AppearanceEditorProps) {
                                 onClick={() => setLighting(l.id)}
                                 className={`p-2 rounded-lg border text-left text-xs transition-colors ${lighting === l.id
                                         ? "border-purple-500 bg-purple-500/10 text-purple-300"
-                                        : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
+                                        : "border-gray-700 bg-gray-800 text-gray-200 hover:border-gray-600"
                                     }`}
                             >
                                 <p className="font-medium">{l.label}</p>
-                                <p className="text-gray-500 mt-0.5">{l.desc}</p>
+                                <p className="text-gray-300 mt-0.5">{l.desc}</p>
                             </button>
                         ))}
                     </div>
@@ -201,7 +201,7 @@ export default function AppearanceEditor({ twinId }: AppearanceEditorProps) {
                                 onClick={() => setClothing(c.id)}
                                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${clothing === c.id
                                         ? "border-purple-500 bg-purple-500/10 text-purple-300"
-                                        : "border-gray-700 bg-gray-800 text-gray-400"
+                                        : "border-gray-700 bg-gray-800 text-gray-200"
                                     }`}
                             >
                                 {c.label}
@@ -224,7 +224,7 @@ export default function AppearanceEditor({ twinId }: AppearanceEditorProps) {
                             onChange={(e) => setCameraAngle(parseInt(e.target.value))}
                             className="w-full accent-purple-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-600">
+                        <div className="flex justify-between text-xs text-gray-200">
                             <span>-30°</span>
                             <span>{cameraAngle}°</span>
                             <span>30°</span>
@@ -242,7 +242,7 @@ export default function AppearanceEditor({ twinId }: AppearanceEditorProps) {
                             onChange={(e) => setZoom(parseInt(e.target.value))}
                             className="w-full accent-purple-500"
                         />
-                        <div className="flex justify-between text-xs text-gray-600">
+                        <div className="flex justify-between text-xs text-gray-200">
                             <span>Wide</span>
                             <span>{zoom}%</span>
                             <span>Close</span>
@@ -261,7 +261,7 @@ export default function AppearanceEditor({ twinId }: AppearanceEditorProps) {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-50 text-sm"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 disabled:opacity-80 text-sm"
                     >
                         {saving ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

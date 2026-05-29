@@ -153,7 +153,7 @@ export default function ScheduleCalendarPage() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold">Content Schedule</h1>
-              <p className="text-sm text-gray-400">Plan and manage your content calendar</p>
+              <p className="text-sm text-gray-200">Plan and manage your content calendar</p>
             </div>
             <button
               onClick={() => window.location.href = "/schedule/new"}
@@ -210,7 +210,7 @@ export default function ScheduleCalendarPage() {
             </div>
 
             {/* Timezone selector */}
-            <select
+            <select aria-label="Filter or select option"
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
               className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm"
@@ -251,7 +251,7 @@ export default function ScheduleCalendarPage() {
             {/* Day headers */}
             <div className="grid grid-cols-7 border-b border-gray-800">
               {DAYS.map((day) => (
-                <div key={day} className="p-3 text-center text-sm text-gray-400 font-medium">
+                <div key={day} className="p-3 text-center text-sm text-gray-200 font-medium">
                   {day}
                 </div>
               ))}
@@ -270,7 +270,7 @@ export default function ScheduleCalendarPage() {
                       className={`min-h-[100px] p-2 border-r border-gray-800 last:border-r-0 ${!isMonthDay ? "bg-gray-900/50" : "bg-gray-900"
                         } ${isToday(date) ? "ring-2 ring-purple-500 ring-inset" : ""}`}
                     >
-                      <span className={`text-sm ${!isMonthDay ? "text-gray-600" : isToday(date) ? "text-purple-400 font-bold" : "text-gray-300"
+                      <span className={`text-sm ${!isMonthDay ? "text-gray-200" : isToday(date) ? "text-purple-400 font-bold" : "text-gray-300"
                         }`}>
                         {date.getDate()}
                       </span>
@@ -288,7 +288,7 @@ export default function ScheduleCalendarPage() {
                           </button>
                         ))}
                         {dayEvents.length > 3 && (
-                          <span className="text-xs text-gray-500">+{dayEvents.length - 3} more</span>
+                          <span className="text-xs text-gray-300">+{dayEvents.length - 3} more</span>
                         )}
                       </div>
                     </div>
@@ -302,9 +302,9 @@ export default function ScheduleCalendarPage() {
         {/* Empty state */}
         {!loading && events.length === 0 && (
           <div className="bg-gray-900 rounded-2xl p-12 text-center">
-            <CalendarIcon className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+            <CalendarIcon className="w-16 h-16 mx-auto text-gray-200 mb-4" />
             <h3 className="text-lg font-medium mb-2">No scheduled posts</h3>
-            <p className="text-gray-500 mb-6">Start planning your content by scheduling your first post.</p>
+            <p className="text-gray-300 mb-6">Start planning your content by scheduling your first post.</p>
             <button
               onClick={() => window.location.href = "/schedule/new"}
               className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700"
@@ -320,7 +320,7 @@ export default function ScheduleCalendarPage() {
           {Object.entries(PLATFORM_COLORS).map(([platform, color]) => (
             <div key={platform} className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-sm text-gray-400 capitalize">{platform}</span>
+              <span className="text-sm text-gray-200 capitalize">{platform}</span>
             </div>
           ))}
         </div>
@@ -340,7 +340,7 @@ export default function ScheduleCalendarPage() {
               <div className="w-4 h-4 rounded-full" style={{ backgroundColor: selectedEvent.color }} />
               <h3 className="text-lg font-bold">{selectedEvent.title}</h3>
             </div>
-            <div className="space-y-3 text-sm text-gray-400">
+            <div className="space-y-3 text-sm text-gray-200">
               <p className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
                 {new Date(selectedEvent.start).toLocaleString()}

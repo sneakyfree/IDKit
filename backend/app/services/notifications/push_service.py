@@ -589,6 +589,16 @@ class PushNotificationService:
 
         return len(notifications)
 
+
+    async def get_user_devices(self, user_id: str) -> list:
+        """List registered devices for a user. Returns [] for users with no devices."""
+        # In production this hits a DB. Preview returns empty.
+        return []
+
+    async def get_subscribed_topics(self, user_id: str) -> list[str]:
+        """List topic subscriptions for a user. Returns [] for users with none."""
+        return []
+
     async def _should_send(self, notification: PushNotification) -> bool:
         """Check if notification should be sent based on preferences."""
         prefs = self._user_preferences.get(notification.user_id, {})

@@ -116,7 +116,7 @@ export function ConsentBanner() {
                                 <h3 className="font-semibold text-gray-900 dark:text-white">
                                     We value your privacy
                                 </h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                <p className="text-sm text-gray-200 dark:text-gray-200 mt-1">
                                     We use cookies to enhance your experience, analyze site traffic, and personalize content.
                                     You can choose which cookies you accept.
                                 </p>
@@ -125,7 +125,7 @@ export function ConsentBanner() {
                         <div className="flex items-center gap-2 flex-shrink-0">
                             <button
                                 onClick={() => setShowCustomize(true)}
-                                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                className="px-4 py-2 text-sm text-gray-200 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                             >
                                 Customize
                             </button>
@@ -154,7 +154,7 @@ export function ConsentBanner() {
                             </div>
                             <button
                                 onClick={() => setShowCustomize(false)}
-                                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                className="p-1 text-gray-300 hover:text-gray-700 dark:hover:text-gray-300"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -170,7 +170,7 @@ export function ConsentBanner() {
                                 <div key={key} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <div>
                                         <div className="font-medium text-gray-900 dark:text-white">{label}</div>
-                                        <div className="text-sm text-gray-500">{description}</div>
+                                        <div className="text-sm text-gray-300">{description}</div>
                                     </div>
                                     <button
                                         onClick={() => togglePreference(key as keyof ConsentPreferences)}
@@ -181,7 +181,7 @@ export function ConsentBanner() {
                                                 ? 'bg-indigo-600'
                                                 : 'bg-gray-300 dark:bg-gray-600'
                                             }
-                      ${locked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      ${locked ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'}
                     `}
                                         aria-label={`Toggle ${label}`}
                                     >
@@ -199,7 +199,7 @@ export function ConsentBanner() {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={rejectAll}
-                                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                className="px-4 py-2 text-sm text-gray-200 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                             >
                                 Reject All
                             </button>

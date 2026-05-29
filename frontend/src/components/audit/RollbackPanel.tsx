@@ -102,7 +102,7 @@ export function RollbackPanel({
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Rollback to Previous State
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-300">
                             Restore data from an earlier snapshot
                         </p>
                     </div>
@@ -132,9 +132,9 @@ export function RollbackPanel({
                                     <span className="font-medium text-gray-900 dark:text-white text-sm">
                                         {snapshot.description}
                                     </span>
-                                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                                    <ChevronRight className="h-4 w-4 text-gray-200" />
                                 </div>
-                                <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                                <div className="flex items-center gap-3 mt-1 text-xs text-gray-300">
                                     <span className="flex items-center gap-1">
                                         <Clock className="h-3 w-3" />
                                         {new Date(snapshot.created_at).toLocaleString()}
@@ -155,14 +155,14 @@ export function RollbackPanel({
                     </h3>
 
                     {!selectedSnapshot ? (
-                        <div className="text-center py-12 text-gray-500">
+                        <div className="text-center py-12 text-gray-300">
                             <RotateCcw className="h-8 w-8 mx-auto mb-2 opacity-30" />
                             <p className="text-sm">Select a snapshot to preview changes</p>
                         </div>
                     ) : loading ? (
                         <div className="text-center py-12">
                             <div className="animate-spin h-6 w-6 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto" />
-                            <p className="mt-2 text-sm text-gray-500">Loading preview...</p>
+                            <p className="mt-2 text-sm text-gray-300">Loading preview...</p>
                         </div>
                     ) : success ? (
                         <div className="text-center py-12">
@@ -175,7 +175,7 @@ export function RollbackPanel({
                             <div className="space-y-2 mb-4 max-h-[250px] overflow-y-auto">
                                 {previewChanges.map((change, i) => (
                                     <div key={i} className="p-2 bg-gray-50 dark:bg-gray-800 rounded text-sm">
-                                        <div className="font-mono text-xs text-gray-500 mb-1">
+                                        <div className="font-mono text-xs text-gray-300 mb-1">
                                             {change.field}
                                         </div>
                                         <div className="grid grid-cols-2 gap-2">
@@ -233,7 +233,7 @@ export function RollbackPanel({
                                     <button
                                         onClick={handleRollback}
                                         disabled={loading}
-                                        className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                        className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-80"
                                     >
                                         {loading ? 'Rolling back...' : 'Confirm Rollback'}
                                     </button>

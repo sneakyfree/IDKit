@@ -127,7 +127,7 @@ export default function AdminExportPage() {
             case "completed": return <CheckCircle className="w-5 h-5 text-green-400" />;
             case "failed": return <AlertCircle className="w-5 h-5 text-red-400" />;
             case "processing": return <Loader2 className="w-5 h-5 text-purple-400 animate-spin" />;
-            default: return <Loader2 className="w-5 h-5 text-gray-400" />;
+            default: return <Loader2 className="w-5 h-5 text-gray-200" />;
         }
     };
 
@@ -137,7 +137,7 @@ export default function AdminExportPage() {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold">Data Export</h1>
-                    <p className="text-gray-400">Export platform data for analysis or backup</p>
+                    <p className="text-gray-200">Export platform data for analysis or backup</p>
                 </div>
 
                 {/* Admin Notice */}
@@ -146,7 +146,7 @@ export default function AdminExportPage() {
                         <AlertCircle className="w-5 h-5 text-yellow-400" />
                         <div>
                             <p className="font-medium">Administrator Access</p>
-                            <p className="text-sm text-gray-400">Exports may contain sensitive data. Handle with care.</p>
+                            <p className="text-sm text-gray-200">Exports may contain sensitive data. Handle with care.</p>
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ export default function AdminExportPage() {
                                     {icon}
                                     <span className="font-medium">{label}</span>
                                 </div>
-                                <p className="text-xs text-gray-400">{description}</p>
+                                <p className="text-xs text-gray-200">{description}</p>
                             </button>
                         ))}
                     </div>
@@ -186,7 +186,7 @@ export default function AdminExportPage() {
                         <>
                             {/* Format Selection */}
                             <div className="mb-6">
-                                <label className="block text-sm text-gray-400 mb-2">Export Format</label>
+                                <label className="block text-sm text-gray-200 mb-2">Export Format</label>
                                 <div className="flex gap-3">
                                     {(["csv", "json", "xlsx"] as const).map((f) => (
                                         <button
@@ -204,7 +204,7 @@ export default function AdminExportPage() {
                             {/* Date Range */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">Start Date (optional)</label>
+                                    <label className="block text-sm text-gray-200 mb-1">Start Date (optional)</label>
                                     <input
                                         type="date"
                                         value={dateRange.start}
@@ -213,7 +213,7 @@ export default function AdminExportPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-gray-400 mb-1">End Date (optional)</label>
+                                    <label className="block text-sm text-gray-200 mb-1">End Date (optional)</label>
                                     <input
                                         type="date"
                                         value={dateRange.end}
@@ -227,7 +227,7 @@ export default function AdminExportPage() {
                             <button
                                 onClick={handleStartExport}
                                 disabled={processing}
-                                className="w-full py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80 flex items-center justify-center gap-2"
                             >
                                 {processing ? (
                                     <>
@@ -251,8 +251,8 @@ export default function AdminExportPage() {
 
                     {jobs.length === 0 ? (
                         <div className="bg-gray-900 rounded-xl p-8 text-center">
-                            <FileText className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-                            <p className="text-gray-500">No exports yet</p>
+                            <FileText className="w-12 h-12 mx-auto text-gray-200 mb-3" />
+                            <p className="text-gray-300">No exports yet</p>
                         </div>
                     ) : (
                         <div className="space-y-3">
@@ -266,7 +266,7 @@ export default function AdminExportPage() {
                                                     <span className="font-medium capitalize">{job.type.replace("_", " ")}</span>
                                                     <span className="text-xs bg-gray-800 px-2 py-0.5 rounded uppercase">{job.format}</span>
                                                 </div>
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-gray-300">
                                                     {new Date(job.createdAt).toLocaleString()}
                                                     {job.size && ` · ${job.size}`}
                                                 </p>

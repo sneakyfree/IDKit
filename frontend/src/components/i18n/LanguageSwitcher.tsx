@@ -56,13 +56,13 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
                 aria-controls={listboxId}
                 aria-label="Select language"
             >
-                <Globe className="w-4 h-4 text-gray-400" />
+                <Globe className="w-4 h-4 text-gray-200" />
                 {variant !== "compact" && (
                     <>
                         <span className="text-sm">
                             {LOCALE_FLAGS[locale]} {LOCALE_NAMES[locale]}
                         </span>
-                        <ChevronDown className={`w-3 h-3 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-3 h-3 text-gray-300 transition-transform ${open ? "rotate-180" : ""}`} />
                     </>
                 )}
             </button>

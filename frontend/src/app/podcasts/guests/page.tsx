@@ -82,7 +82,7 @@ export default function GuestManagementPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Guest Management</h1>
-                        <p className="text-gray-400">Coordinate your podcast guests</p>
+                        <p className="text-gray-200">Coordinate your podcast guests</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -125,9 +125,9 @@ export default function GuestManagementPage() {
                 {/* Empty State */}
                 {!loading && filteredGuests.length === 0 && (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <Users className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <Users className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No guests yet</h3>
-                        <p className="text-gray-500 mb-6">Start inviting guests to your podcast.</p>
+                        <p className="text-gray-300 mb-6">Start inviting guests to your podcast.</p>
                         <button
                             onClick={() => setShowAddModal(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -180,7 +180,7 @@ function StatCard({ label, value, color = "text-white" }: { label: string; value
     return (
         <div className="bg-gray-900 rounded-xl p-4">
             <p className={`text-2xl font-bold ${color}`}>{value}</p>
-            <p className="text-sm text-gray-500">{label}</p>
+            <p className="text-sm text-gray-300">{label}</p>
         </div>
     );
 }
@@ -195,7 +195,7 @@ function GuestCard({ guest, onClick, onUpdateStatus }: {
         confirmed: "text-green-400 bg-green-400/10",
         scheduled: "text-blue-400 bg-blue-400/10",
         recorded: "text-purple-400 bg-purple-400/10",
-        published: "text-gray-400 bg-gray-400/10",
+        published: "text-gray-200 bg-gray-400/10",
     };
 
     return (
@@ -209,8 +209,8 @@ function GuestCard({ guest, onClick, onUpdateStatus }: {
                 {/* Info */}
                 <div className="flex-1 min-w-0 cursor-pointer" onClick={onClick} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }} role="button" tabIndex={0}>
                     <h3 className="font-semibold">{guest.name}</h3>
-                    <p className="text-sm text-gray-400 truncate">{guest.bio}</p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                    <p className="text-sm text-gray-200 truncate">{guest.bio}</p>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-300">
                         <span className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
                             {guest.email}
@@ -226,7 +226,7 @@ function GuestCard({ guest, onClick, onUpdateStatus }: {
 
                 {/* Status */}
                 <div className="flex items-center gap-2">
-                    <select
+                    <select aria-label="Filter or select option"
                         value={guest.status}
                         onChange={(e) => onUpdateStatus(guest.id, e.target.value as PodcastGuest["status"])}
                         onClick={(e) => e.stopPropagation()}
@@ -259,8 +259,8 @@ function GuestDetailModal({ guest, onClose, onDelete }: {
                                 {guest.name.charAt(0)}
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold">{guest.name}</h2>
-                                <p className="text-gray-400 capitalize">{guest.status}</p>
+                                <h2 className="text-xl font-bold text-white">{guest.name}</h2>
+                                <p className="text-gray-200 capitalize">{guest.status}</p>
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
@@ -277,13 +277,13 @@ function GuestDetailModal({ guest, onClose, onDelete }: {
                             {guest.email}
                         </a>
                         {guest.phone && (
-                            <a href={`tel:${guest.phone}`} className="flex items-center gap-2 text-gray-400 hover:text-gray-300">
+                            <a href={`tel:${guest.phone}`} className="flex items-center gap-2 text-gray-200 hover:text-gray-300">
                                 <Phone className="w-4 h-4" />
                                 {guest.phone}
                             </a>
                         )}
                         {guest.website && (
-                            <a href={guest.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-400 hover:text-gray-300">
+                            <a href={guest.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-200 hover:text-gray-300">
                                 <Globe className="w-4 h-4" />
                                 {guest.website}
                             </a>
@@ -299,10 +299,10 @@ function GuestDetailModal({ guest, onClose, onDelete }: {
                                     <div key={ep.id} className="bg-gray-800 rounded-lg p-3">
                                         <div className="flex items-center justify-between">
                                             <span className="font-medium">{ep.episodeTitle}</span>
-                                            <span className="text-xs text-gray-500 capitalize">{ep.status}</span>
+                                            <span className="text-xs text-gray-300 capitalize">{ep.status}</span>
                                         </div>
                                         {ep.recordingDate && (
-                                            <p className="text-sm text-gray-500 mt-1">
+                                            <p className="text-sm text-gray-300 mt-1">
                                                 Recording: {new Date(ep.recordingDate).toLocaleDateString()}
                                             </p>
                                         )}
@@ -354,7 +354,7 @@ function AddGuestModal({ onClose, onAdd }: { onClose: () => void; onAdd: (guest:
                 <h2 className="text-xl font-bold mb-4">Add Guest</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Name *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Name *</label>
                         <input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -363,7 +363,7 @@ function AddGuestModal({ onClose, onAdd }: { onClose: () => void; onAdd: (guest:
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Email *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Email *</label>
                         <input
                             type="email"
                             value={email}
@@ -373,7 +373,7 @@ function AddGuestModal({ onClose, onAdd }: { onClose: () => void; onAdd: (guest:
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Bio</label>
+                        <label className="block text-sm text-gray-200 mb-1">Bio</label>
                         <textarea
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
@@ -385,7 +385,7 @@ function AddGuestModal({ onClose, onAdd }: { onClose: () => void; onAdd: (guest:
                         <button type="button" onClick={onClose} className="flex-1 py-3 bg-gray-800 rounded-xl hover:bg-gray-700">
                             Cancel
                         </button>
-                        <button type="submit" disabled={!name || !email} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50">
+                        <button type="submit" disabled={!name || !email} className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80">
                             Add Guest
                         </button>
                     </div>

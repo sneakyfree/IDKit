@@ -87,7 +87,7 @@ export default function ABTestingPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold">A/B Testing</h1>
-            <p className="text-gray-400">Test content variations to optimize performance</p>
+            <p className="text-gray-200">Test content variations to optimize performance</p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
@@ -130,9 +130,9 @@ export default function ABTestingPage() {
         {/* Empty State */}
         {!loading && filteredTests.length === 0 && (
           <div className="bg-gray-900 rounded-2xl p-12 text-center">
-            <BarChart3 className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+            <BarChart3 className="w-16 h-16 mx-auto text-gray-200 mb-4" />
             <h3 className="text-lg font-medium mb-2">No tests yet</h3>
-            <p className="text-gray-500 mb-6">Create your first A/B test to start optimizing.</p>
+            <p className="text-gray-300 mb-6">Create your first A/B test to start optimizing.</p>
             <button
               onClick={() => setShowCreateModal(true)}
               className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700"
@@ -171,7 +171,7 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
         <div className="text-purple-400">{icon}</div>
         <div>
           <p className="text-2xl font-bold">{value}</p>
-          <p className="text-sm text-gray-500">{label}</p>
+          <p className="text-sm text-gray-300">{label}</p>
         </div>
       </div>
     </div>
@@ -200,11 +200,11 @@ function TestCard({ test }: { test: ABTest }) {
               {test.status}
             </span>
           </div>
-          <p className="text-sm text-gray-500">Measuring: {test.metric}</p>
+          <p className="text-sm text-gray-300">Measuring: {test.metric}</p>
         </div>
         {test.confidence && (
           <div className="text-right">
-            <p className="text-sm text-gray-400">Confidence</p>
+            <p className="text-sm text-gray-200">Confidence</p>
             <p className={`text-xl font-bold ${test.confidence >= 95 ? "text-green-400" : "text-yellow-400"}`}>
               {test.confidence}%
             </p>
@@ -231,7 +231,7 @@ function TestCard({ test }: { test: ABTest }) {
                   </span>
                 )}
               </div>
-              <span className="text-sm text-gray-400">{variation.content}</span>
+              <span className="text-sm text-gray-200">{variation.content}</span>
             </div>
 
             {/* Progress bar */}
@@ -242,7 +242,7 @@ function TestCard({ test }: { test: ABTest }) {
               />
               <div className="absolute inset-0 flex items-center justify-between px-3 text-sm">
                 <span>{variation.metrics.rate}% rate</span>
-                <span className="text-gray-400">
+                <span className="text-gray-200">
                   {variation.metrics.clicks.toLocaleString()} / {variation.metrics.impressions.toLocaleString()}
                 </span>
               </div>
@@ -306,7 +306,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
         {step === 1 && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Test Name</label>
+              <label className="block text-sm text-gray-200 mb-1">Test Name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -315,8 +315,8 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Success Metric</label>
-              <select
+              <label className="block text-sm text-gray-200 mb-1">Success Metric</label>
+              <select aria-label="Filter or select option"
                 value={metric}
                 onChange={(e) => setMetric(e.target.value as ABTest["metric"])}
                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -335,7 +335,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
           <div className="space-y-4">
             {variations.map((v, i) => (
               <div key={v.id}>
-                <label className="block text-sm text-gray-400 mb-1">{v.name}</label>
+                <label className="block text-sm text-gray-200 mb-1">{v.name}</label>
                 <textarea
                   value={v.content}
                   onChange={(e) => {
@@ -362,7 +362,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
         {/* Step 3: Traffic Split */}
         {step === 3 && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-400">Set traffic distribution between variations</p>
+            <p className="text-sm text-gray-200">Set traffic distribution between variations</p>
             {variations.map((v, i) => (
               <div key={v.id} className="flex items-center gap-4">
                 <span className="w-24">{v.name}</span>
@@ -386,7 +386,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
                 <span className="w-12 text-right">{trafficSplit[i]}%</span>
               </div>
             ))}
-            <p className="text-xs text-gray-500">Total: {trafficSplit.reduce((a, b) => a + b, 0)}%</p>
+            <p className="text-xs text-gray-300">Total: {trafficSplit.reduce((a, b) => a + b, 0)}%</p>
           </div>
         )}
 
@@ -402,7 +402,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
             <button
               onClick={() => setStep(step + 1)}
               disabled={step === 1 && !name}
-              className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+              className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
             >
               Next
             </button>

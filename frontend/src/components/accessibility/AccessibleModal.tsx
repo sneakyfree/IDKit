@@ -99,7 +99,7 @@ export function AccessibleModal({
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors"
+                        className="p-2 text-gray-200 hover:text-white rounded-lg hover:bg-gray-800 transition-colors"
                         aria-label="Close modal"
                     >
                         <svg
@@ -189,7 +189,7 @@ export function AccessibleAlertDialog({
                 <h2 id={titleId} className="text-xl font-semibold mb-2">
                     {title}
                 </h2>
-                <p id={descId} className="text-gray-400 mb-6">
+                <p id={descId} className="text-gray-200 mb-6">
                     {message}
                 </p>
 

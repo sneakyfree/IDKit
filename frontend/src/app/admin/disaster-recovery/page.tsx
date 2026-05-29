@@ -87,7 +87,7 @@ export default function DisasterRecoveryPage() {
     const [expandedRunbook, setExpandedRunbook] = useState<number | null>(null);
     const [activeTab, setActiveTab] = useState<"overview" | "replicas" | "runbook">("overview");
 
-    const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+    const headers = { Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("token") : ""}` };
 
     const fetchAll = useCallback(async () => {
         try {
@@ -160,7 +160,7 @@ export default function DisasterRecoveryPage() {
                         <Shield className="w-8 h-8 text-green-400" />
                         <div>
                             <h1 className="text-2xl font-bold">Disaster Recovery</h1>
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-gray-200 text-sm">
                                 RPO: {drStatus?.rpo_minutes}min · RTO: {drStatus?.rto_minutes}min
                             </p>
                         </div>
@@ -175,7 +175,7 @@ export default function DisasterRecoveryPage() {
                         <button
                             onClick={handleTestFailover}
                             disabled={testing}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-lg hover:bg-green-500 transition-colors disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-lg hover:bg-green-500 transition-colors disabled:opacity-80"
                         >
                             {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
                             Test Failover
@@ -219,7 +219,7 @@ export default function DisasterRecoveryPage() {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${activeTab === tab ? "bg-gray-700 text-white" : "text-gray-400 hover:text-white"
+                            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${activeTab === tab ? "bg-gray-700 text-white" : "text-gray-200 hover:text-white"
                                 }`}
                         >
                             {tab}
@@ -239,7 +239,7 @@ export default function DisasterRecoveryPage() {
                                     </div>
                                     <StatusBadge status={comp.status} />
                                 </div>
-                                <div className="space-y-1 text-sm text-gray-500">
+                                <div className="space-y-1 text-sm text-gray-300">
                                     {Object.entries(comp)
                                         .filter(([k]) => k !== "status")
                                         .slice(0, 4)
@@ -267,20 +267,20 @@ export default function DisasterRecoveryPage() {
                                         <Database className="w-5 h-5 text-purple-400" />
                                         <div>
                                             <p className="font-medium">{r.id}</p>
-                                            <p className="text-sm text-gray-500">{r.type} · {r.region}</p>
+                                            <p className="text-sm text-gray-300">{r.type} · {r.region}</p>
                                         </div>
                                     </div>
                                     <StatusBadge status={r.status} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <p className="text-gray-500">Replication Lag</p>
+                                        <p className="text-gray-300">Replication Lag</p>
                                         <p className={`font-mono ${r.replication_lag_seconds < 1 ? "text-green-400" : "text-yellow-400"}`}>
                                             {r.replication_lag_seconds.toFixed(1)}s
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-gray-500">Last Heartbeat</p>
+                                        <p className="text-gray-300">Last Heartbeat</p>
                                         <p className="text-gray-300">{new Date(r.last_heartbeat).toLocaleTimeString()}</p>
                                     </div>
                                 </div>
@@ -302,13 +302,13 @@ export default function DisasterRecoveryPage() {
                                         <BookOpen className="w-5 h-5 text-purple-400" />
                                         <div className="text-left">
                                             <p className="font-medium">{proc.name}</p>
-                                            <p className="text-sm text-gray-500">Trigger: {proc.trigger}</p>
+                                            <p className="text-sm text-gray-300">Trigger: {proc.trigger}</p>
                                         </div>
                                     </div>
                                     {expandedRunbook === idx ? (
-                                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                                        <ChevronDown className="w-5 h-5 text-gray-300" />
                                     ) : (
-                                        <ChevronRight className="w-5 h-5 text-gray-500" />
+                                        <ChevronRight className="w-5 h-5 text-gray-300" />
                                     )}
                                 </button>
                                 {expandedRunbook === idx && (
@@ -328,8 +328,8 @@ export default function DisasterRecoveryPage() {
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <p className="text-sm text-gray-500 mt-0.5">{step.description}</p>
-                                                        <p className="text-xs text-gray-600 mt-1">
+                                                        <p className="text-sm text-gray-300 mt-0.5">{step.description}</p>
+                                                        <p className="text-xs text-gray-200 mt-1">
                                                             ~{step.estimated_minutes}min · {step.responsible_team}
                                                         </p>
                                                     </div>

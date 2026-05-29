@@ -26,7 +26,7 @@ from app.schemas.intake import (
 )
 from app.services.intake_service import IntakeService
 
-router = APIRouter(prefix="/intake", tags=["intake"])
+router = APIRouter(tags=["intake"])
 
 
 # ============== Response Schemas ==============

@@ -57,7 +57,7 @@ export function LanguageSelector({
   if (variant === "list") {
     return (
       <div className={`space-y-2 ${className}`}>
-        <label className="block text-sm font-medium text-gray-400 mb-3">
+        <label className="block text-sm font-medium text-gray-200 mb-3">
           {t("settings.selectLanguage")}
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -70,7 +70,7 @@ export function LanguageSelector({
                 locale === loc
                   ? "border-purple-500 bg-purple-500/20 text-white"
                   : "border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white"
-              } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+              } ${isLoading ? "opacity-80 cursor-not-allowed" : ""}`}
             >
               {showFlags && (
                 <span className="text-xl">{LOCALE_FLAGS[loc]}</span>
@@ -107,13 +107,13 @@ export function LanguageSelector({
           onClick={() => setIsOpen(!isOpen)}
           disabled={isLoading}
           className={`flex items-center gap-1 px-2 py-1 rounded text-sm hover:bg-gray-800 transition-colors ${
-            isLoading ? "opacity-50 cursor-not-allowed" : ""
+            isLoading ? "opacity-80 cursor-not-allowed" : ""
           }`}
         >
           {showFlags && <span>{LOCALE_FLAGS[locale]}</span>}
           <span className="text-gray-300 uppercase">{locale}</span>
           <svg
-            className={`w-3 h-3 text-gray-500 transition-transform ${
+            className={`w-3 h-3 text-gray-300 transition-transform ${
               isOpen ? "rotate-180" : ""
             }`}
             fill="none"
@@ -164,7 +164,7 @@ export function LanguageSelector({
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
         className={`flex items-center justify-between gap-3 w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors ${
-          isLoading ? "opacity-50 cursor-not-allowed" : ""
+          isLoading ? "opacity-80 cursor-not-allowed" : ""
         }`}
       >
         <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export function LanguageSelector({
           )}
         </div>
         <svg
-          className={`w-5 h-5 text-gray-500 transition-transform ${
+          className={`w-5 h-5 text-gray-300 transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
           fill="none"

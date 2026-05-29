@@ -51,7 +51,7 @@ export default function StudioPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Content Studio</h1>
+          <h1 className="text-xl font-bold text-white">Content Studio</h1>
           <Link
             href="/studio/create"
             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
@@ -63,7 +63,7 @@ export default function StudioPage() {
         {/* Search */}
         <div className="px-4 pb-3">
           <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
             <input
               type="text"
               placeholder="Search content..."
@@ -93,7 +93,7 @@ export default function StudioPage() {
 
       {/* Quick Actions */}
       <div className="px-4 py-4">
-        <h2 className="text-sm font-medium text-gray-400 mb-3">Quick Create</h2>
+        <h2 className="text-sm font-medium text-gray-200 mb-3">Quick Create</h2>
         <div className="grid grid-cols-4 gap-3">
           <Link
             href="/studio/create/video"
@@ -137,8 +137,8 @@ export default function StudioPage() {
       {/* Content List */}
       <div className="px-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-gray-400">Your Content</h2>
-          <span className="text-xs text-gray-500">
+          <h2 className="text-sm font-medium text-gray-200">Your Content</h2>
+          <span className="text-xs text-gray-300">
             {filteredContent.length} items
           </span>
         </div>
@@ -152,9 +152,9 @@ export default function StudioPage() {
             >
               {/* Thumbnail */}
               <div className="w-24 h-16 rounded-lg bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center flex-shrink-0">
-                {item.type === "video" && <VideoIcon className="w-6 h-6 text-gray-500" />}
-                {item.type === "post" && <EditIcon className="w-6 h-6 text-gray-500" />}
-                {item.type === "podcast" && <MicIcon className="w-6 h-6 text-gray-500" />}
+                {item.type === "video" && <VideoIcon className="w-6 h-6 text-gray-300" />}
+                {item.type === "post" && <EditIcon className="w-6 h-6 text-gray-300" />}
+                {item.type === "podcast" && <MicIcon className="w-6 h-6 text-gray-300" />}
               </div>
 
               {/* Info */}
@@ -162,10 +162,10 @@ export default function StudioPage() {
                 <h3 className="font-medium text-sm truncate">{item.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <StatusBadge status={item.status} />
-                  <span className="text-xs text-gray-500">{item.createdAt}</span>
+                  <span className="text-xs text-gray-300">{item.createdAt}</span>
                 </div>
                 {item.status === "published" && (
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-300">
                     <span>{formatNumber(item.views)} views</span>
                     <span>{formatNumber(item.likes)} likes</span>
                   </div>
@@ -180,7 +180,7 @@ export default function StudioPage() {
                 }}
                 className="p-2 -mr-2 hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <MoreIcon className="w-5 h-5 text-gray-400" />
+                <MoreIcon className="w-5 h-5 text-gray-200" />
               </button>
             </Link>
           ))}
@@ -189,10 +189,10 @@ export default function StudioPage() {
         {filteredContent.length === 0 && (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-              <EditIcon className="w-8 h-8 text-gray-600" />
+              <EditIcon className="w-8 h-8 text-gray-200" />
             </div>
-            <h3 className="font-medium text-gray-400">No content found</h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <h3 className="font-medium text-gray-200">No content found</h3>
+            <p className="text-sm text-gray-300 mt-1">
               Create your first piece of content to get started
             </p>
           </div>
@@ -208,7 +208,7 @@ export default function StudioPage() {
 function StatusBadge({ status }: { status: string }) {
   const styles = {
     published: "bg-green-500/20 text-green-400",
-    draft: "bg-gray-500/20 text-gray-400",
+    draft: "bg-gray-500/20 text-gray-200",
     scheduled: "bg-blue-500/20 text-blue-400",
     processing: "bg-yellow-500/20 text-yellow-400",
   };

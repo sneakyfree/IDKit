@@ -170,7 +170,7 @@ export function ContentCalendar({
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Content Calendar
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-300">
                             Schedule and manage your content
                         </p>
                     </div>
@@ -180,7 +180,7 @@ export function ContentCalendar({
                         onClick={() => setShowOptimalTimes(!showOptimalTimes)}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${showOptimalTimes
                                 ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+                                : 'text-gray-200 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                             }`}
                     >
                         <Sparkles className="h-4 w-4" />
@@ -213,7 +213,7 @@ export function ContentCalendar({
                     </button>
                     <button
                         onClick={goToToday}
-                        className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                        className="px-3 py-1.5 text-sm text-gray-200 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                     >
                         Today
                     </button>
@@ -228,7 +228,7 @@ export function ContentCalendar({
                             onClick={() => setViewMode(mode)}
                             className={`px-3 py-1 text-sm rounded-md capitalize transition-colors ${viewMode === mode
                                     ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                                    : 'text-gray-600 dark:text-gray-400'
+                                    : 'text-gray-200 dark:text-gray-200'
                                 }`}
                         >
                             {mode}
@@ -242,7 +242,7 @@ export function ContentCalendar({
                 {dayNames.map((day) => (
                     <div
                         key={day}
-                        className="py-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400"
+                        className="py-2 text-center text-sm font-medium text-gray-300 dark:text-gray-200"
                     >
                         {day}
                     </div>
@@ -274,14 +274,14 @@ export function ContentCalendar({
                                             ? 'bg-indigo-600 text-white'
                                             : isCurrentMonth
                                                 ? 'text-gray-900 dark:text-white'
-                                                : 'text-gray-400 dark:text-gray-600'
+                                                : 'text-gray-200 dark:text-gray-200'
                                         }
                   `}
                                 >
                                     {day.getDate()}
                                 </span>
                                 {dayPosts.length > 0 && (
-                                    <span className="text-xs text-gray-500">{dayPosts.length} posts</span>
+                                    <span className="text-xs text-gray-300">{dayPosts.length} posts</span>
                                 )}
                             </div>
 
@@ -305,7 +305,7 @@ export function ContentCalendar({
                                     </button>
                                 ))}
                                 {dayPosts.length > 3 && (
-                                    <div className="text-xs text-gray-500 text-center">
+                                    <div className="text-xs text-gray-300 text-center">
                                         +{dayPosts.length - 3} more
                                     </div>
                                 )}
@@ -331,7 +331,7 @@ export function ContentCalendar({
                                 <div className="font-medium text-gray-900 dark:text-white">
                                     {time.time}
                                 </div>
-                                <div className="text-xs text-gray-500">{time.reason}</div>
+                                <div className="text-xs text-gray-300">{time.reason}</div>
                             </div>
                         ))}
                     </div>

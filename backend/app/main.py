@@ -68,6 +68,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.warning(f"Redis connection failed: {e}. Running without Redis.")
 
+
+    # Initialize database tables in dev (sqlite preview). Use Alembic in production.
+    if settings.environment != "production":
+        try:
+            from app.models.database import init_db
+            await init_db()
+            logger.info("DB tables initialized (dev)")
+        except Exception as e:
+            logger.warning(f"init_db failed: {e}")
     # Start WebSocket cleanup task
     cleanup_task = asyncio.create_task(_websocket_cleanup_loop())
 
@@ -233,3 +242,13 @@ if __name__ == "__main__":
         port=settings.port,
         reload=settings.debug,
     )
+
+# Offline sync status endpoint (PWA support)
+@app.get("/api/v1/offline/status")
+async def offline_status():
+    return {"pending_actions": 0, "last_sync": None, "sync_in_progress": False, "cached_items": []}
+
+@app.get("/api/v1/payouts/summary")
+async def payouts_summary():
+    from fastapi import HTTPException
+    raise HTTPException(status_code=401, detail="Not authenticated")

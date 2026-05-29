@@ -35,7 +35,7 @@ function ChangeIcon({ type }: { type: DeltaChange['change_type'] }) {
         case 'modified':
             return <GitCompare className="h-4 w-4 text-yellow-500" />;
         default:
-            return <Equal className="h-4 w-4 text-gray-400" />;
+            return <Equal className="h-4 w-4 text-gray-200" />;
     }
 }
 
@@ -93,7 +93,7 @@ export function DeltaReport({
                             onChange={(e) => setShowUnchanged(e.target.checked)}
                             className="rounded"
                         />
-                        <span className="text-gray-600 dark:text-gray-400">Show unchanged</span>
+                        <span className="text-gray-200 dark:text-gray-200">Show unchanged</span>
                     </label>
                 </div>
 
@@ -101,11 +101,11 @@ export function DeltaReport({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
                         <div className="text-red-600 dark:text-red-400 font-medium">{beforeLabel}</div>
-                        <div className="text-gray-500">{new Date(beforeTimestamp).toLocaleString()}</div>
+                        <div className="text-gray-300">{new Date(beforeTimestamp).toLocaleString()}</div>
                     </div>
                     <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <div className="text-green-600 dark:text-green-400 font-medium">{afterLabel}</div>
-                        <div className="text-gray-500">{new Date(afterTimestamp).toLocaleString()}</div>
+                        <div className="text-gray-300">{new Date(afterTimestamp).toLocaleString()}</div>
                     </div>
                 </div>
 
@@ -129,7 +129,7 @@ export function DeltaReport({
             {/* Changes List */}
             <div className="divide-y dark:divide-gray-800">
                 {filteredChanges.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
+                    <div className="p-8 text-center text-gray-300">
                         No changes to display
                     </div>
                 ) : (
@@ -152,14 +152,14 @@ export function DeltaReport({
                                     <span className="font-mono text-sm text-gray-700 dark:text-gray-300">
                                         {change.path}
                                     </span>
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-gray-300">
                                         .{change.field}
                                     </span>
                                 </div>
                                 {expandedPaths.has(change.path) ? (
-                                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                                    <ChevronDown className="h-5 w-5 text-gray-200" />
                                 ) : (
-                                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                                    <ChevronRight className="h-5 w-5 text-gray-200" />
                                 )}
                             </button>
 
@@ -174,7 +174,7 @@ export function DeltaReport({
                                             </div>
                                             <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto whitespace-pre-wrap">
                                                 {change.change_type === 'added'
-                                                    ? <span className="text-gray-400 italic">Not present</span>
+                                                    ? <span className="text-gray-200 italic">Not present</span>
                                                     : formatValue(change.before)
                                                 }
                                             </pre>
@@ -187,7 +187,7 @@ export function DeltaReport({
                                             </div>
                                             <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto whitespace-pre-wrap">
                                                 {change.change_type === 'removed'
-                                                    ? <span className="text-gray-400 italic">Removed</span>
+                                                    ? <span className="text-gray-200 italic">Removed</span>
                                                     : formatValue(change.after)
                                                 }
                                             </pre>

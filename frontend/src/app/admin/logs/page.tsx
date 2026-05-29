@@ -38,7 +38,7 @@ const levelIcons: Record<string, React.ReactNode> = {
     error: <AlertCircle className="w-4 h-4 text-red-400" />,
     warn: <AlertTriangle className="w-4 h-4 text-yellow-400" />,
     info: <Info className="w-4 h-4 text-blue-400" />,
-    debug: <Bug className="w-4 h-4 text-gray-500" />,
+    debug: <Bug className="w-4 h-4 text-gray-300" />,
 };
 
 const levelColors: Record<string, string> = {
@@ -57,7 +57,7 @@ export default function LogsPage() {
     const [autoRefresh, setAutoRefresh] = useState(true);
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+    const headers = { Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("token") : ""}` };
 
     const fetchLogs = useCallback(async () => {
         try {
@@ -116,11 +116,11 @@ export default function LogsPage() {
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Terminal className="w-6 h-6 text-green-400" />
-                        <h1 className="text-xl font-bold">Log Viewer</h1>
-                        <span className="text-xs text-gray-500">{filteredLogs.length} entries</span>
+                        <h1 className="text-xl font-bold text-white">Log Viewer</h1>
+                        <span className="text-xs text-gray-300">{filteredLogs.length} entries</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                        <label className="flex items-center gap-2 text-sm text-gray-200 cursor-pointer">
                             <input
                                 type="checkbox"
                                 checked={autoRefresh}
@@ -143,8 +143,8 @@ export default function LogsPage() {
             <div className="p-4 border-b border-gray-800 bg-gray-900/50">
                 <div className="max-w-7xl mx-auto flex gap-3 items-center">
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-500" />
-                        <select
+                        <Filter className="w-4 h-4 text-gray-300" />
+                        <select aria-label="Filter or select option"
                             value={service}
                             onChange={(e) => setService(e.target.value)}
                             className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
@@ -153,7 +153,7 @@ export default function LogsPage() {
                                 <option key={s} value={s}>{s === "All" ? "All Services" : s}</option>
                             ))}
                         </select>
-                        <select
+                        <select aria-label="Filter or select option"
                             value={level}
                             onChange={(e) => setLevel(e.target.value)}
                             className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
@@ -164,7 +164,7 @@ export default function LogsPage() {
                         </select>
                     </div>
                     <div className="flex-1 relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                         <input
                             type="text"
                             value={search}
@@ -184,11 +184,11 @@ export default function LogsPage() {
                             key={i}
                             className={`flex gap-3 px-4 py-1.5 border-l-2 hover:bg-gray-800/30 ${levelColors[log.level] || ""}`}
                         >
-                            <span className="text-gray-600 text-xs whitespace-nowrap min-w-[140px]">
+                            <span className="text-gray-200 text-xs whitespace-nowrap min-w-[140px]">
                                 {new Date(log.timestamp).toLocaleTimeString()}
                             </span>
                             <span className="min-w-[16px]">{levelIcons[log.level]}</span>
-                            <span className="text-gray-500 min-w-[80px] text-xs">[{log.service}]</span>
+                            <span className="text-gray-300 min-w-[80px] text-xs">[{log.service}]</span>
                             <span className="text-gray-300 break-all">{log.message}</span>
                         </div>
                     ))}

@@ -114,7 +114,7 @@ export default function AnalyticsPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold">Analytics</h1>
+          <h1 className="text-xl font-bold text-white">Analytics</h1>
           <Link
             href="/analytics/export"
             className="px-4 py-2 bg-gray-800 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors"
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-2 gap-3">
             {/* Followers */}
             <div className="bg-gray-900 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+              <div className="flex items-center gap-2 text-gray-200 text-sm mb-2">
                 <UsersIcon className="w-4 h-4" />
                 Followers
               </div>
@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
 
             {/* Views */}
             <div className="bg-gray-900 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+              <div className="flex items-center gap-2 text-gray-200 text-sm mb-2">
                 <EyeIcon className="w-4 h-4" />
                 Views
               </div>
@@ -197,21 +197,21 @@ export default function AnalyticsPage() {
 
             {/* Engagements */}
             <div className="bg-gray-900 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+              <div className="flex items-center gap-2 text-gray-200 text-sm mb-2">
                 <HeartIcon className="w-4 h-4" />
                 Engagements
               </div>
               <div className="text-2xl font-bold">
                 {formatNumber(overview.totalEngagements)}
               </div>
-              <div className="text-sm text-gray-500 mt-1">
+              <div className="text-sm text-gray-300 mt-1">
                 Likes, comments, shares
               </div>
             </div>
 
             {/* Engagement Rate */}
             <div className="bg-gray-900 rounded-2xl p-4">
-              <div className="flex items-center gap-2 text-gray-400 text-sm mb-2">
+              <div className="flex items-center gap-2 text-gray-200 text-sm mb-2">
                 <ChartIcon className="w-4 h-4" />
                 Eng. Rate
               </div>
@@ -238,7 +238,7 @@ export default function AnalyticsPage() {
                       <div className={`w-3 h-3 rounded-full ${platform.color}`} />
                       <span className="text-sm font-medium">{platform.platform}</span>
                     </div>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-gray-200">
                       {formatNumber(platform.followers)} followers
                     </span>
                   </div>
@@ -251,7 +251,7 @@ export default function AnalyticsPage() {
                         }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500 w-20 text-right">
+                    <span className="text-xs text-gray-300 w-20 text-right">
                       {formatNumber(platform.views)} views
                     </span>
                   </div>
@@ -270,7 +270,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="space-y-3">
               {topContent.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">Connect social accounts to see top content</p>
+                <p className="text-sm text-gray-300 text-center py-4">Connect social accounts to see top content</p>
               ) : topContent.map((content, index) => (
                 <div
                   key={content.id}
@@ -281,11 +281,11 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-medium truncate">{content.title}</h3>
-                    <p className="text-xs text-gray-500">{content.platform}</p>
+                    <p className="text-xs text-gray-300">{content.platform}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-medium">{formatNumber(content.views)}</div>
-                    <div className="text-xs text-gray-500">{content.engagement}% eng.</div>
+                    <div className="text-xs text-gray-300">{content.engagement}% eng.</div>
                   </div>
                 </div>
               ))}
@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
             >
               <UsersIcon className="w-6 h-6 text-purple-400 mb-2" />
               <h3 className="font-medium text-sm">Audience Insights</h3>
-              <p className="text-xs text-gray-500 mt-1">Demographics & behavior</p>
+              <p className="text-xs text-gray-300 mt-1">Demographics & behavior</p>
             </Link>
             <Link
               href="/analytics/trends"
@@ -308,7 +308,7 @@ export default function AnalyticsPage() {
             >
               <TrendIcon className="w-6 h-6 text-pink-400 mb-2" />
               <h3 className="font-medium text-sm">Trend Radar</h3>
-              <p className="text-xs text-gray-500 mt-1">AI topic monitoring</p>
+              <p className="text-xs text-gray-300 mt-1">AI topic monitoring</p>
             </Link>
             <Link
               href="/analytics/competitors"
@@ -316,7 +316,7 @@ export default function AnalyticsPage() {
             >
               <CompetitorIcon className="w-6 h-6 text-blue-400 mb-2" />
               <h3 className="font-medium text-sm">Competitor Analysis</h3>
-              <p className="text-xs text-gray-500 mt-1">Benchmark performance</p>
+              <p className="text-xs text-gray-300 mt-1">Benchmark performance</p>
             </Link>
             <Link
               href="/analytics/viral"
@@ -324,7 +324,7 @@ export default function AnalyticsPage() {
             >
               <ViralIcon className="w-6 h-6 text-orange-400 mb-2" />
               <h3 className="font-medium text-sm">Viral Predictor</h3>
-              <p className="text-xs text-gray-500 mt-1">Score your content</p>
+              <p className="text-xs text-gray-300 mt-1">Score your content</p>
             </Link>
             <Link
               href="/roi"
@@ -332,7 +332,7 @@ export default function AnalyticsPage() {
             >
               <ROIIcon className="w-6 h-6 text-green-400 mb-2" />
               <h3 className="font-medium text-sm">ROI Calculator</h3>
-              <p className="text-xs text-gray-500 mt-1">Track profitability</p>
+              <p className="text-xs text-gray-300 mt-1">Track profitability</p>
             </Link>
             <Link
               href="/settings/payouts"
@@ -340,7 +340,7 @@ export default function AnalyticsPage() {
             >
               <PayoutIcon className="w-6 h-6 text-purple-400 mb-2" />
               <h3 className="font-medium text-sm">Payouts</h3>
-              <p className="text-xs text-gray-500 mt-1">Manage earnings</p>
+              <p className="text-xs text-gray-300 mt-1">Manage earnings</p>
             </Link>
           </div>
         </div>

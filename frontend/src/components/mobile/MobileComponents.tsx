@@ -210,7 +210,7 @@ export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(
         const variants = {
             primary: "bg-purple-600 text-white hover:bg-purple-700",
             secondary: "bg-gray-800 text-white hover:bg-gray-700",
-            ghost: "bg-transparent text-gray-400 hover:text-white hover:bg-gray-800",
+            ghost: "bg-transparent text-gray-200 hover:text-white hover:bg-gray-800",
         };
 
         const sizes = {

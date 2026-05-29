@@ -259,17 +259,24 @@ class SearchService:
         Returns:
             List of trending searches
         """
-        result = await db.execute(
-            text("""
-                SELECT query, COUNT(*) as search_count
-                FROM search_logs
-                WHERE created_at > NOW() - INTERVAL '24 hours'
-                GROUP BY query
-                ORDER BY search_count DESC
-                LIMIT :limit
-            """),
-            {"limit": limit},
-        )
+        from datetime import datetime, timedelta, timezone
+        from sqlalchemy.exc import OperationalError
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+        try:
+            result = await db.execute(
+                text("""
+                    SELECT query, COUNT(*) as search_count
+                    FROM search_logs
+                    WHERE created_at > :cutoff
+                    GROUP BY query
+                    ORDER BY search_count DESC
+                    LIMIT :limit
+                """),
+                {"limit": limit, "cutoff": cutoff},
+            )
+        except OperationalError:
+            # search_logs not present (preview env without analytics ingestion)
+            return []
 
         return [
             {"query": row.query, "count": row.search_count}

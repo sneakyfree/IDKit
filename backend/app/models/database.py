@@ -14,6 +14,31 @@ from sqlalchemy.ext.asyncio import (
 
 from app.config import settings
 
+# --- Dev-only: SQLite compile shims for postgres-specific types -----------------
+# Allows init_db() to create tables on sqlite (preview / tests) without needing PG.
+try:
+    from sqlalchemy.ext.compiler import compiles
+    from sqlalchemy.dialects.postgresql import JSONB, ARRAY, UUID as PGUUID, INET, CIDR
+    @compiles(JSONB, "sqlite")
+    def _sqlite_jsonb(element, compiler, **kw):
+        return "JSON"
+    @compiles(ARRAY, "sqlite")
+    def _sqlite_array(element, compiler, **kw):
+        return "JSON"
+    @compiles(PGUUID, "sqlite")
+    def _sqlite_uuid(element, compiler, **kw):
+        return "VARCHAR(36)"
+    @compiles(INET, "sqlite")
+    def _sqlite_inet(element, compiler, **kw):
+        return "VARCHAR(45)"
+    @compiles(CIDR, "sqlite")
+    def _sqlite_cidr(element, compiler, **kw):
+        return "VARCHAR(45)"
+except Exception:
+    pass
+# --------------------------------------------------------------------------------
+
+
 # Create async engine
 engine = create_async_engine(
     settings.database_url,

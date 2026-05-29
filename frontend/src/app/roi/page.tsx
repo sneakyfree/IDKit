@@ -97,10 +97,10 @@ export default function ROICalculatorPage() {
             {/* Header */}
             <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
                 <div className="flex items-center gap-3 px-4 py-3">
-                    <Link href="/analytics" className="text-gray-400 hover:text-white">
+                    <Link href="/analytics" className="text-gray-200 hover:text-white" aria-label="Back">
                         <BackIcon className="w-6 h-6" />
                     </Link>
-                    <h1 className="text-xl font-bold">ROI Calculator</h1>
+                    <h1 className="text-xl font-bold text-white">ROI Calculator</h1>
                 </div>
                 {/* Tabs */}
                 <div className="flex border-b border-gray-800">
@@ -110,7 +110,7 @@ export default function ROICalculatorPage() {
                             onClick={() => setActiveTab(tab)}
                             className={`flex-1 py-3 text-sm font-medium capitalize transition-colors ${activeTab === tab
                                     ? "text-purple-400 border-b-2 border-purple-400"
-                                    : "text-gray-500 hover:text-gray-300"
+                                    : "text-gray-300 hover:text-gray-300"
                                 }`}
                         >
                             {tab}
@@ -131,7 +131,7 @@ export default function ROICalculatorPage() {
                             {/* Key Metrics */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-gradient-to-br from-green-900/40 to-green-800/20 rounded-2xl p-4 border border-green-500/30">
-                                    <p className="text-gray-400 text-sm">Revenue</p>
+                                    <p className="text-gray-200 text-sm">Revenue</p>
                                     <p className="text-2xl font-bold text-green-400">
                                         {formatCurrency(current?.revenue.total || 0)}
                                     </p>
@@ -143,14 +143,14 @@ export default function ROICalculatorPage() {
                                     )}
                                 </div>
                                 <div className="bg-gradient-to-br from-red-900/40 to-red-800/20 rounded-2xl p-4 border border-red-500/30">
-                                    <p className="text-gray-400 text-sm">Costs</p>
+                                    <p className="text-gray-200 text-sm">Costs</p>
                                     <p className="text-2xl font-bold text-red-400">
                                         {formatCurrency(current?.costs.total || 0)}
                                     </p>
-                                    <p className="text-xs text-gray-500 mt-1">This period</p>
+                                    <p className="text-xs text-gray-300 mt-1">This period</p>
                                 </div>
                                 <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/20 rounded-2xl p-4 border border-purple-500/30">
-                                    <p className="text-gray-400 text-sm">Net Profit</p>
+                                    <p className="text-gray-200 text-sm">Net Profit</p>
                                     <p className={`text-2xl font-bold ${(current?.metrics.net_profit_cents || 0) >= 0 ? "text-green-400" : "text-red-400"
                                         }`}>
                                         {formatCurrency(current?.metrics.net_profit_cents || 0)}
@@ -163,7 +163,7 @@ export default function ROICalculatorPage() {
                                     )}
                                 </div>
                                 <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 rounded-2xl p-4 border border-blue-500/30">
-                                    <p className="text-gray-400 text-sm">ROI</p>
+                                    <p className="text-gray-200 text-sm">ROI</p>
                                     <p className="text-2xl font-bold text-blue-400">
                                         {current?.metrics.roi_percentage.toFixed(1) || 0}%
                                     </p>
@@ -190,7 +190,7 @@ export default function ROICalculatorPage() {
                                         return (
                                             <div key={item.label}>
                                                 <div className="flex justify-between text-sm mb-1">
-                                                    <span className="text-gray-400">{item.label}</span>
+                                                    <span className="text-gray-200">{item.label}</span>
                                                     <span>{formatCurrency(item.value)}</span>
                                                 </div>
                                                 <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -211,25 +211,25 @@ export default function ROICalculatorPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="text-center p-3 bg-gray-800 rounded-xl">
                                         <p className="text-2xl font-bold">{current?.content_pieces || 0}</p>
-                                        <p className="text-xs text-gray-500">Content Pieces</p>
+                                        <p className="text-xs text-gray-300">Content Pieces</p>
                                     </div>
                                     <div className="text-center p-3 bg-gray-800 rounded-xl">
                                         <p className="text-2xl font-bold">
                                             {formatCurrency(current?.metrics.revenue_per_content || 0)}
                                         </p>
-                                        <p className="text-xs text-gray-500">Revenue per Content</p>
+                                        <p className="text-xs text-gray-300">Revenue per Content</p>
                                     </div>
                                     <div className="text-center p-3 bg-gray-800 rounded-xl">
                                         <p className="text-2xl font-bold">
                                             {(current?.metrics.profit_margin || 0).toFixed(1)}%
                                         </p>
-                                        <p className="text-xs text-gray-500">Profit Margin</p>
+                                        <p className="text-xs text-gray-300">Profit Margin</p>
                                     </div>
                                     <div className="text-center p-3 bg-gray-800 rounded-xl">
                                         <p className="text-2xl font-bold">
                                             {(current?.metrics.engagement_rate || 0).toFixed(1)}%
                                         </p>
-                                        <p className="text-xs text-gray-500">Engagement Rate</p>
+                                        <p className="text-xs text-gray-300">Engagement Rate</p>
                                     </div>
                                 </div>
                             </section>
@@ -260,7 +260,7 @@ export default function ROICalculatorPage() {
                                     <div className="space-y-2">
                                         {Object.entries(costs.by_category).map(([category, amount]) => (
                                             <div key={category} className="flex justify-between text-sm">
-                                                <span className="text-gray-400 capitalize">{category.replace("_", " ")}</span>
+                                                <span className="text-gray-200 capitalize">{category.replace("_", " ")}</span>
                                                 <span>{formatCurrency(amount)}</span>
                                             </div>
                                         ))}
@@ -274,7 +274,7 @@ export default function ROICalculatorPage() {
                                     <h2 className="font-semibold">Recent Expenses</h2>
                                 </div>
                                 {costs?.entries.length === 0 ? (
-                                    <div className="p-8 text-center text-gray-500">
+                                    <div className="p-8 text-center text-gray-300">
                                         No expenses recorded yet
                                     </div>
                                 ) : (
@@ -286,9 +286,9 @@ export default function ROICalculatorPage() {
                                                         {entry.category.replace("_", " ")}
                                                     </p>
                                                     {entry.description && (
-                                                        <p className="text-sm text-gray-500">{entry.description}</p>
+                                                        <p className="text-sm text-gray-300">{entry.description}</p>
                                                     )}
-                                                    <p className="text-xs text-gray-600">
+                                                    <p className="text-xs text-gray-200">
                                                         {new Date(entry.expense_date).toLocaleDateString()}
                                                     </p>
                                                 </div>
@@ -298,7 +298,7 @@ export default function ROICalculatorPage() {
                                                     </span>
                                                     <button
                                                         onClick={() => handleDeleteCost(entry.id)}
-                                                        className="p-1 text-gray-500 hover:text-red-400"
+                                                        className="p-1 text-gray-300 hover:text-red-400"
                                                     >
                                                         <TrashIcon className="w-4 h-4" />
                                                     </button>
@@ -315,14 +315,14 @@ export default function ROICalculatorPage() {
                     {activeTab === "history" && (
                         <section className="space-y-4">
                             {history.length === 0 ? (
-                                <div className="bg-gray-900 rounded-2xl p-8 text-center text-gray-500">
+                                <div className="bg-gray-900 rounded-2xl p-8 text-center text-gray-300">
                                     No historical data yet
                                 </div>
                             ) : (
                                 history.map((report) => (
                                     <div key={report.id} className="bg-gray-900 rounded-2xl p-4">
                                         <div className="flex justify-between items-center mb-3">
-                                            <p className="text-sm text-gray-400">
+                                            <p className="text-sm text-gray-200">
                                                 {new Date(report.period_start).toLocaleDateString()} -{" "}
                                                 {new Date(report.period_end).toLocaleDateString()}
                                             </p>
@@ -338,20 +338,20 @@ export default function ROICalculatorPage() {
                                                 <p className="text-lg font-bold text-green-400">
                                                     {formatCurrency(report.revenue.total)}
                                                 </p>
-                                                <p className="text-xs text-gray-500">Revenue</p>
+                                                <p className="text-xs text-gray-300">Revenue</p>
                                             </div>
                                             <div>
                                                 <p className="text-lg font-bold text-red-400">
                                                     {formatCurrency(report.costs.total)}
                                                 </p>
-                                                <p className="text-xs text-gray-500">Costs</p>
+                                                <p className="text-xs text-gray-300">Costs</p>
                                             </div>
                                             <div>
                                                 <p className={`text-lg font-bold ${report.metrics.net_profit_cents >= 0 ? "text-green-400" : "text-red-400"
                                                     }`}>
                                                     {formatCurrency(report.metrics.net_profit_cents)}
                                                 </p>
-                                                <p className="text-xs text-gray-500">Profit</p>
+                                                <p className="text-xs text-gray-300">Profit</p>
                                             </div>
                                         </div>
                                     </div>
@@ -369,9 +369,9 @@ export default function ROICalculatorPage() {
                         <h2 className="text-xl font-bold mb-4">Add Expense</h2>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Amount</label>
+                                <label className="block text-sm text-gray-200 mb-1">Amount</label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">$</span>
                                     <input
                                         type="number"
                                         value={newCost.amount}
@@ -382,8 +382,8 @@ export default function ROICalculatorPage() {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Category</label>
-                                <select
+                                <label className="block text-sm text-gray-200 mb-1">Category</label>
+                                <select aria-label="Filter or select option"
                                     value={newCost.category}
                                     onChange={(e) => setNewCost({ ...newCost, category: e.target.value })}
                                     className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl focus:border-purple-500 focus:outline-none"
@@ -397,7 +397,7 @@ export default function ROICalculatorPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Date</label>
+                                <label className="block text-sm text-gray-200 mb-1">Date</label>
                                 <input
                                     type="date"
                                     value={newCost.date}
@@ -406,7 +406,7 @@ export default function ROICalculatorPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Description (optional)</label>
+                                <label className="block text-sm text-gray-200 mb-1">Description (optional)</label>
                                 <input
                                     type="text"
                                     value={newCost.description}
@@ -426,7 +426,7 @@ export default function ROICalculatorPage() {
                             <button
                                 onClick={handleAddCost}
                                 disabled={!newCost.amount || parseFloat(newCost.amount) <= 0}
-                                className="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-xl font-medium transition-colors"
+                                className="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-80 rounded-xl font-medium transition-colors"
                             >
                                 Add Expense
                             </button>

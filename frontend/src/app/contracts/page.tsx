@@ -86,7 +86,7 @@ export default function ContractsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold">Contract Management</h1>
-                        <p className="text-gray-400">Track and manage your legal agreements</p>
+                        <p className="text-gray-200">Track and manage your legal agreements</p>
                     </div>
                     <button
                         onClick={() => setShowCreateModal(true)}
@@ -101,15 +101,15 @@ export default function ContractsPage() {
                 <div className="grid grid-cols-3 gap-4 mb-8">
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold text-green-400">{stats.active}</p>
-                        <p className="text-sm text-gray-500">Active Contracts</p>
+                        <p className="text-sm text-gray-300">Active Contracts</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold text-yellow-400">{stats.pending}</p>
-                        <p className="text-sm text-gray-500">Pending Signature</p>
+                        <p className="text-sm text-gray-300">Pending Signature</p>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-4">
                         <p className="text-2xl font-bold">${stats.totalValue.toLocaleString()}</p>
-                        <p className="text-sm text-gray-500">Total Contract Value</p>
+                        <p className="text-sm text-gray-300">Total Contract Value</p>
                     </div>
                 </div>
 
@@ -137,9 +137,9 @@ export default function ContractsPage() {
                 {/* Empty State */}
                 {!loading && filteredContracts.length === 0 && (
                     <div className="bg-gray-900 rounded-2xl p-12 text-center">
-                        <FileText className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                        <FileText className="w-16 h-16 mx-auto text-gray-200 mb-4" />
                         <h3 className="text-lg font-medium mb-2">No contracts found</h3>
-                        <p className="text-gray-500 mb-6">Create your first contract or agreement.</p>
+                        <p className="text-gray-300 mb-6">Create your first contract or agreement.</p>
                         <button
                             onClick={() => setShowCreateModal(true)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
@@ -188,7 +188,7 @@ export default function ContractsPage() {
 
 function ContractCard({ contract, onClick }: { contract: Contract; onClick: () => void }) {
     const statusConfig = {
-        draft: { color: "text-gray-400 bg-gray-400/10", icon: Edit },
+        draft: { color: "text-gray-200 bg-gray-400/10", icon: Edit },
         pending: { color: "text-yellow-400 bg-yellow-400/10", icon: Clock },
         signed: { color: "text-green-400 bg-green-400/10", icon: CheckCircle },
         expired: { color: "text-orange-400 bg-orange-400/10", icon: AlertCircle },
@@ -210,7 +210,7 @@ function ContractCard({ contract, onClick }: { contract: Contract; onClick: () =
                     </div>
                     <div>
                         <h3 className="font-semibold">{contract.title}</h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 text-sm text-gray-300">
                             <span>{typeLabel}</span>
                             {contract.value && (
                                 <span className="text-green-400">${contract.value.toLocaleString()}</span>
@@ -221,7 +221,7 @@ function ContractCard({ contract, onClick }: { contract: Contract; onClick: () =
 
                 <div className="flex items-center gap-4">
                     {/* Signature Progress */}
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-300">
                         {contract.parties.filter(p => p.signed).length}/{contract.parties.length} signed
                     </div>
 
@@ -242,7 +242,7 @@ function ContractDetailModal({ contract, onClose }: { contract: Contract; onClos
             <div className="bg-gray-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold">{contract.title}</h2>
+                        <h2 className="text-xl font-bold text-white">{contract.title}</h2>
                         <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">×</button>
                     </div>
                 </div>
@@ -251,26 +251,26 @@ function ContractDetailModal({ contract, onClose }: { contract: Contract; onClos
                     {/* Info Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <p className="text-sm text-gray-500">Type</p>
+                            <p className="text-sm text-gray-300">Type</p>
                             <p className="capitalize">{contract.type}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500">Status</p>
+                            <p className="text-sm text-gray-300">Status</p>
                             <p className="capitalize">{contract.status}</p>
                         </div>
                         {contract.value && (
                             <div>
-                                <p className="text-sm text-gray-500">Value</p>
+                                <p className="text-sm text-gray-300">Value</p>
                                 <p className="text-green-400">${contract.value.toLocaleString()}</p>
                             </div>
                         )}
                         <div>
-                            <p className="text-sm text-gray-500">Start Date</p>
+                            <p className="text-sm text-gray-300">Start Date</p>
                             <p>{new Date(contract.startDate).toLocaleDateString()}</p>
                         </div>
                         {contract.endDate && (
                             <div>
-                                <p className="text-sm text-gray-500">End Date</p>
+                                <p className="text-sm text-gray-300">End Date</p>
                                 <p>{new Date(contract.endDate).toLocaleDateString()}</p>
                             </div>
                         )}
@@ -284,7 +284,7 @@ function ContractDetailModal({ contract, onClose }: { contract: Contract; onClos
                                 <div key={i} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
                                     <div>
                                         <p className="font-medium">{party.name}</p>
-                                        <p className="text-sm text-gray-500">{party.email}</p>
+                                        <p className="text-sm text-gray-300">{party.email}</p>
                                     </div>
                                     {party.signed ? (
                                         <span className="flex items-center gap-1 text-green-400 text-sm">
@@ -363,7 +363,7 @@ function CreateContractModal({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Contract Title *</label>
+                        <label className="block text-sm text-gray-200 mb-1">Contract Title *</label>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -373,8 +373,8 @@ function CreateContractModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Type</label>
-                        <select
+                        <label className="block text-sm text-gray-200 mb-1">Type</label>
+                        <select aria-label="Filter or select option"
                             value={type}
                             onChange={(e) => setType(e.target.value as Contract["type"])}
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -386,7 +386,7 @@ function CreateContractModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Contract Value ($)</label>
+                        <label className="block text-sm text-gray-200 mb-1">Contract Value ($)</label>
                         <input
                             type="number"
                             value={value}
@@ -398,7 +398,7 @@ function CreateContractModal({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Start Date *</label>
+                            <label className="block text-sm text-gray-200 mb-1">Start Date *</label>
                             <input
                                 type="date"
                                 value={startDate}
@@ -408,7 +408,7 @@ function CreateContractModal({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">End Date</label>
+                            <label className="block text-sm text-gray-200 mb-1">End Date</label>
                             <input
                                 type="date"
                                 value={endDate}
@@ -419,7 +419,7 @@ function CreateContractModal({
                     </div>
 
                     <div className="border-t border-gray-800 pt-4">
-                        <p className="text-sm text-gray-400 mb-2">Other Party</p>
+                        <p className="text-sm text-gray-200 mb-2">Other Party</p>
                         <div className="space-y-2">
                             <input
                                 value={partyName}
@@ -444,7 +444,7 @@ function CreateContractModal({
                         <button
                             type="submit"
                             disabled={!title || !startDate}
-                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-50"
+                            className="flex-1 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 disabled:opacity-80"
                         >
                             Create
                         </button>

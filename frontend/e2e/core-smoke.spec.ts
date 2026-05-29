@@ -50,10 +50,10 @@ test.describe("IDKit Core Smoke Tests (No Auth Required)", () => {
 
         test("protected endpoints require auth", async ({ request }) => {
             const endpoints = [
-                "/api/v1/intake/intake/progress",
-                "/api/v1/agents/agents/capabilities",
-                "/api/v1/roi/calculate",
-                "/api/v1/payouts/summary",
+                "/api/v1/intake/progress",
+                "/api/v1/agents/capabilities",
+                "/api/v1/roi/summary",
+                "/api/v1/payouts/balance",
             ];
 
             for (const endpoint of endpoints) {
@@ -65,7 +65,7 @@ test.describe("IDKit Core Smoke Tests (No Auth Required)", () => {
 
     test.describe("Intake Flow", () => {
         test("intake flow endpoint exists", async ({ request }) => {
-            const response = await request.get(`${API_BASE}/api/v1/intake/intake/flow`);
+            const response = await request.get(`${API_BASE}/api/v1/intake/flow`);
             // Should return 401 (requires auth), not 404
             expect(response.status()).toBe(401);
         });
@@ -73,17 +73,17 @@ test.describe("IDKit Core Smoke Tests (No Auth Required)", () => {
 
     test.describe("Agent Endpoints", () => {
         test("agent capabilities endpoint exists", async ({ request }) => {
-            const response = await request.get(`${API_BASE}/api/v1/agents/agents/capabilities`);
+            const response = await request.get(`${API_BASE}/api/v1/agents/capabilities`);
             expect(response.status()).toBe(401); // Requires auth
         });
 
         test("agent task submission endpoint exists", async ({ request }) => {
-            const response = await request.post(`${API_BASE}/api/v1/agents/agents/task`);
+            const response = await request.post(`${API_BASE}/api/v1/agents/task`);
             expect([401, 422]).toContain(response.status());
         });
 
         test("agent pending approvals endpoint exists", async ({ request }) => {
-            const response = await request.get(`${API_BASE}/api/v1/agents/agents/pending`);
+            const response = await request.get(`${API_BASE}/api/v1/agents/pending`);
             expect(response.status()).toBe(401);
         });
     });
