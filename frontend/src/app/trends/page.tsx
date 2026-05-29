@@ -73,8 +73,8 @@ export default function TrendsPage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No trends detected yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Trends will appear as we analyze your niche</p>
+                        <p className="text-zinc-300 text-lg">No trends detected yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Trends will appear as we analyze your niche</p>
                     </div>
                 )}
             </div>

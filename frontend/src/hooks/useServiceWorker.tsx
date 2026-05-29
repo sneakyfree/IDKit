@@ -28,10 +28,14 @@ interface UseServiceWorkerReturn extends ServiceWorkerState {
  * const { isOnline, isRegistered, update } = useServiceWorker();
  */
 export function useServiceWorker(): UseServiceWorkerReturn {
+    // Optimistic default: assume online for the initial paint. navigator.onLine
+    // is unreliable at load (it can report false while actually online on some
+    // networks/browsers), which flashes a false "You're offline" banner. We
+    // instead trust the more-reliable online/offline transition events below.
     const [state, setState] = useState<ServiceWorkerState>({
         isSupported: false,
         isRegistered: false,
-        isOnline: typeof navigator !== "undefined" ? navigator.onLine : true,
+        isOnline: true,
         waitingWorker: null,
         registration: null,
     });

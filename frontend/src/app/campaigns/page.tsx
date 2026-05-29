@@ -75,8 +75,8 @@ export default function CampaignsPage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No campaigns yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Create your first campaign to get started</p>
+                        <p className="text-zinc-300 text-lg">No campaigns yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Create your first campaign to get started</p>
                     </div>
                 )}
             </div>

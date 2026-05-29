@@ -69,8 +69,8 @@ export default function CompetitorsPage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No competitors tracked yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Add competitors to benchmark your growth</p>
+                        <p className="text-zinc-300 text-lg">No competitors tracked yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Add competitors to benchmark your growth</p>
                     </div>
                 )}
             </div>

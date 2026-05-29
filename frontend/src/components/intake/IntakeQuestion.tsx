@@ -52,7 +52,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
             case 'currency':
                 return (
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                         <input
                             type="number"
                             value={value || ''}
@@ -76,7 +76,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                             step={0.1}
                             className="w-full pr-10 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                         />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">%</span>
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                     </div>
                 );
 
@@ -189,7 +189,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                                 <span className="text-purple-600">Connect →</span>
                             </button>
                         ))}
-                        <p className="text-sm text-gray-300 text-center mt-2">
+                        <p className="text-sm text-gray-500 text-center mt-2">
                             You can skip this and connect accounts later
                         </p>
                     </div>
@@ -222,7 +222,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
                         type="button"
                         onMouseEnter={() => setShowTooltip(true)}
                         onMouseLeave={() => setShowTooltip(false)}
-                        className="text-gray-200 hover:text-gray-200 relative"
+                        className="text-gray-600 hover:text-gray-600 relative"
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path
@@ -244,7 +244,7 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
 
             {/* Description */}
             {question.description && (
-                <p className="text-sm text-gray-300">{question.description}</p>
+                <p className="text-sm text-gray-500">{question.description}</p>
             )}
 
             {/* Input */}
@@ -254,12 +254,12 @@ export function IntakeQuestion({ question, value, isUnsure, onChange }: IntakeQu
 
             {/* Help Text */}
             {question.help_text && (
-                <p className="text-sm text-gray-200">{question.help_text}</p>
+                <p className="text-sm text-gray-600">{question.help_text}</p>
             )}
 
             {/* I'm Not Sure Option */}
             {question.allow_unsure !== false && (
-                <label className="flex items-center mt-2 text-sm text-gray-200 cursor-pointer group">
+                <label className="flex items-center mt-2 text-sm text-gray-600 cursor-pointer group">
                     <input
                         type="checkbox"
                         checked={isUnsure}

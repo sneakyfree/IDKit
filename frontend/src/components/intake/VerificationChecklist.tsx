@@ -76,10 +76,10 @@ export function VerificationChecklist({ tasks, onComplete }: VerificationCheckli
                         )}
                     </div>
 
-                    <p className="text-sm text-gray-200 mt-1">{task.instructions}</p>
+                    <p className="text-sm text-gray-600 mt-1">{task.instructions}</p>
 
                     {task.current_value && (
-                        <p className="text-sm text-gray-300 mt-2">
+                        <p className="text-sm text-gray-500 mt-2">
                             Current value: <span className="font-medium">{formatValue(task.current_value)}</span>
                         </p>
                     )}
@@ -106,7 +106,7 @@ export function VerificationChecklist({ tasks, onComplete }: VerificationCheckli
                     <h3 className="text-lg font-semibold text-gray-900">
                         Verification Checklist
                     </h3>
-                    <p className="text-sm text-gray-200">
+                    <p className="text-sm text-gray-600">
                         Complete these to improve your profile accuracy
                     </p>
                 </div>
@@ -135,7 +135,7 @@ export function VerificationChecklist({ tasks, onComplete }: VerificationCheckli
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-300 text-center">
+                <p className="text-xs text-gray-500 text-center">
                     Verifying your information helps us provide more accurate recommendations
                 </p>
             </div>

@@ -54,7 +54,7 @@ export default function ScenariosDashboard() {
             acc[s.type] = (acc[s.type] || 0) + 1;
             return acc;
         }, {} as Record<string, number>),
-        averageConfidence: scenarios.reduce((sum, s) => sum + s.confidence, 0) / scenarios.length,
+        averageConfidence: scenarios.length ? scenarios.reduce((sum, s) => sum + s.confidence, 0) / scenarios.length : 0,
         totalPotentialRevenue: scenarios.reduce((sum, s) => sum + (s.potentialRevenue || 0), 0),
     };
 

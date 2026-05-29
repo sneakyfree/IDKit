@@ -73,8 +73,8 @@ export default function RepurposePage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No repurposed content yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Transform your best content for new audiences</p>
+                        <p className="text-zinc-300 text-lg">No repurposed content yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Transform your best content for new audiences</p>
                     </div>
                 )}
             </div>

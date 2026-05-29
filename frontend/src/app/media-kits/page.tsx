@@ -82,8 +82,8 @@ export default function MediaKitsPage() {
                     ))
                 ) : (
                     <div className="col-span-2 text-center py-16">
-                        <p className="text-zinc-500 text-lg">No media kits yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Create a media kit to showcase your brand</p>
+                        <p className="text-zinc-300 text-lg">No media kits yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Create a media kit to showcase your brand</p>
                     </div>
                 )}
             </div>

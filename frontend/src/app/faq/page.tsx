@@ -58,17 +58,17 @@ export default function FAQPage() {
       <div className="max-w-4xl mx-auto py-12 px-4">
         {filtered.map((cat, ci) => (
           <div key={cat.name} className="mb-10">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><span>{cat.icon}</span>{cat.name}</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-900"><span>{cat.icon}</span>{cat.name}</h2>
             <div className="space-y-3">
               {cat.items.map((faq, fi) => {
                 const key = `${ci}-${fi}`;
                 return (
                   <div key={key} className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                    <button onClick={() => setOpen(p => ({...p, [key]: !p[key]}))} className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50">
+                    <button onClick={() => setOpen(p => ({...p, [key]: !p[key]}))} className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 text-gray-900">
                       <span className="font-medium">{faq.q}</span>
                       <span className={`transition-transform ${open[key] ? 'rotate-180' : ''}`}>▼</span>
                     </button>
-                    {open[key] && <div className="px-4 pb-4 text-gray-200 whitespace-pre-line">{faq.a}</div>}
+                    {open[key] && <div className="px-4 pb-4 text-gray-600 whitespace-pre-line">{faq.a}</div>}
                   </div>
                 );
               })}

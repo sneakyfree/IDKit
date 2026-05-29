@@ -71,8 +71,8 @@ export default function SmartReplyPage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No smart replies yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Connect your inbox to get AI-generated replies</p>
+                        <p className="text-zinc-300 text-lg">No smart replies yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Connect your inbox to get AI-generated replies</p>
                     </div>
                 )}
             </div>

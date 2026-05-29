@@ -78,8 +78,8 @@ export default function CompliancePage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">All compliant ✓</p>
-                        <p className="text-zinc-600 text-sm mt-2">No outstanding compliance items</p>
+                        <p className="text-zinc-300 text-lg">All compliant ✓</p>
+                        <p className="text-zinc-400 text-sm mt-2">No outstanding compliance items</p>
                     </div>
                 )}
             </div>

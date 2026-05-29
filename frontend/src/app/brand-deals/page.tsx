@@ -54,11 +54,13 @@ export default function BrandDealsPage() {
 
             <div className="space-y-4">
                 {deals.length > 0 ? (
-                    deals.map((deal) => (
-                        <div key={deal.id} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    deals.map((deal, idx) => (
+                        <div key={deal.id ?? idx} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 hover:border-zinc-700 transition-colors">
                             <div className="flex items-center justify-between mb-2">
                                 <h3 className="font-semibold text-lg">{deal.title || deal.brand_name}</h3>
-                                <span className="text-xs px-2 py-1 rounded-full bg-purple-900/50 text-purple-300">{deal.status}</span>
+                                {deal.status && (
+                                    <span className="text-xs px-2 py-1 rounded-full bg-purple-900/50 text-purple-300">{deal.status}</span>
+                                )}
                             </div>
                             <p className="text-zinc-400 text-sm">{deal.brand_name}</p>
                             {deal.budget > 0 && (
@@ -68,8 +70,8 @@ export default function BrandDealsPage() {
                     ))
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-zinc-500 text-lg">No brand deals yet</p>
-                        <p className="text-zinc-600 text-sm mt-2">Create your first deal to start monetizing</p>
+                        <p className="text-zinc-300 text-lg">No brand deals yet</p>
+                        <p className="text-zinc-400 text-sm mt-2">Create your first deal to start monetizing</p>
                     </div>
                 )}
             </div>
