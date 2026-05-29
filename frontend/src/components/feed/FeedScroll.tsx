@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Link from "next/link";
 import { PostCard } from "./PostCard";
 import { feed } from "@/lib/api";
 import type { FeedPostResponse } from "@/lib/api";
@@ -88,6 +89,9 @@ export function FeedScroll() {
             ? "Follow creators to see their posts"
             : "Be the first to post!"}
         </p>
+        <Link href="/studio" className="mt-4 px-5 py-2 bg-purple-600 text-white rounded-full text-sm font-medium hover:bg-purple-700 transition-colors">
+          Create your first post
+        </Link>
       </div>
     );
   }

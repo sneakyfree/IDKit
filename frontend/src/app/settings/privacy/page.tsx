@@ -567,6 +567,7 @@ function ConsentToggle({
         <p className="text-xs text-gray-200 mt-0.5">{item.description}</p>
       </div>
       <Toggle
+        ariaLabel={item.label}
         enabled={isBoolean ? value : false}
         onChange={() => onChange(isBoolean ? !value : true)}
         disabled={disabled}
@@ -579,15 +580,20 @@ function Toggle({
   enabled,
   onChange,
   disabled,
+  ariaLabel,
 }: {
   enabled: boolean;
   onChange: () => void;
   disabled: boolean;
+  ariaLabel?: string;
 }) {
   return (
     <button
       onClick={onChange}
       disabled={disabled}
+      aria-label={ariaLabel || "Toggle setting"}
+      role="switch"
+      aria-checked={enabled}
       className={`relative w-11 h-6 rounded-full transition-colors disabled:opacity-80 ${
         enabled ? "bg-purple-600" : "bg-gray-700"
       }`}

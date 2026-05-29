@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
           <h1 className="text-xl font-bold text-white">Analytics</h1>
           <Link
             href="/analytics/export"
-            className="px-4 py-2 bg-gray-800 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-gray-800 rounded-full text-sm font-medium text-white hover:bg-gray-700 transition-colors"
           >
             Export
           </Link>
