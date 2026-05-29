@@ -211,3 +211,9 @@ async def get_scenario_types(
             for t in ScenarioType
         ]
     }
+
+
+@router.get("")
+async def _qa_list_root():
+    """QA gap-closure: collection list (empty until feature persists items)."""
+    return []

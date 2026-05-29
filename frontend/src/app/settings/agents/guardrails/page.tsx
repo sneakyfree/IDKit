@@ -64,7 +64,7 @@ export default function GuardrailSettingsPage() {
     const fetchConfig = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/v1/agent-memory/guardrails');
+            const res = await fetch('/api/v1/agent-memory/guardrails', { headers: { Authorization: 'Bearer ' + (typeof localStorage !== 'undefined' ? (localStorage.getItem('access_token') || '') : '') } });
             if (res.ok) {
                 const data = await res.json();
                 setConfig(data);

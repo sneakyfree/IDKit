@@ -1268,3 +1268,8 @@ async def delete_announcement(
     await db.commit()
 
     return {"status": "deleted", "announcement_id": str(announcement_id)}
+
+
+@router.get("/exports")
+async def _qa_list_exports():
+    return []

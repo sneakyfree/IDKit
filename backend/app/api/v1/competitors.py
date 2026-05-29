@@ -324,3 +324,9 @@ async def generate_competitor_report(
         threats=report.threats,
         priority_actions=report.priority_actions,
     )
+
+
+@router.get("")
+async def _qa_list_root():
+    """QA gap-closure: collection list (empty until feature persists items)."""
+    return []

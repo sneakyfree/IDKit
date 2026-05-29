@@ -31,8 +31,8 @@ export default function AgentDashboard() {
         async function fetchData() {
             try {
                 const [agentsRes, approvalsRes] = await Promise.allSettled([
-                    apiRequest<AgentCapability[]>('/api/v1/agents'),
-                    apiRequest<PendingApproval[]>('/api/v1/agents/approvals'),
+                    apiRequest<AgentCapability[]>('/api/v1/agents/capabilities'),
+                    apiRequest<PendingApproval[]>('/api/v1/agents/pending'),
                 ]);
                 if (agentsRes.status === 'fulfilled') {
                     setAgents(Array.isArray(agentsRes.value) ? agentsRes.value : []);

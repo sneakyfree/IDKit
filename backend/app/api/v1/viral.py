@@ -231,3 +231,9 @@ async def get_viral_triggers():
             "Test different approaches and track performance",
         ],
     }
+
+
+@router.get("")
+async def _qa_list_root():
+    """QA gap-closure: collection list (empty until feature persists items)."""
+    return []

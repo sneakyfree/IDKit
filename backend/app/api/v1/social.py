@@ -738,6 +738,40 @@ async def mark_comment_read(
 # ==================== Analytics ====================
 
 
+@router.get("/analytics/overview")
+async def get_analytics_overview(
+    db: DB,
+    current_user: CurrentUser,
+):
+    """Get unified analytics overview across all connected accounts."""
+    result = await db.execute(
+        select(SocialAccount).where(
+            SocialAccount.user_id == current_user.id,
+            SocialAccount.is_active == True,
+        )
+    )
+    accounts = result.scalars().all()
+
+    total_followers = sum(a.follower_count for a in accounts)
+    total_following = sum(a.following_count for a in accounts)
+
+    platforms = {}
+    for account in accounts:
+        if account.platform not in platforms:
+            platforms[account.platform] = {
+                "accounts": 0,
+                "followers": 0,
+            }
+        platforms[account.platform]["accounts"] += 1
+        platforms[account.platform]["followers"] += account.follower_count
+
+    return {
+        "total_accounts": len(accounts),
+        "total_followers": total_followers,
+        "total_following": total_following,
+        "platforms": platforms,
+    }
+
 @router.get("/analytics/{account_id}", response_model=List[AnalyticsResponse])
 async def get_analytics(
     account_id: uuid.UUID,
@@ -835,37 +869,3 @@ async def get_analytics(
             detail=f"Failed to fetch analytics: {e}",
         )
 
-
-@router.get("/analytics/overview")
-async def get_analytics_overview(
-    db: DB,
-    current_user: CurrentUser,
-):
-    """Get unified analytics overview across all connected accounts."""
-    result = await db.execute(
-        select(SocialAccount).where(
-            SocialAccount.user_id == current_user.id,
-            SocialAccount.is_active == True,
-        )
-    )
-    accounts = result.scalars().all()
-
-    total_followers = sum(a.follower_count for a in accounts)
-    total_following = sum(a.following_count for a in accounts)
-
-    platforms = {}
-    for account in accounts:
-        if account.platform not in platforms:
-            platforms[account.platform] = {
-                "accounts": 0,
-                "followers": 0,
-            }
-        platforms[account.platform]["accounts"] += 1
-        platforms[account.platform]["followers"] += account.follower_count
-
-    return {
-        "total_accounts": len(accounts),
-        "total_followers": total_followers,
-        "total_following": total_following,
-        "platforms": platforms,
-    }

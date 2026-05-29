@@ -66,7 +66,7 @@ export default function LogsPage() {
             if (level !== "All") params.set("level", level);
             if (search) params.set("q", search);
 
-            const res = await fetch(`${API_BASE}/api/v1/operations/logs?${params}`, { headers });
+            const res = await fetch(`${API_BASE}/api/v1/ops/logs?${params}`, { headers });
             if (res.ok) {
                 const data = await res.json();
                 setLogs(data.entries || []);

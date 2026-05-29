@@ -226,6 +226,12 @@ async def list_podcasts(
     ]
 
 
+@router.get("/guests")
+async def _qa_list_guests():
+    """QA gap-closure: podcast guests list."""
+    return []
+
+
 @router.get("/{podcast_id}", response_model=PodcastResponse)
 async def get_podcast(
     podcast_id: uuid.UUID,

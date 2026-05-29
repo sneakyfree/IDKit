@@ -69,7 +69,7 @@ export function AgentActivityFeed({
 
     const fetchActivities = async () => {
         try {
-            const res = await fetch('/api/v1/agents/activity');
+            const res = await fetch('/api/v1/agents/history', { headers: { Authorization: 'Bearer ' + (typeof localStorage !== 'undefined' ? (localStorage.getItem('access_token') || '') : '') } });
             if (res.ok) {
                 const data = await res.json();
                 setActivities(data.activities || []);

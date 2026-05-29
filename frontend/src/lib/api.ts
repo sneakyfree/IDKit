@@ -508,24 +508,24 @@ export interface CreateABTestRequest {
 
 export const testing = {
   create: (data: CreateABTestRequest) =>
-    apiRequest<ABTestResponse>("/api/v1/testing", {
+    apiRequest<ABTestResponse>("/api/v1/tests", {
       method: "POST",
       body: data,
     }),
 
   list: (status?: string, testType?: string, limit = 20, offset = 0) =>
     apiRequest<ABTestResponse[]>(
-      `/api/v1/testing?limit=${limit}&offset=${offset}${status ? `&status=${status}` : ""}${testType ? `&test_type=${testType}` : ""}`
+      `/api/v1/tests?limit=${limit}&offset=${offset}${status ? `&status=${status}` : ""}${testType ? `&test_type=${testType}` : ""}`
     ),
 
   get: (testId: string) =>
-    apiRequest<ABTestResponse>(`/api/v1/testing/${testId}`),
+    apiRequest<ABTestResponse>(`/api/v1/tests/${testId}`),
 
   start: (testId: string) =>
-    apiRequest<ABTestResponse>(`/api/v1/testing/${testId}/start`, { method: "POST" }),
+    apiRequest<ABTestResponse>(`/api/v1/tests/${testId}/start`, { method: "POST" }),
 
   end: (testId: string) =>
-    apiRequest<ABTestResponse>(`/api/v1/testing/${testId}/end`, { method: "POST" }),
+    apiRequest<ABTestResponse>(`/api/v1/tests/${testId}/end`, { method: "POST" }),
 
   analyze: (testId: string) =>
     apiRequest<{
@@ -534,10 +534,10 @@ export const testing = {
       statistical_significance: number;
       is_significant: boolean;
       recommendation: string;
-    }>(`/api/v1/testing/${testId}/analyze`),
+    }>(`/api/v1/tests/${testId}/analyze`),
 
   delete: (testId: string) =>
-    apiRequest(`/api/v1/testing/${testId}`, { method: "DELETE" }),
+    apiRequest(`/api/v1/tests/${testId}`, { method: "DELETE" }),
 };
 
 // ==================== Approvals ====================

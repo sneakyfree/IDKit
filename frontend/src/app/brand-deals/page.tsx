@@ -22,7 +22,7 @@ export default function BrandDealsPage() {
         async function load() {
             try {
                 const result = await apiRequest<{ items: BrandDeal[] } | BrandDeal[]>(
-                    "/api/v1/brand-deals"
+                    "/api/v1/brand-deals/opportunities"
                 );
                 setDeals(Array.isArray(result) ? result : result?.items || []);
             } catch (err: unknown) {

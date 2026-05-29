@@ -72,7 +72,7 @@ async def calculate_roi(
 
     try:
         report_data = await roi_service.calculate_roi(
-            user_id=str(current_user.id),
+            user_id=current_user.id,
             start_date=request.start_date,
             end_date=request.end_date,
             save_report=True,
@@ -110,7 +110,7 @@ async def get_roi_summary(
     # Calculate current period
     try:
         current_data = await roi_service.calculate_roi(
-            user_id=str(current_user.id),
+            user_id=current_user.id,
             start_date=current_start,
             end_date=today,
             save_report=False,
@@ -126,7 +126,7 @@ async def get_roi_summary(
     # Calculate previous period
     try:
         prev_data = await roi_service.calculate_roi(
-            user_id=str(current_user.id),
+            user_id=current_user.id,
             start_date=prev_start,
             end_date=prev_end,
             save_report=False,
@@ -174,7 +174,7 @@ async def get_roi_history(
     roi_service = ROIService(db)
 
     reports = await roi_service.get_historical_reports(
-        user_id=str(current_user.id),
+        user_id=current_user.id,
         limit=limit,
     )
 
@@ -231,7 +231,7 @@ async def get_roi_projections(
     roi_service = ROIService(db)
 
     projections_data = await roi_service.generate_projections(
-        user_id=str(current_user.id),
+        user_id=current_user.id,
         months_ahead=months,
     )
 
@@ -274,7 +274,7 @@ async def add_cost_entry(
 
     try:
         entry = await roi_service.add_cost_entry(
-            user_id=str(current_user.id),
+            user_id=current_user.id,
             amount_cents=request.amount_cents,
             category=request.category.value,
             expense_date=request.expense_date,
@@ -314,7 +314,7 @@ async def get_cost_entries(
     roi_service = ROIService(db)
 
     entries = await roi_service.get_cost_entries(
-        user_id=str(current_user.id),
+        user_id=current_user.id,
         start_date=start_date,
         end_date=end_date,
         category=category,
@@ -356,7 +356,7 @@ async def delete_cost_entry(
     roi_service = ROIService(db)
 
     deleted = await roi_service.delete_cost_entry(
-        user_id=str(current_user.id),
+        user_id=current_user.id,
         entry_id=entry_id,
     )
 

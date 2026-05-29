@@ -68,6 +68,7 @@ export function IntakeWizard({ flowId = 'creator_onboarding_v1', onComplete }: I
         try {
             setIsLoading(true);
             const response = await fetch(`/api/v1/intake/flow?flow_id=${flowId}`, {
+                headers: { Authorization: 'Bearer ' + (typeof localStorage !== 'undefined' ? (localStorage.getItem('access_token') || '') : '') },
                 credentials: 'include',
             });
 

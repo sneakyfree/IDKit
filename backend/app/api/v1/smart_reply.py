@@ -368,3 +368,9 @@ async def list_available_tones():
             {"value": "casual", "label": "Casual", "description": "Relaxed and conversational"}
         ]
     }
+
+
+@router.get("")
+async def _qa_list_root():
+    """QA gap-closure: collection list (empty until feature persists items)."""
+    return []

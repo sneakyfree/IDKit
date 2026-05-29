@@ -345,6 +345,57 @@ async def list_content(
     ]
 
 
+@router.get("/templates", response_model=List[TemplateResponse])
+async def list_templates(
+    db: DB,
+    current_user: CurrentUser,
+    content_type: Optional[str] = None,
+    include_system: bool = Query(default=True),
+    include_public: bool = Query(default=True),
+):
+    """List available templates."""
+    from sqlalchemy import or_
+
+    conditions = [ContentTemplate.user_id == current_user.id]
+
+    if include_system:
+        conditions.append(ContentTemplate.is_system == True)
+
+    if include_public:
+        conditions.append(ContentTemplate.is_public == True)
+
+    query = select(ContentTemplate).where(or_(*conditions))
+
+    if content_type:
+        query = query.where(ContentTemplate.content_type == content_type)
+
+    query = query.order_by(desc(ContentTemplate.use_count))
+
+    result = await db.execute(query)
+    templates = result.scalars().all()
+
+    return [
+        TemplateResponse(
+            id=t.id,
+            name=t.name,
+            description=t.description,
+            content_type=t.content_type,
+            template_body=t.template_body,
+            variables=t.variables,
+            target_platforms=t.target_platforms,
+            category=t.category,
+            tags=t.tags,
+            use_count=t.use_count,
+            is_system=t.is_system,
+            is_public=t.is_public,
+        )
+        for t in templates
+    ]
+
+
+# ==================== Jobs ====================
+
+
 @router.get("/{content_id}", response_model=ContentResponse)
 async def get_content(
     content_id: uuid.UUID,
@@ -496,57 +547,6 @@ async def create_brand_voice(
 
 
 # ==================== Templates ====================
-
-
-@router.get("/templates", response_model=List[TemplateResponse])
-async def list_templates(
-    db: DB,
-    current_user: CurrentUser,
-    content_type: Optional[str] = None,
-    include_system: bool = Query(default=True),
-    include_public: bool = Query(default=True),
-):
-    """List available templates."""
-    from sqlalchemy import or_
-
-    conditions = [ContentTemplate.user_id == current_user.id]
-
-    if include_system:
-        conditions.append(ContentTemplate.is_system == True)
-
-    if include_public:
-        conditions.append(ContentTemplate.is_public == True)
-
-    query = select(ContentTemplate).where(or_(*conditions))
-
-    if content_type:
-        query = query.where(ContentTemplate.content_type == content_type)
-
-    query = query.order_by(desc(ContentTemplate.use_count))
-
-    result = await db.execute(query)
-    templates = result.scalars().all()
-
-    return [
-        TemplateResponse(
-            id=t.id,
-            name=t.name,
-            description=t.description,
-            content_type=t.content_type,
-            template_body=t.template_body,
-            variables=t.variables,
-            target_platforms=t.target_platforms,
-            category=t.category,
-            tags=t.tags,
-            use_count=t.use_count,
-            is_system=t.is_system,
-            is_public=t.is_public,
-        )
-        for t in templates
-    ]
-
-
-# ==================== Jobs ====================
 
 
 @router.get("/jobs", response_model=List[JobStatusResponse])

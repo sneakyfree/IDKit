@@ -23,7 +23,7 @@ export default function AffiliatesPage() {
         async function load() {
             try {
                 const result = await apiRequest<{ items: Affiliate[] } | Affiliate[]>(
-                    "/api/v1/affiliates"
+                    "/api/v1/affiliates/links"
                 );
                 setAffiliates(Array.isArray(result) ? result : result?.items || []);
             } catch (err: unknown) {

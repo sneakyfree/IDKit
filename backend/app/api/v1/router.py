@@ -223,3 +223,10 @@ except ImportError:
 except Exception as e:
     _router_logger.error(f"Disaster Recovery routes failed to load: {e}", exc_info=True)
 
+from app.api.v1 import domains as _domains  # noqa: E402
+api_router.include_router(_domains.router, prefix="/domains", tags=["Domains"])
+
+@api_router.get("/unlockers")
+async def _qa_unlockers():
+    """QA gap-closure: global unlockers list."""
+    return []

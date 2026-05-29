@@ -231,12 +231,17 @@ class ABTestingService:
         self,
         user_id: uuid.UUID,
         status: Optional[TestStatus] = None,
+        test_type: Optional["TestType"] = None,
+        limit: int = 20,
+        offset: int = 0,
     ) -> List[ABTest]:
         """Get all tests for a user."""
         tests = self._tests_cache.get(user_id, [])
         if status:
             tests = [t for t in tests if t.status == status]
-        return tests
+        if test_type:
+            tests = [t for t in tests if getattr(t, "test_type", None) == test_type]
+        return tests[offset:offset + limit]
 
     async def start_test(
         self,

@@ -48,7 +48,7 @@ async def start_onboarding(
     """
     # Check if user already has a Connect account
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     existing_account = result.scalar_one_or_none()
 
@@ -64,7 +64,7 @@ async def start_onboarding(
     else:
         try:
             account_data = await stripe_service.create_connect_account(
-                user_id=str(current_user.id),
+                user_id=current_user.id,
                 email=current_user.email,
             )
         except Exception as e:
@@ -76,7 +76,7 @@ async def start_onboarding(
 
         new_account = ConnectAccount(
             id=str(uuid4()),
-            user_id=str(current_user.id),
+            user_id=current_user.id,
             stripe_account_id=account_data["account_id"],
         )
         db.add(new_account)
@@ -101,22 +101,19 @@ async def start_onboarding(
     return OnboardingLinkResponse(url=onboarding_url)
 
 
-@router.get("/account", response_model=ConnectAccountResponse)
+@router.get("/account", response_model=Optional[ConnectAccountResponse])
 async def get_account_status(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """Get the status of the user's Connect account."""
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     account = result.scalar_one_or_none()
 
     if not account:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No payout account found. Please complete onboarding first.",
-        )
+        return None
 
     # Fetch latest status from Stripe
     try:
@@ -166,7 +163,7 @@ async def get_balance(
 ):
     """Get the current balance for the user's Connect account."""
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     account = result.scalar_one_or_none()
 
@@ -211,7 +208,7 @@ async def get_payout_history(
 ):
     """Get transfer and payout history."""
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     account = result.scalar_one_or_none()
 
@@ -262,7 +259,7 @@ async def initiate_payout(
 ):
     """Initiate a payout to the creator's bank account."""
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     account = result.scalar_one_or_none()
 
@@ -345,7 +342,7 @@ async def get_dashboard_link(
 ):
     """Get a link to the Stripe Express Dashboard."""
     result = await db.execute(
-        select(ConnectAccount).where(ConnectAccount.user_id == str(current_user.id))
+        select(ConnectAccount).where(ConnectAccount.user_id == current_user.id)
     )
     account = result.scalar_one_or_none()
 

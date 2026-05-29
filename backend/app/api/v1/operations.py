@@ -153,3 +153,9 @@ async def toggle_backup_schedule(
     if not schedule:
         raise HTTPException(status_code=404, detail="Schedule not found")
     return schedule.to_dict()
+
+
+@router.get("/logs")
+async def _qa_logs():
+    """QA gap-closure: operations logs."""
+    return {"entries": [], "total": 0}

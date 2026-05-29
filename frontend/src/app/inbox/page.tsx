@@ -36,7 +36,7 @@ export default function InboxPage() {
       try {
         const [notifResponse, msgResponse] = await Promise.allSettled([
           apiRequest<Notification[]>("/api/v1/notifications"),
-          apiRequest<Message[]>("/api/v1/messages"),
+          apiRequest<Message[]>("/api/v1/inbox/messages"),
         ]);
         if (notifResponse.status === "fulfilled") {
           setNotifications(Array.isArray(notifResponse.value) ? notifResponse.value : []);

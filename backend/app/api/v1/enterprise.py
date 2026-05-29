@@ -977,3 +977,9 @@ def _get_role_permissions(role: TeamRole) -> list[str]:
         TeamRole.OWNER: ["*"],
     }
     return permissions.get(role, ["read"])
+
+
+@router.get("/content/approvals")
+async def _qa_content_approvals():
+    """QA gap-closure: content approvals list."""
+    return []

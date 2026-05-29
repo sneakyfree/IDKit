@@ -22,7 +22,7 @@ export default function PushPage() {
         async function load() {
             try {
                 const result = await apiRequest<{ items: PushNotification[] } | PushNotification[]>(
-                    "/api/v1/push"
+                    "/api/v1/push/channels"
                 );
                 setNotifications(Array.isArray(result) ? result : result?.items || []);
             } catch (err: unknown) {
