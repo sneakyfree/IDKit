@@ -587,20 +587,27 @@ function Toggle({
   disabled: boolean;
   ariaLabel?: string;
 }) {
+  const [on, setOn] = useState(enabled);
+  useEffect(() => {
+    setOn(enabled);
+  }, [enabled]);
   return (
     <button
-      onClick={onChange}
+      onClick={() => {
+        setOn((v) => !v);
+        onChange();
+      }}
       disabled={disabled}
       aria-label={ariaLabel || "Toggle setting"}
       role="switch"
-      aria-checked={enabled}
+      aria-checked={on}
       className={`relative w-11 h-6 rounded-full transition-colors disabled:opacity-80 ${
-        enabled ? "bg-purple-600" : "bg-gray-700"
+        on ? "bg-purple-600" : "bg-gray-700"
       }`}
     >
       <div
         className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-          enabled ? "translate-x-6" : "translate-x-1"
+          on ? "translate-x-6" : "translate-x-1"
         }`}
       />
     </button>
