@@ -108,6 +108,17 @@ from app.models.revenue_sharing import (
 )
 from app.models.performance import PerformanceMetric
 
+from app.models.agent import AgentTask, AgentActionLog, PendingApproval
+from app.models.audit import AuditSnapshotRecord, VersionRecord, DeltaReportRecord
+from app.models.intake import IntakeProgress, IntakeAnswer, ContradictionRecord, VerificationTask
+from app.models.notification import NotificationType, Notification, NotificationSettings
+from app.models.payment import SubscriptionPlan, Subscription, PaymentMethod, Payment, UsageRecord, Invoice
+from app.models.revenue import BrandDealRecord, RevenueEntryRecord, PayoutRecord, PricingBenchmarkRecord
+from app.models.scenario import SavedScenario, BlockerRecord, UnlockerProgress, SimulationRecord
+from app.models.schedule import ScheduledPost
+# NOTE: app/models/twin.py is intentionally NOT imported - dead duplicate of
+# ai_twin.py (redefines ai_twins, collides). See state-of-union audit 2026-05-28.
+
 __all__ = [
     "Base",
     "User",
@@ -176,6 +187,34 @@ __all__ = [
     "RevenueAgreement",
     "RevenueDistribution",
     "PerformanceMetric",
+    "AgentTask",
+    "AgentActionLog",
+    "PendingApproval",
+    "AuditSnapshotRecord",
+    "VersionRecord",
+    "DeltaReportRecord",
+    "IntakeProgress",
+    "IntakeAnswer",
+    "ContradictionRecord",
+    "VerificationTask",
+    "NotificationType",
+    "Notification",
+    "NotificationSettings",
+    "SubscriptionPlan",
+    "Subscription",
+    "PaymentMethod",
+    "Payment",
+    "UsageRecord",
+    "Invoice",
+    "BrandDealRecord",
+    "RevenueEntryRecord",
+    "PayoutRecord",
+    "PricingBenchmarkRecord",
+    "SavedScenario",
+    "BlockerRecord",
+    "UnlockerProgress",
+    "SimulationRecord",
+    "ScheduledPost",
 ]
 
 

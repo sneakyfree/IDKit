@@ -19,6 +19,7 @@ from sqlalchemy import (
     Text,
     Index,
 )
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from app.models.base import Base
@@ -61,7 +62,7 @@ class ConnectAccount(Base):
     __tablename__ = "connect_accounts"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False, unique=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True)
     stripe_account_id = Column(String(255), nullable=False, unique=True, index=True)
 
     status = Column(

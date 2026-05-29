@@ -18,7 +18,7 @@ from sqlalchemy import (
     Text,
     Index,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from app.models.base import Base
@@ -35,7 +35,7 @@ class ROIReport(Base):
     __tablename__ = "roi_reports"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
     # Time period
     period_start = Column(DateTime, nullable=False)
@@ -99,7 +99,7 @@ class CostEntry(Base):
     __tablename__ = "cost_entries"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
     # Cost details
     amount_cents = Column(Integer, nullable=False)
