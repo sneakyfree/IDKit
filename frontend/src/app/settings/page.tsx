@@ -36,7 +36,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <UserIcon className="w-5 h-5 text-gray-200" />
-                <span>Edit Profile</span>
+                <span className="text-gray-100">Edit Profile</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -47,7 +47,7 @@ export default function SettingsPage() {
               className="flex items-center justify-between p-4 hover:bg-gray-800 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span>Privacy</span>
+                <span className="text-gray-100">Privacy</span>
               </div>
               <span className="text-sm text-gray-300">›</span>
             </Link>
@@ -57,7 +57,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <ShieldIcon className="w-5 h-5 text-gray-200" />
-                <span>Security & Privacy</span>
+                <span className="text-gray-100">Security & Privacy</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -68,7 +68,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <LinkIcon className="w-5 h-5 text-gray-200" />
-                <span>Connected Accounts</span>
+                <span className="text-gray-100">Connected Accounts</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -82,7 +82,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <BellIcon className="w-5 h-5 text-gray-200" />
-                <span>Push Notifications</span>
+                <span className="text-gray-100">Push Notifications</span>
               </div>
               <Toggle
                 enabled={notifications.pushEnabled}
@@ -95,7 +95,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <MailIcon className="w-5 h-5 text-gray-200" />
-                <span>Email Digest</span>
+                <span className="text-gray-100">Email Digest</span>
               </div>
               <Toggle
                 enabled={notifications.emailDigest}
@@ -108,7 +108,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <UsersIcon className="w-5 h-5 text-gray-200" />
-                <span>New Followers</span>
+                <span className="text-gray-100">New Followers</span>
               </div>
               <Toggle
                 enabled={notifications.newFollowers}
@@ -121,7 +121,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <ChatIcon className="w-5 h-5 text-gray-200" />
-                <span>Comments & Mentions</span>
+                <span className="text-gray-100">Comments & Mentions</span>
               </div>
               <Toggle
                 enabled={notifications.comments}
@@ -140,7 +140,7 @@ export default function SettingsPage() {
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <PaletteIcon className="w-5 h-5 text-gray-200" />
-                <span>Theme</span>
+                <span className="text-gray-100">Theme</span>
               </div>
               <ThemeToggle variant="buttons" showLabels={true} />
             </div>
@@ -148,7 +148,7 @@ export default function SettingsPage() {
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <GlobeIcon className="w-5 h-5 text-gray-200" />
-                <span>Language</span>
+                <span className="text-gray-100">Language</span>
               </div>
               <LanguageSelector variant="dropdown" />
             </div>
@@ -167,7 +167,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <SparklesIcon className="w-5 h-5 text-gray-200" />
-                <span>Brand Voice Settings</span>
+                <span className="text-gray-100">Brand Voice Settings</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <CpuIcon className="w-5 h-5 text-gray-200" />
-                <span>AI Preferences</span>
+                <span className="text-gray-100">AI Preferences</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -189,7 +189,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <CalendarIcon className="w-5 h-5 text-gray-200" />
-                <span>Posting Schedule</span>
+                <span className="text-gray-100">Posting Schedule</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -220,7 +220,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <ChartIcon className="w-5 h-5 text-gray-200" />
-                <span>Usage & Limits</span>
+                <span className="text-gray-100">Usage & Limits</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -231,7 +231,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <BankIcon className="w-5 h-5 text-gray-200" />
-                <span>Payouts</span>
+                <span className="text-gray-100">Payouts</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -248,7 +248,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <HelpIcon className="w-5 h-5 text-gray-200" />
-                <span>Help Center</span>
+                <span className="text-gray-100">Help Center</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
@@ -259,7 +259,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <MessageIcon className="w-5 h-5 text-gray-200" />
-                <span>Send Feedback</span>
+                <span className="text-gray-100">Send Feedback</span>
               </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </Link>
