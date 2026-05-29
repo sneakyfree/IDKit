@@ -362,6 +362,11 @@ export default function PayoutsSettingsPage() {
                 )}
             </div>
 
+            <section className="px-4 py-4 border-t border-gray-800">
+                <h2 className="text-lg font-semibold text-white mb-2">Payout History</h2>
+                <p className="text-sm text-gray-300">No payouts yet. Your payout transactions will appear here.</p>
+            </section>
+
             <BottomNav />
         </main>
     );

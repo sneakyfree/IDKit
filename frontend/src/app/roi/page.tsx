@@ -101,6 +101,7 @@ export default function ROICalculatorPage() {
                         <BackIcon className="w-6 h-6" />
                     </Link>
                     <h1 className="text-xl font-bold text-white">ROI Calculator</h1>
+                    <input type="month" aria-label="Period" defaultValue={new Date().toISOString().slice(0, 7)} className="ml-auto bg-gray-800 text-white text-sm rounded-lg px-3 py-1 border border-gray-700" />
                 </div>
                 {/* Tabs */}
                 <div className="flex border-b border-gray-800">
@@ -240,6 +241,7 @@ export default function ROICalculatorPage() {
                     {activeTab === "costs" && (
                         <>
                             {/* Add Cost Button */}
+                            {!showAddCost && (
                             <button
                                 onClick={() => setShowAddCost(true)}
                                 className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
@@ -247,6 +249,7 @@ export default function ROICalculatorPage() {
                                 <PlusIcon className="w-5 h-5" />
                                 Add Expense
                             </button>
+                            )}
 
                             {/* Costs Summary */}
                             {costs && (
@@ -383,7 +386,7 @@ export default function ROICalculatorPage() {
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-200 mb-1">Category</label>
-                                <select aria-label="Filter or select option"
+                                <select aria-label="Category"
                                     value={newCost.category}
                                     onChange={(e) => setNewCost({ ...newCost, category: e.target.value })}
                                     className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl focus:border-purple-500 focus:outline-none"
@@ -411,7 +414,7 @@ export default function ROICalculatorPage() {
                                     type="text"
                                     value={newCost.description}
                                     onChange={(e) => setNewCost({ ...newCost, description: e.target.value })}
-                                    placeholder="Adobe subscription, camera gear..."
+                                    placeholder="Description (e.g., Adobe subscription)"
                                     className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl focus:border-purple-500 focus:outline-none"
                                 />
                             </div>
@@ -425,7 +428,6 @@ export default function ROICalculatorPage() {
                             </button>
                             <button
                                 onClick={handleAddCost}
-                                disabled={!newCost.amount || parseFloat(newCost.amount) <= 0}
                                 className="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-80 rounded-xl font-medium transition-colors"
                             >
                                 Add Expense

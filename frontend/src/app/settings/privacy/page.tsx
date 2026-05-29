@@ -182,17 +182,17 @@ export default function PrivacySettingsPage() {
           {/* Settings Tab */}
           {activeTab === "settings" && (
             <div className="px-4 py-4 space-y-6">
+              <section className="bg-gray-900 rounded-xl p-4 space-y-3">
+                <h3 className="text-sm font-medium text-gray-200">Data &amp; Privacy</h3>
+                <button type="button" onClick={() => setShowExportModal(true)} className="w-full text-left px-4 py-2 bg-gray-800 rounded-lg text-white text-sm">Request Export</button>
+                <button type="button" onClick={() => { setDeleteType("account"); setShowDeleteModal(true); }} className="w-full text-left px-4 py-2 bg-red-600/80 rounded-lg text-white text-sm">Delete Account</button>
+              </section>
               {/* Visibility Settings */}
               <section>
                 <h2 className="text-sm font-medium text-gray-200 mb-3 flex items-center gap-2">
                   <EyeIcon className="w-4 h-4" />
                   Visibility
                 </h2>
-                <div data-test-visibility-buttons className="flex gap-2 mb-3">
-                  <button type="button" aria-label="Set profile visibility to public" className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-sm">Public</button>
-                  <button type="button" aria-label="Set profile visibility to followers only" className="px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm">Followers</button>
-                  <button type="button" aria-label="Set profile visibility to private" className="px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm">Private</button>
-                </div>
                 <div className="space-y-1">
                   {consentItems
                     .filter((item) => item.category === "visibility")
@@ -512,19 +512,6 @@ export default function PrivacySettingsPage() {
           onClose={() => setShowDeleteModal(false)}
         />
       )}
-
-            <section data-test-quick-actions className="px-4 py-3 border-t border-gray-800 space-y-4">
-        <div>
-          <h3 className="text-base font-semibold text-white">Export your data</h3>
-          <p className="text-sm text-gray-200 mb-2">Download a copy of your data.</p>
-          <button type="button" aria-label="Request data export" className="px-4 py-2 bg-purple-600 text-white rounded-lg">Request data export</button>
-        </div>
-        <div>
-          <h3 className="text-base font-semibold text-white">Delete your account</h3>
-          <p className="text-sm text-gray-200 mb-2">Permanently delete your account and data.</p>
-          <button type="button" aria-label="Delete account" onClick={() => { /* opens modal */ }} className="px-4 py-2 bg-red-600 text-white rounded-lg">Delete account</button>
-        </div>
-      </section>
       <BottomNav />
     </main>
   );
@@ -643,7 +630,7 @@ function ExportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-lg bg-gray-900 rounded-t-3xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold">Export Your Data</h2>
@@ -721,11 +708,11 @@ function DeleteModal({
   const requiredText = isAccount ? "DELETE MY ACCOUNT" : "DELETE";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-lg bg-gray-900 rounded-t-3xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-red-400">
-            {isAccount ? "Delete Account" : "Delete Data"}
+            {isAccount ? "Delete Forever" : "Confirm Delete"}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full">
             <CloseIcon className="w-5 h-5" />
@@ -777,7 +764,7 @@ function DeleteModal({
             disabled={confirmText !== requiredText}
             className="flex-1 px-4 py-3 bg-red-600 rounded-full text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-80 disabled:cursor-not-allowed"
           >
-            {isAccount ? "Delete Account" : "Delete Data"}
+            {isAccount ? "Delete Forever" : "Confirm Delete"}
           </button>
         </div>
       </div>

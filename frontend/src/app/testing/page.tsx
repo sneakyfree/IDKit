@@ -108,6 +108,11 @@ export default function ABTestingPage() {
 
         {/* Filters */}
         <div className="flex gap-2 mb-6">
+          <select aria-label="Filter by type" className="px-4 py-2 rounded-lg text-sm bg-gray-800 text-white border border-gray-700">
+            <option>All Types</option>
+            <option>Split Test</option>
+            <option>Multivariate</option>
+          </select>
           {(["all", "running", "completed", "draft"] as const).map((f) => (
             <button
               key={f}
@@ -298,7 +303,7 @@ function CreateTestModal({ onClose, onCreate }: { onClose: () => void; onCreate:
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div role="dialog" className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-2xl max-w-lg w-full p-6">
         <h2 className="text-xl font-bold mb-6">Create A/B Test</h2>
 

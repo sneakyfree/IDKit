@@ -227,7 +227,7 @@ export default function AnalyticsExportPage() {
                     ) : (
                         <>
                             <DownloadIcon className="w-5 h-5" />
-                            Download {format.toUpperCase()}
+                            Download Export
                         </>
                     )}
                 </button>

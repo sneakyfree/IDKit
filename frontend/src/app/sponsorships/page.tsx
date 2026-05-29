@@ -100,7 +100,7 @@ export default function SponsorshipPage() {
                         className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-xl hover:bg-purple-700"
                     >
                         <Plus className="w-5 h-5" />
-                        Add Sponsor
+                        Add Sponsorship
                     </button>
                 </div>
 
@@ -144,7 +144,7 @@ export default function SponsorshipPage() {
                             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 rounded-xl"
                         >
                             <Plus className="w-5 h-5" />
-                            Add Sponsor
+                            Add Sponsorship
                         </button>
                     </div>
                 )}
@@ -373,6 +373,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
+                            aria-label="Company Name"
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
                         />
                     </div>
@@ -382,6 +383,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                             value={industry}
                             onChange={(e) => setIndustry(e.target.value)}
                             placeholder="e.g., Technology, Fashion"
+                            aria-label="Industry"
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
                         />
                     </div>
@@ -390,6 +392,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         <input
                             value={contactName}
                             onChange={(e) => setContactName(e.target.value)}
+                            aria-label="Contact Name"
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
                         />
                     </div>
@@ -398,6 +401,7 @@ function AddSponsorModal({ onClose, onAdd }: { onClose: () => void; onAdd: (spon
                         <input
                             type="email"
                             value={contactEmail}
+                            aria-label="Contact Email"
                             onChange={(e) => setContactEmail(e.target.value)}
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
                         />

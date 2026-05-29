@@ -367,6 +367,7 @@ function CreateContractModal({
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
+                            aria-label="Contract Title"
                             required
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700 focus:border-purple-500 focus:outline-none"
                         />
@@ -374,7 +375,7 @@ function CreateContractModal({
 
                     <div>
                         <label className="block text-sm text-gray-200 mb-1">Type</label>
-                        <select aria-label="Filter or select option"
+                        <select aria-label="Type"
                             value={type}
                             onChange={(e) => setType(e.target.value as Contract["type"])}
                             className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
@@ -403,6 +404,7 @@ function CreateContractModal({
                                 type="date"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
+                                aria-label="Start Date"
                                 required
                                 className="w-full px-4 py-3 bg-gray-800 rounded-xl border border-gray-700"
                             />
